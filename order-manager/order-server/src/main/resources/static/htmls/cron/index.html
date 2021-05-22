@@ -1,0 +1,115 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	<link rel="stylesheet" href="../../admin/css/load.css"/>
+    <link rel="stylesheet" href="../../admin/css/admin.css"/>
+    <link rel="stylesheet" href="../../component/pear/css/pear.css">
+    <link rel="stylesheet" href="../../component/zTree_v3/css/zTreeStyle/zTreeStyle.css">
+    <script src="../../component/layui/layui.js"></script>
+    <script src="../../component/pear/pear.js"></script>
+    <script src="../../component/jquery.min.js"></script>
+    <script src="../../component/zTree_v3/js/jquery.ztree.core.js"></script>
+    <script src="../common.js"></script>
+    <script src="../request.js"></script>
+
+
+    <link href="cron-generator/bootstrap.min.css" rel="stylesheet">
+	<link href="cron-generator/font/font-awesome.min.css" rel="stylesheet">
+		<link href="cron-generator/cronGen.css" rel="stylesheet">
+    <script src="cron-generator/jquery-2.1.4.min.js"></script>
+    <title></title>
+    <script type="text/javascript">
+	$(function() {
+	    $("#cron").cronGen({
+	    	direction : 'right'
+	    	});
+	});
+</script>
+</head>
+    <body>
+<!--
+	<div class="container">
+		<form role="form" class="form-inline">
+			<div class="form-group">
+				<label for="cron">Cron</label>
+				<input id="cron" class="form-control" />
+			</div>
+		</form>
+	</div>
+
+-->
+<div class="container">
+	<form role="form" class="form-inline">
+		<div class="form-group">
+			<label for="cron">Cron</label>
+			<input id="cron" class="form-control" />
+		</div>
+	</form>
+
+
+
+	<form class="layui-form">
+		<div class="mainBox">
+			<div class="main-container">
+				<div class="layui-form-item">
+					<label class="layui-form-label">名称：</label>
+					<div class="layui-input-block">
+						<input type="text" name="name" placeholder="请输入名称" class="layui-input"/>
+					</div>
+				</div>
+				<div class="layui-form-item" style="width: 200px">
+
+					<label class="layui-form-label">表达式：</label>
+					<div class="layui-input-block" style="width: 200px">
+
+					<!--	<input id="cron" class="form-control" />-->
+
+
+
+					</div>
+				</div>
+
+				<div class="layui-form-item">
+					<label class="layui-form-label">排序：</label>
+					<div class="layui-input-block">
+						<input type="text" name="sort" placeholder="请输入排序" class="layui-input"/>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="bottom">
+			<div class="button-container">
+				<button type="submit" class="layui-btn layui-btn-normal layui-btn-sm" lay-submit="" lay-filter="cron-save">
+					<i class="layui-icon layui-icon-ok"></i>
+					提交
+				</button>
+				<button type="reset" class="layui-btn layui-btn-primary layui-btn-sm">
+					<i class="layui-icon layui-icon-refresh"></i>
+					重置
+				</button>
+			</div>
+		</div>
+	</form>
+
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+        <script src="cron-generator/cronGen.min.js"></script>
+        <script src="cron-generator/bootstrap.min.js"></script>
+    </body>
+</html>

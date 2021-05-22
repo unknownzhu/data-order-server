@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>工单详情</title>
+    <link rel="stylesheet" href="../../admin/css/load.css"/>
+    <link rel="stylesheet" href="../../admin/css/admin.css"/>
+    <link rel="stylesheet" href="../../component/pear/css/pear.css">
+    <link rel="stylesheet" href="../../component/zTree_v3/css/zTreeStyle/zTreeStyle.css">
+    <script src="../../component/layui/layui.js"></script>
+    <script src="../../component/pear/pear.js"></script>
+    <script src="../../component/jquery.min.js"></script>
+    <script src="../../component/zTree_v3/js/jquery.ztree.core.js"></script>
+    <script src="../common.js"></script>
+    <script src="../request.js"></script>
+</head>
+<body>
+<form class="layui-form">
+    <div class="mainBox">
+        <div class="main-container">
+            <div style="width: 33%;float: left">
+                <label class="layui-form-label">工单名</label>
+                <div class="layui-input-block">
+                    <input type="text" name="name" id="name" placeholder="请输入工单名" class="layui-input"/>
+                </div>
+            </div>
+
+
+            <div style="width: 33%;float: left">
+                <label class="layui-form-label">申请类型</label>
+                <div class="layui-input-block">
+                    <input type="text" name="flowName" id="flowName" placeholder="申请类型" class="layui-input"/>
+                    <!-- <select id="flowId" name="flowId"></select>-->
+                </div>
+            </div>
+
+
+            <div style="width: 33%;float: left">
+                <label class="layui-form-label">数据库名称</label>
+                <div class="layui-input-block">
+                    <input type="text" name="dbName" id="dbName" placeholder="数据库名称" class="layui-input"/>
+                    <!-- <select id="dbId" name="dbId"></select>-->
+                </div>
+            </div>
+
+            <div>
+                <label class="layui-form-label">申请原因</label>
+                <div class="layui-input-block">
+                    <textarea name="reason" id="reason" placeholder="请输入申请原因" style="height: 100px;"
+                              class="layui-textarea"></textarea>
+                </div>
+            </div>
+
+            <div class="layui-form-item layui-form-text">
+                <label class="layui-form-label">sql语句</label>
+                <div class="layui-input-block">
+                    <textarea name="sqls" id="sqls" placeholder="请输入sql语句" style="height: 200px;"
+                              class="layui-textarea"></textarea>
+                </div>
+            </div>
+
+
+            <div style="width: 50%;float: left;margin-top: 20px">
+                <label class="layui-form-label">语句检查</label>
+                <div class="layui-input-block">
+                    <div class="radio-box" radio-dict-code="input">
+                        <input type="text" name="checkStatusText" id="checkStatusText"
+                               placeholder="语句检查状态"
+                               autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+            </div>
+
+            <div style="width: 50%;float: left;margin-top: 20px">
+                <label class="layui-form-label">审核状态</label>
+                <div class="layui-input-block">
+                    <div class="radio-box" radio-dict-code="input">
+                        <input type="text" name="reviewStatus" id="reviewStatus"
+                               placeholder="审核状态"
+                               autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+            </div>
+
+
+            <div style="width: 50%;float: left;margin-top: 20px">
+                <label class="layui-form-label">创建人</label>
+                <div class="layui-input-block">
+                    <div class="radio-box" radio-dict-code="input">
+                        <input type="text" name="creatorName" id="creatorName"
+                               placeholder="创建人"
+                               autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+            </div>
+            <div style="width: 50%;float: left;margin-top: 20px">
+                <label class="layui-form-label">创建时间</label>
+                <div class="layui-input-block">
+                    <div class="radio-box" radio-dict-code="input">
+                        <input type="text" name="createTime" id="createTime"
+                               placeholder="创建时间"
+                               autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+            </div>
+            <div style="width: 50%;float: left;margin-top: 20px">
+                <label class="layui-form-label">送审人</label>
+                <div class="layui-input-block">
+                    <div class="radio-box" radio-dict-code="input">
+                        <input type="text" name="pusherName" id="pusherName"
+                               placeholder="送审人"
+                               autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+            </div>
+            <div style="width: 50%;float: left;margin-top: 20px">
+                <label class="layui-form-label">送审时间</label>
+                <div class="layui-input-block">
+                    <div class="radio-box" radio-dict-code="input">
+                        <input type="text" name="pushTime" id="pushTime"
+                               placeholder="送审时间"
+                               autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+            </div>
+            <div style="width: 50%;float: left;margin-top: 20px">
+                <label class="layui-form-label">审核人</label>
+                <div class="layui-input-block">
+                    <div class="radio-box" radio-dict-code="input">
+                        <input type="text" name="reviewerName" id="reviewerName"
+                               placeholder="审核人"
+                               autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+            </div>
+            <div style="width: 50%;float: left;margin-top: 20px">
+                <label class="layui-form-label">审核时间</label>
+                <div class="layui-input-block">
+                    <div class="radio-box" radio-dict-code="input">
+                        <input type="text" name="reviewTime" id="reviewTime"
+                               placeholder="审核时间"
+                               autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+            </div>
+
+
+            <div style="width: 50%;float: left;margin-top: 20px">
+                <label class="layui-form-label">执行状态</label>
+                <div class="layui-input-block">
+                    <div class="radio-box" radio-dict-code="input">
+                        <input type="text" name="executeStatus" id="executeStatus"
+                               placeholder="执行状态"
+                               autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+            </div>
+
+
+            <div style="width: 50%;float: left;margin-top: 20px">
+                <label class="layui-form-label">执行时间</label>
+                <div class="layui-input-block">
+                    <div class="radio-box" radio-dict-code="input">
+                        <input type="text" name="executeTime" id="executeTime"
+                               placeholder="执行时间"
+                               autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+            </div>
+
+
+            <div style="float:left;margin-top: 10px">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">定时任务</label>
+                    <div class="layui-input-block">
+                        <input type="radio" disabled name='isSchedule' value="0" checked title="否"
+                               lay-filter="isSchedule"/>
+                        <input type="radio" disabled name='isSchedule' value="1" title="是" lay-filter="isSchedule"/>
+                    </div>
+                </div>
+            </div>
+
+            <div style="float:left;display: none;margin-top: 10px" id="cronDiv">
+                <div class="layui-form-item" style="float:left;">
+                    <label class="layui-form-label">定时描述：</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="cronName" id="cronName"
+                               placeholder="请输入cron表达式"
+                               autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+            </div>
+
+
+
+        </div>
+    </div>
+  <!--  <div class="bottom">
+        <div class="button-container">
+
+            <button type="submit" class="layui-btn layui-btn-normal layui-btn-sm" lay-submit=""
+                    lay-filter="orders-save">
+                <i class="layui-icon layui-icon-ok"></i>
+                提交
+            </button>
+            <button type="reset" class="layui-btn layui-btn-primary layui-btn-sm">
+                <i class="layui-icon layui-icon-refresh"></i>
+                重置
+            </button>
+        </div>
+    </div>-->
+</form>
+</body>
+<th:block th:include="include :: footer"/>
+<script th:inline="javascript">
+
+    function ReaderOnly() {
+        var temp = document.getElementsByTagName("input");
+        for (i = 0; i < temp.length; i++) {
+            if (temp[i].type == "text") {
+                temp[i].readOnly = true;
+            }
+        }
+        var temp1 = document.getElementsByTagName("textarea");
+        for (i = 0; i < temp1.length; i++) {
+            temp1[i].readOnly = true;
+        }
+    }
+
+    window.onload = ReaderOnly;
+
+    var dataId = GetQueryString('id');
+    layui.use(['form', 'jquery', 'laydate'], function () {
+        let form = layui.form;
+        let $ = layui.jquery;
+        let laydate = layui.laydate;
+
+        let prefix = "/data-order-server/system/orders/"
+
+        formatData();
+
+        function formatData() {
+            editData = request.get(prefix + "selectOneOrdersLinkDetail?id=" + dataId, null).data;
+            //editData = request.get(prefix + "edit?id=" + dataId, null).data;
+            $("#id").val(editData.id);
+            $("#name").val(editData.name);
+            $("#dbId").val(editData.dbId);
+            $("#reason").val(editData.reason);
+            $("#sqls").val(editData.sqls);
+            $("#rowCount").val(editData.rowCount);
+            $("#cron").val(editData.cron);
+            $("#cronName").val(editData.cronName);
+            $("#cronText").val(editData.cronText);
+            $("#dbName").val(editData.dbName);
+            $("#flowName").val(editData.flowName);
+
+            $("#createTime").val(editData.createTime);
+            $("#creatorName").val(editData.creatorName);
+            $("#pushTime").val(editData.pushTime);
+            $("#pusherName").val(editData.pusherName);
+            $("#reviewerName").val(editData.reviewerName);
+            $("#reviewTime").val(editData.reviewTime);
+            $("#executeTime").val(editData.executeTime);
+
+  /*          var execData = request.get("/data-order-server/system/orderSqlLog/list?orderId=" + editData.id, null).data;
+            console.log(execData);
+            if (execData.length > 0) {
+                $("#executeTime").val(execData[0].createTime);
+
+            }*/
+
+            var executeStatus = '';
+            if (editData.executeStatus == '0') {
+                executeStatus = '失败';
+            } else if (editData.executeStatus == '1') {
+                executeStatus = '成功';
+            }
+            $("#executeStatus").val(executeStatus);
+
+            var reviewStatus = '';  //状态 0 未申请（草稿） 1 待审核 2 审核成功 3 审核失败
+            if (editData.reviewStatus == '0') {
+                reviewStatus = '草稿';
+            } else if (editData.reviewStatus == '1') {
+                reviewStatus = '待审核';
+            } else if (editData.reviewStatus == '2') {
+                reviewStatus = '审核通过';
+            } else if (editData.reviewStatus == '3') {
+                reviewStatus = '退回';
+            } else if (editData.reviewStatus == '4') {
+                reviewStatus = '完成';
+            }
+            $("#reviewStatus").val(reviewStatus);
+
+            var checkStatus = '';  // 1 成功 2 失败 0 未检查
+            if (editData.checkStatus == '0') {
+                checkStatus = '未检查';
+            } else if (editData.checkStatus == '1') {
+                checkStatus = '成功';
+            } else if (editData.checkStatus == '2') {
+                checkStatus = '失败';
+            }
+            $("#checkStatusText").val(checkStatus);
+
+            document.querySelector("input[name='isSchedule'][value='" + editData.isSchedule + "']").checked = true;
+            if (editData.isSchedule == '0') {
+                document.getElementById("cronDiv").style.display = "none";
+            } else if (editData.isSchedule == '1') {
+                document.getElementById("cronDiv").style.display = "inline";
+            }
+            form.render();
+        }
+
+        form.on('radio(isSchedule)', function (data) {
+            isSchedule = data.value;
+            if (isSchedule == '0') {
+                $("#cron").val('');
+                document.getElementById("cronDiv").style.display = "none";
+            } else if (isSchedule == '1') {
+                document.getElementById("cronDiv").style.display = "inline";
+            }
+        });
+
+
+    });
+</script>
+</html>

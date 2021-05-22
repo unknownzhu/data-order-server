@@ -1,0 +1,296 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ctjsoft.orderserver.analyze.mapper.JxStdDatabaseMapper">
+    <resultMap id="BaseResultMap" type="com.ctjsoft.orderserver.analyze.domain.JxStdDatabaseExtendRelationVo">
+        <id column="ID" jdbcType="VARCHAR" property="id"/>
+        <result column="CODE" jdbcType="VARCHAR" property="code"/>
+        <result column="NAME" jdbcType="VARCHAR" property="name"/>
+        <result column="TYPE" jdbcType="NUMERIC" property="type"/>
+        <result column="DRIVER" jdbcType="VARCHAR" property="driver"/>
+        <result column="URL" jdbcType="VARCHAR" property="url"/>
+        <result column="USERNAME" jdbcType="VARCHAR" property="username"/>
+        <result column="PWD" jdbcType="VARCHAR" property="pwd"/>
+        <result column="DES" jdbcType="VARCHAR" property="des"/>
+        <result column="MODEL_NAME" jdbcType="VARCHAR" property="modelName"/>
+        <result column="BUSINESS" jdbcType="VARCHAR" property="business"/>
+        <result column="COMPANY_CODE" jdbcType="VARCHAR" property="companyCode"/>
+        <result column="COMPANY_NAME" jdbcType="VARCHAR" property="companyName"/>
+        <result column="SYSTEM_CODE" jdbcType="VARCHAR" property="systemCode"/>
+        <result column="SYSTEM_NAME" jdbcType="VARCHAR" property="systemName"/>
+    </resultMap>
+    <resultMap id="BaseResultMap1" type="com.ctjsoft.orderserver.analyze.domain.JxStdDatabase">
+        <id column="ID" jdbcType="VARCHAR" property="id"/>
+        <result column="CODE" jdbcType="VARCHAR" property="code"/>
+        <result column="NAME" jdbcType="VARCHAR" property="name"/>
+        <result column="TYPE" jdbcType="NUMERIC" property="type"/>
+        <result column="DRIVER" jdbcType="VARCHAR" property="driver"/>
+        <result column="URL" jdbcType="VARCHAR" property="url"/>
+        <result column="USERNAME" jdbcType="VARCHAR" property="username"/>
+        <result column="PWD" jdbcType="VARCHAR" property="pwd"/>
+        <result column="DES" jdbcType="VARCHAR" property="des"/>
+        <result column="MODEL_NAME" jdbcType="VARCHAR" property="modelName"/>
+        <result column="BUSINESS" jdbcType="VARCHAR" property="business"/>
+        <result column="VERSION" jdbcType="VARCHAR" property="version"/>
+        <result column="COMPANY_CODE" jdbcType="VARCHAR" property="companyCode"/>
+        <result column="DETECE_FREQUENCY" jdbcType="VARCHAR" property="deteceFrequency"/>
+        <result column="RATE" jdbcType="VARCHAR" property="rate"/>
+        <result column="IS_SCHEDULE" jdbcType="VARCHAR" property="isSchedule"/>
+        <result column="CRON" jdbcType="VARCHAR" property="cron"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        ID, CODE, NAME, TYPE, DRIVER, URL, USERNAME, PWD, DES, MODEL_NAME, BUSINESS, VERSION,COMPANY_CODE,RATE
+        ,IS_SCHEDULE ,CRON
+
+    </sql>
+    <select id="search" resultMap="BaseResultMap">
+        select distinct
+        SD.ID, CODE, NAME, TYPE, DRIVER, URL, USERNAME, PWD, DES,
+        MODEL_NAME, BUSINESS, VERSION,SC.COMPANY_CODE,SC.COMPANY_NAME,SS.SYSTEM_CODE,SS.SYSTEM_NAME
+        FROM STD_DATABASE SD LEFT JOIN STD_DATABASE_RELATION SDR ON SD.ID = SDR.DATABASE_ID
+        LEFT JOIN STD_COMPANY SC ON SC.COMPANY_CODE = SDR.COMPANY_CODE
+        LEFT JOIN STD_SYSTEM SS ON SS.SYSTEM_CODE = SDR.SYSTEM_CODE
+
+        <where>
+            <if test="companyCodeList != null and companyCodeList.size > 0">
+                sdr.company_code in
+                <foreach collection="companyCodeList" separator="," close=")" open="(" item="companyCode">
+                    #{companyCode}
+                </foreach>
+            </if>
+            <if test="search != null and search != ''">
+                <bind name="search_bind" value="'%'+search+'%'"/>
+                sd.code like #{search_bind} or sd.name like #{search_bind}
+            </if>
+        </where>
+    </select>
+
+
+
+    <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap1">
+        select
+        <include refid="Base_Column_List"/>
+        from STD_DATABASE
+        where ID = #{id,jdbcType=VARCHAR}
+    </select>
+    <select id="loadSearch" resultMap="BaseResultMap1">
+        select
+        <include refid="Base_Column_List"/>
+        from STD_DATABASE
+        <where>
+            <if test="search != null and search != ''">
+                <bind name="search_bind" value="'%'+search+'%'"/>
+                code like #{search_bind} or name like   concat(concat('%',#{search_bind}),'%')
+            </if>
+        </where>
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+        delete
+        from STD_DATABASE
+        where ID = #{id,jdbcType=VARCHAR}
+    </delete>
+    <insert id="insert" parameterType="com.ctjsoft.orderserver.analyze.domain.JxStdDatabase">
+        insert into STD_DATABASE (ID, CODE, NAME,
+                                  TYPE, DRIVER, URL,
+                                  USERNAME, PWD, DES ,MODEL_NAME, BUSINESS, VERSION,COMPANY_CODE)
+        values (#{id,jdbcType=VARCHAR}, #{code,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR},
+                #{type,jdbcType=NUMERIC}, #{driver,jdbcType=VARCHAR}, #{url,jdbcType=VARCHAR},
+                #{username,jdbcType=VARCHAR}, #{pwd,jdbcType=VARCHAR}, #{des,jdbcType=VARCHAR}, #{modelName,jdbcType=VARCHAR},
+                #{business,jdbcType=VARCHAR}, #{version,jdbcType=VARCHAR}, #{companyCode,jdbcType=VARCHAR})
+    </insert>
+    <insert id="insertSelective" parameterType="com.ctjsoft.orderserver.analyze.domain.JxStdDatabase">
+        insert into STD_DATABASE
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                ID,
+            </if>
+            <if test="code != null">
+                CODE,
+            </if>
+            <if test="name != null">
+                NAME,
+            </if>
+            <if test="type != null">
+                TYPE,
+            </if>
+            <if test="driver != null">
+                DRIVER,
+            </if>
+            <if test="url != null">
+                URL,
+            </if>
+            <if test="username != null">
+                USERNAME,
+            </if>
+            <if test="pwd != null">
+                PWD,
+            </if>
+            <if test="des != null">
+                DES,
+            </if>
+            <if test="modelName != null">
+                MODEL_NAME,
+            </if>
+            <if test="business != null">
+                BUSINESS,
+            </if>
+            <if test="version != null">
+                VERSION,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=VARCHAR},
+            </if>
+            <if test="code != null">
+                #{code,jdbcType=VARCHAR},
+            </if>
+            <if test="name != null">
+                #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="type != null">
+                #{type,jdbcType=NUMERIC},
+            </if>
+            <if test="driver != null">
+                #{driver,jdbcType=VARCHAR},
+            </if>
+            <if test="url != null">
+                #{url,jdbcType=VARCHAR},
+            </if>
+            <if test="username != null">
+                #{username,jdbcType=VARCHAR},
+            </if>
+            <if test="pwd != null">
+                #{pwd,jdbcType=VARCHAR},
+            </if>
+            <if test="des != null">
+                #{des,jdbcType=VARCHAR},
+            </if>
+            <if test="modelName != null">
+                #{modelName,jdbcType=VARCHAR},
+            </if>
+            <if test="business != null">
+                #{business,jdbcType=VARCHAR},
+            </if>
+            <if test="version != null">
+                #{version,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.ctjsoft.orderserver.analyze.domain.JxStdDatabase">
+        update STD_DATABASE
+        <set>
+            <if test="code != null">
+                CODE = #{code,jdbcType=VARCHAR},
+            </if>
+            <if test="name != null">
+                NAME = #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="type != null">
+                TYPE = #{type,jdbcType=NUMERIC},
+            </if>
+            <if test="driver != null">
+                DRIVER = #{driver,jdbcType=VARCHAR},
+            </if>
+            <if test="url != null">
+                URL = #{url,jdbcType=VARCHAR},
+            </if>
+            <if test="username != null">
+                USERNAME = #{username,jdbcType=VARCHAR},
+            </if>
+            <if test="pwd != null">
+                PWD = #{pwd,jdbcType=VARCHAR},
+            </if>
+            <if test="des != null">
+                DES = #{des,jdbcType=VARCHAR},
+            </if>
+            <if test="modelName != null">
+                MODEL_NAME = #{modelName,jdbcType=VARCHAR},
+            </if>
+            <if test="business != null">
+                BUSINESS = #{business,jdbcType=VARCHAR},
+            </if>
+            <if test="version != null">
+                VERSION = #{version,jdbcType=VARCHAR},
+            </if>
+            <if test="rate != null">
+                RATE = #{rate,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where ID = #{id,jdbcType=VARCHAR}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.ctjsoft.orderserver.analyze.domain.JxStdDatabase">
+        update STD_DATABASE
+        set CODE     = #{code,jdbcType=VARCHAR},
+            NAME     = #{name,jdbcType=VARCHAR},
+            TYPE     = #{type,jdbcType=NUMERIC},
+            DRIVER   = #{driver,jdbcType=VARCHAR},
+            URL      = #{url,jdbcType=VARCHAR},
+            USERNAME = #{username,jdbcType=VARCHAR},
+            PWD      = #{pwd,jdbcType=VARCHAR},
+            DES      = #{des,jdbcType=VARCHAR},
+            BUSINESS = #{business,jdbcType=VARCHAR},
+            VERSION = #{version,jdbcType=VARCHAR},
+            MODEL_NAME      = #{modelName,jdbcType=VARCHAR}
+        where ID = #{id,jdbcType=VARCHAR}
+    </update>
+
+    <!-- 批量查 -->
+    <select id="getDatabaseByIds" resultMap="BaseResultMap1">
+        select
+        <include refid="Base_Column_List"/>
+        from
+        STD_DATABASE
+        <if test="list != null and list.size > 0">
+            where
+            ID in
+            <foreach collection="list" item="item" separator="," open="(" close=")">
+                #{item}
+            </foreach>
+        </if>
+
+    </select>
+    <select id="list" resultMap="BaseResultMap1">
+        select
+        <include refid="Base_Column_List"/>
+        from STD_DATABASE
+        <!--        <where>
+                    <if test="search != null and search != ''">
+                        <bind name="search_bind" value="'%'+search+'%'"/>
+                        code like #{search_bind} or name like #{search_bind}
+                    </if>
+                </where>-->
+    </select>
+
+    <!-- 根据类型查询数据源 -->
+    <select id="getScheduleDatabaseByType" resultMap="BaseResultMap1">
+        select
+        <include refid="Base_Column_List"/>
+        from
+        STD_DATABASE
+        where
+        TYPE in
+        <foreach collection="list" item="item" separator="," open="(" close=")">
+            #{item}
+        </foreach>
+
+        and is_schedule ='1'
+    </select>
+
+
+
+    <!-- 根据类型查询数据源 -->
+         <select id="getBusinessList" resultType="java.lang.String">
+           select busi_code from STD_DATABASE_BUSINESS_RELATION
+           where  DATABASE_ID = #{id,jdbcType=VARCHAR}
+        </select>
+
+    <!-- 根据类型查询数据源 -->
+    <select id="selectName" resultType="java.lang.String">
+           select name from STD_DATABASE
+        </select>
+
+    <!-- 查询名称不为自己本身的所有名字集合 -->
+    <select id="selectNameRemoveSelf" parameterType="java.lang.String" resultType="java.lang.String">
+           select name from STD_DATABASE where id != #{id}
+    </select>
+</mapper>

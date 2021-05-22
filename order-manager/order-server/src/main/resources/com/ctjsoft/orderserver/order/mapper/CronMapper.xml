@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ctjsoft.orderserver.order.mapper.CronMapper">
+
+
+    <resultMap type="com.ctjsoft.orderserver.order.domain.Cron" id="CronResult">
+        <result property="id" column="ID"/>
+        <result property="name" column="NAME"/>
+        <result property="cron" column="CRON"/>
+        <result property="createTime" column="CREATE_TIME"/>
+        <result property="creatorId" column="CREATOR_ID"/>
+        <result property="sort" column="SORT"/>
+    </resultMap>
+
+    <sql id="selectCronVo">
+        select ID, NAME, CRON, CREATE_TIME, CREATOR_ID, SORT
+        from JX_Cron
+    </sql>
+
+    <select id="selectCronList" parameterType="com.ctjsoft.orderserver.order.domain.Cron" resultMap="CronResult">
+        <include refid="selectCronVo"/>
+        <where>
+            <if test="name != null  and name != ''">and NAME like '%' ||#{name} || '%'</if>
+            <if test="cron != null  and cron != ''">and CRON = #{cron}</if>
+            <if test="createTime != null  and createTime != ''">and CREATE_TIME = #{createTime}</if>
+            <if test="creatorId != null  and creatorId != ''">and CREATOR_ID = #{creatorId}</if>
+            <if test="sort != null  and sort != ''">and SORT = #{sort}</if>
+        </where>
+        order by sort
+    </select>
+
+    <select id="selectCronById" parameterType="String" resultMap="CronResult">
+        <include refid="selectCronVo"/>
+        where ID = #{id}
+        order by sort
+    </select>
+
+    <insert id="insertCron" parameterType="com.ctjsoft.orderserver.order.domain.Cron" >
+        insert into JX_Cron
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">ID,</if>
+            <if test="name != null">NAME,</if>
+            <if test="cron != null">CRON,</if>
+            <if test="createTime != null">CREATE_TIME,</if>
+            <if test="creatorId != null">CREATOR_ID,</if>
+            <if test="sort != null">SORT,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="name != null">#{name},</if>
+            <if test="cron != null">#{cron},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="creatorId != null">#{creatorId},</if>
+            <if test="sort != null">#{sort},</if>
+        </trim>
+    </insert>
+
+    <update id="updateCron" parameterType="com.ctjsoft.orderserver.order.domain.Cron" >
+        update JX_Cron
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="name != null">NAME = #{name},</if>
+            <if test="cron != null">CRON = #{cron},</if>
+            <if test="createTime != null">CREATE_TIME = #{createTime},</if>
+            <if test="creatorId != null">CREATOR_ID = #{creatorId},</if>
+            <if test="sort != null">SORT = #{sort},</if>
+        </trim>
+        where ID = #{id}
+    </update>
+
+    <delete id="deleteCronById" parameterType="String">
+        delete
+        from JX_Cron
+        where ID = #{id}
+    </delete>
+
+    <delete id="deleteCronByIds" parameterType="String">
+        delete from JX_Cron where ID in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

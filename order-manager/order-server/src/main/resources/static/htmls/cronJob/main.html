@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <!-- <th:block th:include="include :: header('定时任务列表')"    /> -->
+    <link rel="stylesheet" href="../../admin/css/load.css"/>
+    <link rel="stylesheet" href="../../admin/css/admin.css"/>
+    <link rel="stylesheet" href="../../component/pear/css/pear.css">
+    <link rel="stylesheet" href="../../component/zTree_v3/css/zTreeStyle/zTreeStyle.css">
+    <script src="../../component/layui/layui.js"></script>
+    <script src="../../component/pear/pear.js"></script>
+    <script src="../../component/jquery.min.js"></script>
+    <script src="../../component/zTree_v3/js/jquery.ztree.core.js"></script>
+    <script src="../common.js"></script>
+    <script src="../request.js"></script>
+</head>
+<body class="pear-container">
+<div class="layui-card">
+    <div class="layui-card-body">
+        <div class="col-sm-12 search-collapse">
+            <form id="formId" class="layui-form">
+
+                <div class="layui-form-item">
+
+
+                    <label class="layui-form-label">工单名称：</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="orderName" placeholder="请输入工单名称" class="layui-input"/>
+                    </div>
+
+                    <label class="layui-form-label">状态：</label>
+                    <div class="layui-input-inline">
+                        <select name="status" dict-code="input">
+                            <option value="">所有</option>
+                            <option value="1">启用</option>
+                            <option value="0">停用</option>
+                        </select>
+                    </div>
+                    <button class="pear-btn pear-btn-md pear-btn-primary" lay-submit lay-filter="job-query">
+                        <i class="layui-icon layui-icon-search"></i>
+                        查询
+                    </button>
+                    <button type="reset" class="pear-btn pear-btn-md">
+                        <i class="layui-icon layui-icon-refresh"></i>
+                        重置
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="layui-card">
+    <div class="layui-card-body">
+        <table id="job-table" lay-filter="job-table"></table>
+
+        <script type="text/html" id="job-toolbar">
+
+
+            <button sec:authorize="hasPermission('/data-order-server/system/job/batchStart','system:job:batchStart')"
+                    class="pear-btn pear-btn-primary pear-btn-md" lay-event="batchStart">
+                启用
+            </button>
+            <button sec:authorize="hasPermission('/data-order-server/system/job/batchStop','system:job:batchStop')"
+                    class="pear-btn pear-btn-primary pear-btn-md" lay-event="batchStop">
+                停用
+            </button>
+        </script>
+
+        <script type="text/html" id="job-bar">
+
+            <button sec:authorize="hasPermission('/data-order-server/system/job/start','system:job:start')"
+                    class="pear-btn pear-btn-primary pear-btn-sm" lay-event="start" id="start"> 启用
+            </button>
+
+            <button sec:authorize="hasPermission('/data-order-server/system/job/stop','system:job:stop')"
+                    class="pear-btn pear-btn-primary pear-btn-sm" lay-event="stop" id="stop"> 停用
+            </button>
+        </script>
+
+
+    </div>
+</div>
+<th:block th:include="include :: footer"/>
+<script>
+    layui.use(['table', 'form', 'jquery'], function () {
+        let table = layui.table;
+        let form = layui.form;
+        let $ = layui.jquery;
+
+        let prefix = "/data-order-server/system/job/";
+
+        let cols = [
+            [
+                {type: 'checkbox'},
+                /*   {
+                        field: 'id',
+                        title: '主键'
+                   },*/
+                {
+                    field: 'orderName',
+                    title: '工单名称'
+                },
+                {
+                    field: 'cronName',
+                    title: '表达式名称'
+                },
+                {
+                    field: 'cronText',
+                    title: '定时表达式'
+                },
+                {
+                    field: 'creatorName',
+                    title: '创建人'
+                },
+                {
+                    field: 'cronStatus',
+                    title: '状态', templet: function (d) {
+                        if (d.cronStatus == '1') {
+                            return '启用'
+                        } else if (d.cronStatus == '0') {
+                            return '停用'
+                        }
+
+                    }
+                },
+                {
+                    field: 'updateTime',
+                    title: '最近操作时间'
+                }, {
+                field: 'null',
+                title: '操作', width: 300, align: 'center', templet: function (d) {
+
+
+                    var str = " <button sec:authorize=\"hasPermission('/data-order-server/system/job/orderDetail','system:job:orderDetail')\"\n" +
+                        "                    class=\"pear-btn pear-btn-primary pear-btn-sm\" lay-event=\"orderDetail\">详情\n" +
+                        "            </button>\n" +
+                      /*  " <button sec:authorize=\"hasPermission('/data-order-server/system/job/edit','system:job:edit')\"\n" +
+                        "                    class=\"pear-btn pear-btn-primary pear-btn-sm\" lay-event=\"edit\">修改\n" +
+                        "            </button>\n" +
+                        "            <button sec:authorize=\"hasPermission('/data-order-server/system/job/remove','system:job:remove')\"\n" +
+                        "                    class=\"pear-btn pear-btn-primary pear-btn-sm\" lay-event=\"remove\">删除\n" +
+                        "            </button>\n" +*/
+                        "\n";
+                    if (d.cronStatus == '0') {
+                        str += "            <button sec:authorize=\"hasPermission('/data-order-server/system/job/start','system:job:start')\"\n" +
+                            "                    class=\"pear-btn pear-btn-primary pear-btn-sm\" lay-event=\"start\" id=\"start\"> 启用\n" +
+                            "            </button>\n"
+                    } else if (d.cronStatus == '1') {
+                        str += "            <button sec:authorize=\"hasPermission('/data-order-server/system/job/stop','system:job:stop')\"\n" +
+                            "                    class=\"pear-btn pear-btn-primary pear-btn-sm\" lay-event=\"stop\" id=\"stop\"> 停用\n" +
+                            "            </button>";
+                    }
+
+                    return str;
+                }
+            }
+            ]
+        ]
+
+        table.render({
+            elem: '#job-table',
+            url: prefix + 'linkdata',
+            page: true,
+            cols: cols,
+            skin: 'line',
+            toolbar: '#job-toolbar',
+            defaultToolbar: [{
+                layEvent: 'refresh',
+                icon: 'layui-icon-refresh',
+            }, 'filter', 'print', 'exports']
+        });
+
+        table.on('tool(job-table)', function (obj) {
+            if (obj.event === 'remove') {
+                window.remove(obj);
+            } else if (obj.event === 'edit') {
+                window.edit(obj);
+            } else if (obj.event === 'start') {
+                window.control(obj.data.id, 1);
+            } else if (obj.event === 'stop') {
+                window.control(obj.data.id, 0);
+            } else if (obj.event === 'orderDetail') {
+                window.orderDetail(obj);
+            }
+
+
+        });
+
+        table.on('toolbar(job-table)', function (obj) {
+            if (obj.event === 'add') {
+                window.add();
+            } else if (obj.event === 'refresh') {
+                window.refresh();
+            } else if (obj.event === 'batchRemove') {
+                window.batchRemove(obj);
+            } else if (obj.event === 'batchStart') {
+                window.batchControl(obj, 1);
+            } else if (obj.event === 'batchStop') {
+                window.batchControl(obj, 0);
+            }
+        });
+
+        form.on('submit(job-query)', function (data) {
+            table.reload('job-table', {where: data.field})
+            return false;
+        });
+
+        window.add = function () {
+            layer.open({
+                type: 2,
+                title: '新增定时任务',
+                shade: 0.1,
+                area: ['100%', '100%'],
+                content: 'add.html'
+            });
+        }
+
+        window.edit = function (obj) {
+            layer.open({
+                type: 2,
+                title: '修改定时任务',
+                shade: 0.1,
+                area: ['100%', '100%'],
+                content: 'edit.html?id=' + obj.data['id']
+            });
+        }
+
+        window.orderDetail = function (obj) {
+            layer.open({
+                type: 2,
+                title: '工单详情',
+                shade: 0.1,
+                area: ['100%', '100%'],
+                content: '../orders/detail.html?id=' + obj.data['orderId']
+            });
+        }
+
+        window.control = function (orderId, type) {
+            var str = '';
+            if (type == '0') {
+                str = '停用'
+            } else if (type == '1') {
+                str = '启用'
+            }
+            layer.confirm('确定' + str + '该任务？', {icon: 3, title: '提示'}, function (index) {
+                layer.close(index);
+                let loading = layer.load();
+                $.ajax({
+                    url: prefix + "control?id=" + orderId + '&type=' + type,
+                    dataType: 'json',
+                    type: 'get',
+                    success: function (result) {
+                        layer.close(loading);
+                        if (result.success) {
+                            layer.msg(result.msg, {icon: 1, time: 1000}, function () {
+                                table.reload('job-table');
+                            });
+                        } else {
+                            layer.msg(result.msg, {icon: 2, time: 1000});
+                        }
+                    }
+                })
+            });
+        }
+
+
+        window.remove = function (obj) {
+            layer.confirm('确定要删除该定时任务', {icon: 3, title: '提示'}, function (index) {
+                layer.close(index);
+                let loading = layer.load();
+                $.ajax({
+                    url: prefix + "remove/" + obj.data['id'],
+                    dataType: 'json',
+                    type: 'delete',
+                    success: function (result) {
+                        layer.close(loading);
+                        if (result.success) {
+                            layer.msg(result.msg, {icon: 1, time: 1000}, function () {
+                                table.reload('job-table');
+                            });
+                        } else {
+                            layer.msg(result.msg, {icon: 2, time: 1000});
+                        }
+                    }
+                })
+            });
+        }
+
+
+        window.batchControl = function (obj, type) {
+            var str = '';
+            if (type == '0') {
+                str = '停用'
+            } else if (type == '1') {
+                str = '启用'
+            }
+
+            let data = table.checkStatus(obj.config.id).data;
+            if (data.length === 0) {
+                layer.msg("未选中数据", {icon: 3, time: 1000});
+                return false;
+            }
+            let ids = "";
+            for (let i = 0; i < data.length; i++) {
+                ids += data[i].id + ",";
+            }
+            ids = ids.substr(0, ids.length - 1);
+
+            layer.confirm('确定' + str + '选中的任务？', {icon: 3, title: '提示'}, function (index) {
+                layer.close(index);
+                let loading = layer.load();
+                $.ajax({
+                    url: prefix + "batchControl?ids=" + ids + '&type=' + type,
+                    dataType: 'json',
+                    data: {"ids": ids},
+                    type: 'get',
+                    success: function (result) {
+                        layer.close(loading);
+                        if (result.success) {
+                            layer.msg(result.msg, {icon: 1, time: 1000}, function () {
+                                table.reload('job-table');
+                            });
+                        } else {
+                            layer.msg(result.msg, {icon: 2, time: 1000});
+                        }
+                    }
+                })
+            });
+        }
+
+        window.batchRemove = function (obj) {
+            let data = table.checkStatus(obj.config.id).data;
+            if (data.length === 0) {
+                layer.msg("未选中数据", {icon: 3, time: 1000});
+                return false;
+            }
+            let ids = "";
+            for (let i = 0; i < data.length; i++) {
+                ids += data[i].id + ",";
+            }
+            ids = ids.substr(0, ids.length - 1);
+            layer.confirm('确定要删除这些定时任务', {icon: 3, title: '提示'}, function (index) {
+                layer.close(index);
+                let loading = layer.load();
+                $.ajax({
+                    url: prefix + "batchRemove",
+                    dataType: 'json',
+                    data: {"ids": ids},
+                    type: 'delete',
+                    success: function (result) {
+                        layer.close(loading);
+                        if (result.success) {
+                            layer.msg(result.msg, {icon: 1, time: 1000}, function () {
+                                table.reload('job-table');
+                            });
+                        } else {
+                            layer.msg(result.msg, {icon: 2, time: 1000});
+                        }
+                    }
+                })
+            });
+        }
+
+        window.refresh = function (param) {
+            table.reload('job-table', {where: param});
+        }
+    })
+</script>
+</body>
+</html>

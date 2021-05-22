@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <!-- <th:block th:include="include :: header('语句执行日志列表')"    /> -->
+    <link rel="stylesheet" href="../../admin/css/load.css"/>
+    <link rel="stylesheet" href="../../admin/css/admin.css"/>
+    <link rel="stylesheet" href="../../component/pear/css/pear.css">
+    <link rel="stylesheet" href="../../component/zTree_v3/css/zTreeStyle/zTreeStyle.css">
+    <script src="../../component/layui/layui.js"></script>
+    <script src="../../component/pear/pear.js"></script>
+    <script src="../../component/jquery.min.js"></script>
+    <script src="../../component/zTree_v3/js/jquery.ztree.core.js"></script>
+    <script src="../common.js"></script>
+    <script src="../request.js"></script>
+</head>
+<body class="pear-container">
+<!--  <div class="layui-card">
+     <div class="layui-card-body">
+         <div class="col-sm-12 search-collapse">
+             <form id="formId" class="layui-form">
+
+                 <div class="layui-form-item">
+                     <label class="layui-form-label">工单id：</label>
+                     <div class="layui-input-inline">
+                         <input type="text" name="orderId" placeholder="请输入工单id" class="layui-input" />
+                     </div>
+                     <label class="layui-form-label">执行结果：</label>
+                     <div class="layui-input-inline">
+                         <input type="text" name="info" placeholder="请输入执行结果" class="layui-input" />
+                     </div>
+                     <label class="layui-form-label">任务id(仅定时任务有此字段）：</label>
+                     <div class="layui-input-inline">
+                         <input type="text" name="cronJobId" placeholder="请输入任务id(仅定时任务有此字段）" class="layui-input" />
+                     </div>
+                 <button class="pear-btn pear-btn-md pear-btn-primary" lay-submit lay-filter="orderSqlLog-query">
+                     <i class="layui-icon layui-icon-search"></i>
+                     查询
+                 </button>
+                 <button type="reset" class="pear-btn pear-btn-md">
+                     <i class="layui-icon layui-icon-refresh"></i>
+                     重置
+                 </button>
+                 </div>
+             </form>
+         </div>
+     </div>
+  </div>-->
+<div class="layui-card">
+    <div class="layui-card-body">
+        <table id="orderSqlLog-table" lay-filter="orderSqlLog-table"></table>
+
+        <script type="text/html" id="orderSqlLog-toolbar">
+            <button sec:authorize="hasPermission('/data-order-server/system/orderSqlLog/add','system:orderSqlLog:add')"
+                    class="pear-btn pear-btn-primary pear-btn-md" lay-event="add">
+                <i class="layui-icon layui-icon-add-1"></i>
+                新增
+            </button>
+            <button sec:authorize="hasPermission('/data-order-server/system/orderSqlLog/remove','system:orderSqlLog:remove')"
+                    class="pear-btn pear-btn-primary pear-btn-md" lay-event="batchRemove">
+                <i class="layui-icon layui-icon-delete"></i>
+                删除
+            </button>
+        </script>
+
+        <script type="text/html" id="orderSqlLog-bar">
+            <button sec:authorize="hasPermission('/data-order-server/system/orderSqlLog/edit','system:orderSqlLog:edit')"
+                    class="pear-btn pear-btn-primary pear-btn-sm" lay-event="edit"><i
+                    class="layui-icon layui-icon-edit"></i>
+            </button>
+            <button sec:authorize="hasPermission('/data-order-server/system/orderSqlLog/remove','system:orderSqlLog:remove')"
+                    class="pear-btn pear-btn-primary pear-btn-sm" lay-event="remove"><i
+                    class="layui-icon layui-icon-delete"></i>
+            </button>
+        </script>
+    </div>
+</div>
+<th:block th:include="include :: footer"/>
+<script>
+
+    var dataId = GetQueryString('orderId');
+
+    layui.use(['table', 'form', 'jquery', 'dictionary'], function () {
+        let table = layui.table;
+        let form = layui.form;
+        let $ = layui.jquery;
+
+        let prefix = "/data-order-server/system/orderSqlLog/";
+
+        let cols = [
+            [
+                /*{type: 'checkbox'},
+                {
+                    field: 'id',
+                    title: '主键'
+                },
+                {
+                    field: 'orderId',
+                    title: '工单id'
+                },
+                {
+                    field: 'info',
+                    title: '执行结果'
+                },
+                {
+                    field: 'createTime',
+                    title: '创建时间'
+                },
+                {
+                    field: 'cronJobId',
+                    title: '任务id(仅定时任务有此字段）'
+                },*/
+
+                {
+                    field: 'createTime',
+                    title: '创建时间'
+                },
+                {
+                    field: 'info',
+                    title: '影响行数/错误说明'
+                },
+                //   {title: '操作', toolbar: '#orderSqlLog-bar', align: 'center', width: 230}
+            ]
+        ]
+
+
+        table.render({
+            elem: '#orderSqlLog-table',
+            url: prefix + 'data?orderId=' + dataId,
+            page: true,
+            cols: cols,
+            skin: 'line',
+            //    toolbar: '#orderSqlLog-toolbar',
+            defaultToolbar: [{
+                layEvent: 'refresh',
+                icon: 'layui-icon-refresh',
+            }, 'filter', 'print', 'exports']
+        });
+
+        table.on('tool(orderSqlLog-table)', function (obj) {
+            if (obj.event === 'remove') {
+                window.remove(obj);
+            } else if (obj.event === 'edit') {
+                window.edit(obj);
+            }
+        });
+
+        table.on('toolbar(orderSqlLog-table)', function (obj) {
+            if (obj.event === 'add') {
+                window.add();
+            } else if (obj.event === 'refresh') {
+                window.refresh();
+            } else if (obj.event === 'batchRemove') {
+                window.batchRemove(obj);
+            }
+        });
+
+        form.on('submit(orderSqlLog-query)', function (data) {
+            table.reload('orderSqlLog-table', {where: data.field})
+            return false;
+        });
+
+        window.add = function () {
+            layer.open({
+                type: 2,
+                title: '新增语句执行日志',
+                shade: 0.1,
+                area: ['100%', '100%'],
+                content: 'add.html'
+            });
+        }
+
+        window.edit = function (obj) {
+            layer.open({
+                type: 2,
+                title: '修改语句执行日志',
+                shade: 0.1,
+                area: ['100%', '100%'],
+                content: 'edit.html?id=' + obj.data['id']
+            });
+        }
+
+        window.remove = function (obj) {
+            layer.confirm('确定要删除该语句执行日志', {icon: 3, title: '提示'}, function (index) {
+                layer.close(index);
+                let loading = layer.load();
+                $.ajax({
+                    url: prefix + "remove/" + obj.data['id'],
+                    dataType: 'json',
+                    type: 'delete',
+                    success: function (result) {
+                        layer.close(loading);
+                        if (result.success) {
+                            layer.msg(result.msg, {icon: 1, time: 1000}, function () {
+                                table.reload('orderSqlLog-table');
+                            });
+                        } else {
+                            layer.msg(result.msg, {icon: 2, time: 1000});
+                        }
+                    }
+                })
+            });
+        }
+
+        window.batchRemove = function (obj) {
+            let data = table.checkStatus(obj.config.id).data;
+            if (data.length === 0) {
+                layer.msg("未选中数据", {icon: 3, time: 1000});
+                return false;
+            }
+            let ids = "";
+            for (let i = 0; i < data.length; i++) {
+                ids += data[i].id + ",";
+            }
+            ids = ids.substr(0, ids.length - 1);
+            layer.confirm('确定要删除这些语句执行日志', {icon: 3, title: '提示'}, function (index) {
+                layer.close(index);
+                let loading = layer.load();
+                $.ajax({
+                    url: prefix + "batchRemove",
+                    dataType: 'json',
+                    data: {"ids": ids},
+                    type: 'delete',
+                    success: function (result) {
+                        layer.close(loading);
+                        if (result.success) {
+                            layer.msg(result.msg, {icon: 1, time: 1000}, function () {
+                                table.reload('orderSqlLog-table');
+                            });
+                        } else {
+                            layer.msg(result.msg, {icon: 2, time: 1000});
+                        }
+                    }
+                })
+            });
+        }
+
+        window.refresh = function (param) {
+            table.reload('orderSqlLog-table', {where: param});
+        }
+    })
+</script>
+</body>
+</html>

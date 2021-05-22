@@ -1,0 +1,98 @@
+@import url("../lib/layui/css/layui.css");
+@import url("common.css");
+.layui-bg-primary {
+	background: #FFFFFF !important;
+}
+
+.layui-logo {
+	width: 300px !important;
+	color: #FFFFFF !important;
+	font-size: 20px !important;
+	font-weight: bold;
+	background: url(../img/loginText.png) no-repeat;
+	background-size: 100% 100%;
+}
+.logoImg{
+	background: url(../img/u464.png) no-repeat;
+	background-size: 100% 100%;
+	width: 20px;
+	height: 20px;
+	position: absolute;
+	top: 20px;
+	left: 15px;
+}
+.demoA{
+	position: relative;
+}
+.loginImg{
+	width: 15px;
+	height: 15px;
+	position: absolute;
+	top: 23px;
+	left: 0px;
+}
+
+.layuiNavFirst li a {
+	font-size: 16px;
+}
+
+.layui-footer {
+	text-align: center;
+	left: 0px !important;
+}
+
+.layui-body{
+	left: 0px;
+	background: #F5F6FA;
+}
+
+/* 修改导航栏的选中样式 */
+.layuiNavFirst .layui-nav-bar {
+	background-color: none;
+}
+
+.layuiNavColorA{
+	color: #2667DF !important;
+}
+
+/* 下拉菜单 */
+.layui-nav-child{
+	padding-left: 20px;
+}
+.divList{
+	width: 300px;
+}
+.divList a{
+	width: 35%;
+	float: left;
+	color: #333333 !important;
+	font-size: 14px !important;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+.divList a:hover{
+	color: #2667DF !important;
+}
+
+.divList div:first-child{
+	display: block;
+}
+.divList div{
+	display: block;
+}
+.divListA{
+	width: 80% !important;
+	position: relative;
+}
+.divListAImg{
+	width: 10px;
+	height: 10px;
+	position: absolute;
+	top: 0px;
+	left: 0px;
+}
+.divListA:hover{
+	background: #FFFFFF !important;
+}
+

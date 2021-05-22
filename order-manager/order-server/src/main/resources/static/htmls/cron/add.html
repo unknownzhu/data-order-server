@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link rel="stylesheet" href="../../admin/css/load.css"/>
+    <link rel="stylesheet" href="../../admin/css/admin.css"/>
+    <link rel="stylesheet" href="../../component/pear/css/pear.css">
+    <link rel="stylesheet" href="../../component/zTree_v3/css/zTreeStyle/zTreeStyle.css">
+    <script src="../../component/layui/layui.js"></script>
+    <script src="../../component/pear/pear.js"></script>
+    <script src="../../component/jquery.min.js"></script>
+    <script src="../../component/zTree_v3/js/jquery.ztree.core.js"></script>
+    <script src="../common.js"></script>
+    <script src="../request.js"></script>
+
+
+    <link href="cron-generator/bootstrap.min.css" rel="stylesheet">
+    <link href="cron-generator/font/font-awesome.min.css" rel="stylesheet">
+    <script src="cron-generator/jquery-2.1.4.min.js"></script>
+
+    <script src="cron-generator/cronGen.js"></script>
+    <script src="cron-generator/bootstrap.min.js"></script>
+
+    <title></title>
+    <script type="text/javascript">
+        $(function () {
+            $("#cron").cronGen({
+                direction: 'left'
+            });
+        });
+    </script>
+
+</head>
+<body>
+
+<div>
+    <div class="mainBox">
+        <div class="main-container">
+            <div class="layui-form-item">
+                <label class="layui-form-label">名称：</label>
+                <div class="layui-input-block">
+                    <input type="text" name="name" id="name" placeholder="请输入名称" class="layui-input"/>
+                </div>
+            </div>
+            <div class="layui-form-item">
+
+                <label class="layui-form-label">表达式：</label>
+                <div class="layui-input-block">
+                    <input type="text" name="cron" id="cron" placeholder="请输入表达式"/>
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">排序：</label>
+                <div class="layui-input-block">
+                    <input type="text" name="sort" id="sort" placeholder="请输入排序" class="layui-input"/>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="bottom">
+        <div class="button-container">
+            <button type="submit" class="layui-btn layui-btn-normal layui-btn-sm" lay-submit=""
+                    lay-filter="cron-save">
+                <i class="layui-icon layui-icon-ok"></i>
+                提交
+            </button>
+            <button type="reset" class="layui-btn layui-btn-primary layui-btn-sm">
+                <i class="layui-icon layui-icon-refresh"></i>
+                重置
+            </button>
+        </div>
+    </div>
+</div>
+
+
+</body>
+<th:block th:include="include :: footer"/>
+<script th:inline="javascript">
+
+
+    layui.use(['form', 'jquery', 'laydate'], function () {
+        let form = layui.form;
+        let $ = layui.jquery;
+        let laydate = layui.laydate;
+
+        let prefix = "/data-order-server/system/cron/"
+
+
+        form.on('submit(cron-save)', function (data) {
+
+            /*for (var key in data.field) {
+                var type = $(data.form).find("input[name='" + key + "']").attr("type");
+                if (type == "checkbox") {
+                    var value = "";
+                    $(data.form).find("input[name='" + key + "']:checked").each(function () {
+                        value += $(this).val() + ",";
+                    })
+                    if (value != "") {
+                        value = value.substr(0, value.length - 1);
+                        data.field[key] = value;
+                    }
+
+                }
+            }*/
+
+            data.field.name = $("#name").val();
+            data.field.cron = $("#cron").val();
+            data.field.sort = $("#sort").val();
+            var dataaa = data.field;
+            if (dataaa.name == '' || dataaa.cron == '') {
+                layer.msg('请填写空表单', {icon: 2, time: 1000});
+                return false;
+            }
+
+            $.ajax({
+                url: prefix + 'save',
+                data: JSON.stringify(data.field),
+                dataType: 'json',
+                contentType: 'application/json',
+                type: 'post',
+                success: function (result) {
+                    if (result.success) {
+                        layer.msg(result.msg, {icon: 1, time: 1000}, function () {
+                            parent.layer.close(parent.layer.getFrameIndex(window.name));
+                            parent.layui.table.reload("cron-table");
+                        });
+                    } else {
+                        layer.msg(result.msg, {icon: 2, time: 1000});
+                    }
+                }
+            })
+            return false;
+        });
+    });
+</script>
+</html>

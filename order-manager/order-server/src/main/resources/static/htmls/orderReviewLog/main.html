@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <!-- <th:block th:include="include :: header('送审日志列表')"    /> -->
+    <link rel="stylesheet" href="../../admin/css/load.css"/>
+    <link rel="stylesheet" href="../../admin/css/admin.css"/>
+    <link rel="stylesheet" href="../../component/pear/css/pear.css">
+    <link rel="stylesheet" href="../../component/zTree_v3/css/zTreeStyle/zTreeStyle.css">
+    <script src="../../component/layui/layui.js"></script>
+    <script src="../../component/pear/pear.js"></script>
+    <script src="../../component/jquery.min.js"></script>
+    <script src="../../component/zTree_v3/js/jquery.ztree.core.js"></script>
+    <script src="../common.js"></script>
+    <script src="../request.js"></script>
+</head>
+<body class="pear-container">
+<div class="layui-card">
+    <div class="layui-card-body">
+        <div class="col-sm-12 search-collapse">
+            <form id="formId" class="layui-form">
+
+                <div class="layui-form-item">
+
+                    <label class="layui-form-label">送审类型：</label>
+                    <div class="layui-input-inline">
+                        <select name="type" dict-code="input">
+                            <option value="">所有</option>
+                            <option value="0">存为草稿</option>
+                            <option value="1">送审</option>
+                            <option value="2">审核通过</option>
+                            <option value="3">审核退回</option>
+                        </select>
+                    </div>
+                    <!--  <label class="layui-form-label">工单id：</label>
+                      <div class="layui-input-inline">
+                          <input type="text" name="orderId" placeholder="请输入工单id" class="layui-input" />
+                      </div>
+                      <label class="layui-form-label">创建人：</label>
+                      <div class="layui-input-inline">
+                          <input type="text" name="creatorId" placeholder="请输入创建人" class="layui-input" />
+                      </div>
+                      <label class="layui-form-label">审核意见：</label>
+                      <div class="layui-input-inline">
+                          <input type="text" name="info" placeholder="请输入审核意见" class="layui-input" />
+                      </div>-->
+                    <button class="pear-btn pear-btn-md pear-btn-primary" lay-submit lay-filter="orderReviewLog-query">
+                        <i class="layui-icon layui-icon-search"></i>
+                        查询
+                    </button>
+                    <button type="reset" class="pear-btn pear-btn-md">
+                        <i class="layui-icon layui-icon-refresh"></i>
+                        重置
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="layui-card">
+    <div class="layui-card-body">
+        <table id="orderReviewLog-table" lay-filter="orderReviewLog-table"></table>
+
+        <script type="text/html" id="orderReviewLog-toolbar">
+            <button sec:authorize="hasPermission('/data-order-server/system/orderReviewLog/add','system:orderReviewLog:add')"
+                    class="pear-btn pear-btn-primary pear-btn-md" lay-event="add">
+                <i class="layui-icon layui-icon-add-1"></i>
+                新增
+            </button>
+            <button sec:authorize="hasPermission('/data-order-server/system/orderReviewLog/remove','system:orderReviewLog:remove')"
+                    class="pear-btn pear-btn-primary pear-btn-md" lay-event="batchRemove">
+                <i class="layui-icon layui-icon-delete"></i>
+                删除
+            </button>
+        </script>
+
+        <script type="text/html" id="orderReviewLog-bar">
+            <button sec:authorize="hasPermission('/data-order-server/system/orderReviewLog/edit','system:orderReviewLog:edit')"
+                    class="pear-btn pear-btn-primary pear-btn-sm" lay-event="edit"><i
+                    class="layui-icon layui-icon-edit"></i>
+            </button>
+            <button sec:authorize="hasPermission('/data-order-server/system/orderReviewLog/remove','system:orderReviewLog:remove')"
+                    class="pear-btn pear-btn-primary pear-btn-sm" lay-event="remove"><i
+                    class="layui-icon layui-icon-delete"></i>
+            </button>
+        </script>
+    </div>
+</div>
+<th:block th:include="include :: footer"/>
+<script>
+    var orderId = GetQueryString('id');
+    if (orderId == undefined) {
+        orderId = '';
+    }
+    layui.use(['table', 'form', 'jquery'], function () {
+        let table = layui.table;
+        let form = layui.form;
+        let $ = layui.jquery;
+
+        let prefix = "/data-order-server/system/orderReviewLog/";
+
+        let cols = [
+            [
+                //     {type: 'checkbox'},
+                /*   {
+                       field: 'id',
+                       title: '主键'
+                   },*/
+                {
+                    field: 'type',
+                    title: '操作类型',
+                    templet: function (d) {
+                        if (d.type == '0') {
+                            res = '存为草稿';
+                        } else if (d.type == '1') {
+                            res = "送审"
+                        } else if (d.type == '2') {
+                            res = "审核通过"
+                        } else if (d.type == '3') {
+                            res = '<p style="color: red">退回</p>';
+                        }  else if (d.type == '4') {
+                            res = '执行';
+                        } else {
+                            res = '草稿';
+                        }
+                        return res;
+                    }
+                },
+                /*   {
+                       field: 'orderName',
+                       title: '工单'
+                   },*/
+                {
+                    field: 'creatorName',
+                    title: '创建人'
+                },
+                {
+                    field: 'info',
+                    title: '审核意见'
+                },
+                {
+                    field: 'createTime',
+                    title: '创建时间'
+                }
+              /*  ,
+                {
+                    field: 'null',
+                    title: '操作', width: 300, align: 'center', templet: function (d) {
+                        var str = "";
+                        if (d.type == '2') {
+
+                            str = "  <button sec:authorize=\"hasPermission('/data-order-server/system/orders/execResult','system:orders:execResult')\"\n" +
+                                "                    class=\"pear-btn pear-btn-primary pear-btn-sm\" lay-event=\"execResult\">\n" +
+                                "                执行结果\n" +
+                                "            </button>\n";
+                        }
+
+                        return str;
+                    }
+                }*/
+                //    {title: '操作', toolbar: '#orderReviewLog-bar', align: 'center', width: 230}
+            ]
+        ]
+
+        table.render({
+            elem: '#orderReviewLog-table',
+            url: prefix + 'data?orderId=' + orderId,
+            page: true,
+            cols: cols,
+            skin: 'line',
+            //  toolbar: '#orderReviewLog-toolbar',
+            defaultToolbar: [{
+                layEvent: 'refresh',
+                icon: 'layui-icon-refresh',
+            }, 'filter', 'print', 'exports'],
+
+            done: function(res, curr, count){
+             //   $('th').css({'font-weight': 'bold', 'font-size': '15','color': 'orange','background':'linear-gradient(#f2f2f2,#cfcfcf)'});	//进行表头样式设置
+                for(var i in res.data){		//遍历整个表格数据
+                    var item = res.data[i];		//获取当前行数据
+                    if(item.type=='3'){
+                        $("tr[data-index='" + i + "']").attr({"style":"color:red"});  //将当前行变成绿色
+                    }
+                }
+            }
+
+
+        });
+
+        table.on('tool(orderReviewLog-table)', function (obj) {
+            if (obj.event === 'remove') {
+                window.remove(obj);
+            } else if (obj.event === 'edit') {
+                window.edit(obj);
+            }else if (obj.event === 'execResult') {
+                window.execResult(obj);
+            }
+        });
+
+        table.on('toolbar(orderReviewLog-table)', function (obj) {
+            if (obj.event === 'add') {
+                window.add();
+            } else if (obj.event === 'refresh') {
+                window.refresh();
+            } else if (obj.event === 'batchRemove') {
+                window.batchRemove(obj);
+            }
+        });
+
+        form.on('submit(orderReviewLog-query)', function (data) {
+            table.reload('orderReviewLog-table', {where: data.field})
+            return false;
+        });
+
+        window.add = function () {
+            layer.open({
+                type: 2,
+                title: '新增送审日志',
+                shade: 0.1,
+                area: ['100%', '100%'],
+                content: 'add.html'
+            });
+        }
+
+        window.edit = function (obj) {
+            layer.open({
+                type: 2,
+                title: '修改送审日志',
+                shade: 0.1,
+                area: ['100%', '100%'],
+                content: 'edit.html?id=' + obj.data['id']
+            });
+        }
+
+        window.remove = function (obj) {
+            layer.confirm('确定要删除该送审日志', {icon: 3, title: '提示'}, function (index) {
+                layer.close(index);
+                let loading = layer.load();
+                $.ajax({
+                    url: prefix + "remove/" + obj.data['id'],
+                    dataType: 'json',
+                    type: 'delete',
+                    success: function (result) {
+                        layer.close(loading);
+                        if (result.success) {
+                            layer.msg(result.msg, {icon: 1, time: 1000}, function () {
+                                table.reload('orderReviewLog-table');
+                            });
+                        } else {
+                            layer.msg(result.msg, {icon: 2, time: 1000});
+                        }
+                    }
+                })
+            });
+        }
+
+
+        window.execResult = function (obj) {
+
+
+
+            layer.open({
+                type: 2,
+                title: '执行日志',
+                shade: 0.1,
+                area: ['100%', '100%'],
+                content: '../orderSqlLog/main.html?orderId=' + obj.data['orderId']
+            });
+        }
+
+        window.batchRemove = function (obj) {
+            let data = table.checkStatus(obj.config.id).data;
+            if (data.length === 0) {
+                layer.msg("未选中数据", {icon: 3, time: 1000});
+                return false;
+            }
+            let ids = "";
+            for (let i = 0; i < data.length; i++) {
+                ids += data[i].id + ",";
+            }
+            ids = ids.substr(0, ids.length - 1);
+            layer.confirm('确定要删除这些送审日志', {icon: 3, title: '提示'}, function (index) {
+                layer.close(index);
+                let loading = layer.load();
+                $.ajax({
+                    url: prefix + "batchRemove",
+                    dataType: 'json',
+                    data: {"ids": ids},
+                    type: 'delete',
+                    success: function (result) {
+                        layer.close(loading);
+                        if (result.success) {
+                            layer.msg(result.msg, {icon: 1, time: 1000}, function () {
+                                table.reload('orderReviewLog-table');
+                            });
+                        } else {
+                            layer.msg(result.msg, {icon: 2, time: 1000});
+                        }
+                    }
+                })
+            });
+        }
+
+        window.refresh = function (param) {
+            table.reload('orderReviewLog-table', {where: param});
+        }
+    });
+</script>
+</body>
+</html>

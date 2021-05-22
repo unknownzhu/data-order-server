@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+
+<script src="https://www.layuicdn.com/layui-v2.5.6/layui.js" charset="utf-8"></script>
+<link rel="stylesheet" href="https://www.layuicdn.com/layui-v2.5.6/css/layui.css" media="all">
+<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.js"></script>
+
+
+<!--<script src="../../../component/jquery.min.js"></script>-->
+
+<body>
+<table class="layui-hide" id="errorRec" lay-filter="errorRec"></table>
+
+<script>
+
+
+    layui.use(['element', 'layer', 'form', 'jquery', 'table'], function () {
+        var $ = layui.jquery,
+            layer = layui.layer,
+            form = layui.form,
+            layedit = layui.layedit,
+            element = layui.element,
+            table = layui.table;
+
+        var tmp =  {"code":0,"msg":"操作成功","count":15,"data":[{"orderId":"null","defaultValue":"null","scanId":"null","isEmpty":"null","length":0,"type":"null","tableName":"TTTT","columnType":"删除表","isPk":"null","createTime":1620727065000,"entityName":"null","isPrimary":"null","chineseName":"null","isNewest":"1","limit":"null","rEMARK":"null","tableId":"null","id":"null","page":"null","databaseId":"null","keyword":"null","columnName":"null","status":"null"},{"orderId":"null","defaultValue":"null","scanId":"null","isEmpty":"0","length":22,"type":"NUMBER","tableName":"TTTT","columnType":"创建字段","isPk":"null","createTime":1620726860000,"entityName":"null","isPrimary":"0","chineseName":"null","isNewest":"0","limit":"null","rEMARK":"null","tableId":"null","id":"null","page":"null","databaseId":"null","keyword":"null","columnName":"AGE","status":"null"},{"orderId":"null","defaultValue":"null","scanId":"null","isEmpty":"1","length":40,"type":"VARCHAR2","tableName":"TTTT","columnType":"创建字段","isPk":"null","createTime":1620726860000,"entityName":"null","isPrimary":"0","chineseName":"null","isNewest":"0","limit":"null","rEMARK":"null","tableId":"null","id":"null","page":"null","databaseId":"null","keyword":"null","columnName":"NAEQQME","status":"null"},{"orderId":"null","defaultValue":"null","scanId":"null","isEmpty":"0","length":32,"type":"VARCHAR2","tableName":"TTTT","columnType":"创建字段","isPk":"null","createTime":1620726860000,"entityName":"null","isPrimary":"0","chineseName":"null","isNewest":"0","limit":"null","rEMARK":"null","tableId":"null","id":"null","page":"null","databaseId":"null","keyword":"null","columnName":"ID","status":"null"},{"orderId":"null","defaultValue":"null","scanId":"null","isEmpty":"null","length":0,"type":"null","tableName":"TTTT","columnType":"创建表","isPk":"null","createTime":1620726745000,"entityName":"null","isPrimary":"null","chineseName":"null","isNewest":"0","limit":"null","rEMARK":"null","tableId":"null","id":"null","page":"null","databaseId":"null","keyword":"null","columnName":"null","status":"null"},{"orderId":"null","defaultValue":"null","scanId":"null","isEmpty":"null","length":0,"type":"null","tableName":"TTTT","columnType":"删除表","isPk":"null","createTime":1620726670000,"entityName":"null","isPrimary":"null","chineseName":"null","isNewest":"0","limit":"null","rEMARK":"null","tableId":"null","id":"null","page":"null","databaseId":"null","keyword":"null","columnName":"null","status":"null"},{"orderId":"null","defaultValue":"null","scanId":"null","isEmpty":"null","length":0,"type":"null","tableName":"TTT","columnType":"删除表","isPk":"null","createTime":1620726486000,"entityName":"null","isPrimary":"null","chineseName":"null","isNewest":"0","limit":"null","rEMARK":"null","tableId":"null","id":"null","page":"null","databaseId":"null","keyword":"null","columnName":"null","status":"null"},{"orderId":"null","defaultValue":"null","scanId":"null","isEmpty":"1","length":40,"type":"VARCHAR2","tableName":"TTTT","columnType":"创建字段","isPk":"null","createTime":1620726441000,"entityName":"null","isPrimary":"0","chineseName":"null","isNewest":"0","limit":"null","rEMARK":"null","tableId":"null","id":"null","page":"null","databaseId":"null","keyword":"null","columnName":"NAEQQME","status":"null"},{"orderId":"null","defaultValue":"null","scanId":"null","isEmpty":"0","length":32,"type":"VARCHAR2","tableName":"TTTT","columnType":"创建字段","isPk":"null","createTime":1620726441000,"entityName":"null","isPrimary":"0","chineseName":"null","isNewest":"0","limit":"null","rEMARK":"null","tableId":"null","id":"null","page":"null","databaseId":"null","keyword":"null","columnName":"ID","status":"null"},{"orderId":"null","defaultValue":"null","scanId":"null","isEmpty":"null","length":0,"type":"null","tableName":"TTTT","columnType":"创建表","isPk":"null","createTime":1620726441000,"entityName":"null","isPrimary":"null","chineseName":"null","isNewest":"0","limit":"null","rEMARK":"null","tableId":"null","id":"null","page":"null","databaseId":"null","keyword":"null","columnName":"null","status":"null"},{"orderId":"null","defaultValue":"null","scanId":"null","isEmpty":"0","length":22,"type":"NUMBER","tableName":"TTTT","columnType":"创建字段","isPk":"null","createTime":1620726441000,"entityName":"null","isPrimary":"0","chineseName":"null","isNewest":"0","limit":"null","rEMARK":"null","tableId":"null","id":"null","page":"null","databaseId":"null","keyword":"null","columnName":"AGE","status":"null"},{"orderId":"null","defaultValue":"null","scanId":"null","isEmpty":"null","length":0,"type":"null","tableName":"TTT","columnType":"创建表","isPk":"null","createTime":1620726368000,"entityName":"null","isPrimary":"null","chineseName":"null","isNewest":"0","limit":"null","rEMARK":"null","tableId":"null","id":"null","page":"null","databaseId":"null","keyword":"null","columnName":"null","status":"null"},{"orderId":"null","defaultValue":"null","scanId":"null","isEmpty":"0","length":22,"type":"NUMBER","tableName":"TTT","columnType":"创建字段","isPk":"null","createTime":1620726368000,"entityName":"null","isPrimary":"0","chineseName":"null","isNewest":"0","limit":"null","rEMARK":"null","tableId":"null","id":"null","page":"null","databaseId":"null","keyword":"null","columnName":"AGE","status":"null"},{"orderId":"null","defaultValue":"null","scanId":"null","isEmpty":"1","length":40,"type":"VARCHAR2","tableName":"TTT","columnType":"创建字段","isPk":"null","createTime":1620726368000,"entityName":"null","isPrimary":"0","chineseName":"null","isNewest":"0","limit":"null","rEMARK":"null","tableId":"null","id":"null","page":"null","databaseId":"null","keyword":"null","columnName":"NAEQQME","status":"null"},{"orderId":"null","defaultValue":"null","scanId":"null","isEmpty":"0","length":32,"type":"VARCHAR2","tableName":"TTT","columnType":"创建字段","isPk":"null","createTime":1620726368000,"entityName":"null","isPrimary":"0","chineseName":"null","isNewest":"0","limit":"null","rEMARK":"null","tableId":"null","id":"null","page":"null","databaseId":"null","keyword":"null","columnName":"ID","status":"null"}]};
+
+
+        console.log('inintData:');
+        console.log(tmp);
+
+        var errorRecTable = table.render({
+            elem: '#errorRec',
+            id: 'errorRec',
+            // url:  //'/data-order-server/jxStdDatabaseQuestionRecord/loadJxCompareVo',
+            page: true,
+            height: 'full',
+            title: '列表',
+            method: 'get',
+            data: tmp.data,
+            limit: 100,
+            limits: [10, 20, 50, 100],
+           /* request: {
+                pageName: 'page',
+                limitName: 'limit'
+            },*/
+            cols: [
+                [
+                    {
+                        field: 'id233',
+                        type: 'numbers',
+                        title: '序号',
+                    },
+                    {
+                        field: 'tableName',
+                        title: '表名', width: '22%'
+                    },
+                    {
+                        field: 'columnName',
+                        title: '字段名', width: '21%'
+                    },
+                    {
+                        field: 'columnType',
+                        title: '变更类型', width: '6%'
+                    },
+                    {field: 'type', title: '类型', width: '6%'},
+                    {field: 'length', title: '长度', width: '6%'},
+                    {
+                        field: 'isPrimary', title: '是否主键', width: '6%', templet: function (d) {
+                            if (d.isPrimary == '0') {
+                                return '是'
+                            } else if (d.isPrimary == '1') {
+                                return '否'
+                            } else {
+                                return '';
+                            }
+                        }
+                    },
+
+                    {
+                        field: 'isEmpty', title: '是否可为空', width: '6%', templet: function (d) {
+                            if (d.isEmpty == '0') {
+                                return '是'
+                            } else if (d.isEmpty == '1') {
+                                return '否'
+                            } else {
+                                return '';
+                            }
+
+                        }
+                    },
+                    {
+                        field: 'defaultValue',
+                        title: '默认值', width: '6%', templet: function (d) {
+                            if (d.defaultValue == 'null') {
+                                return ''
+                            } else {
+                                return d.defaultValue;
+                            }
+
+                        }
+                    },
+
+
+                    {
+                        field: 'createTime',
+                        title: '时间', width: '7%',
+                        templet: function (d) {
+
+                            return getTime(d.createTime / 1000);
+
+                        }
+
+
+                    },
+                    {
+                        title: '是否最新记录',
+                        align: "center", width: '6%',
+                        templet: function (d) {
+                            if (d.isNewest == '1') {
+                                return "是";
+                            } else {
+                                return "否";
+                            }
+
+                        }
+                    },
+                    {
+                        title: '是否关联工单',
+                        align: "center", width: '6%',
+                        templet: function (d) {
+                            if (d.orderId != null && d.orderId != '') {
+                                return " <a   style='color: blue'  onclick=orderDetail('" + d.orderId + "')>工单详情</a>   ";
+                            } else {
+                                return "否";
+                            }
+                        }
+                    },
+                ]
+            ], done: function (res, curr, count) {
+                console.log('done.res:');
+                console.log(res);
+                console.log(curr);
+                console.log(count);
+
+            }
+        }).config.cols;
+    })
+
+
+    function getTime(nS) {
+        var date = new Date(parseInt(nS) * 1000);
+        var year = date.getFullYear();
+        var mon = date.getMonth() + 1;
+        var day = date.getDate();
+        var hours = date.getHours();
+        var minu = date.getMinutes();
+        var sec = date.getSeconds();
+
+        return year + '/' + mon + '/' + day + ' ' + hours + ':' + minu + ':' + sec;
+    }
+
+
+</script>
+
+
+</body>
+</html>

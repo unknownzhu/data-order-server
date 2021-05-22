@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ctjsoft.orderserver.order.mapper.HistorySqlMapper">
+    
+    <resultMap type="com.ctjsoft.orderserver.order.domain.HistorySqlVo" id="HistorySqlResult">
+        <result property="id"    column="ID"    />
+        <result property="name"    column="NAME"    />
+        <result property="typeId"    column="TYPE_ID"    />
+        <result property="creatorId"    column="CREATOR_ID"    />
+        <result property="createTime"    column="CREATE_TIME"    />
+        <result property="dbType"    column="DB_TYPE"    />
+        <result property="showType"    column="SHOW_TYPE"    />
+        <result property="sqls"    column="sqls"    />
+        <result property="dbId"    column="db_Id"    />
+
+        <result property="dbName"    column="schema_title"    />
+        <result property="dbTypeName"    column="dbTypeName"    />
+        <result property="creatorName"    column="creatorName"    />
+        <result property="typeName"    column="typeName"    />
+    </resultMap>
+
+    <sql id="selectHistorySqlVo">
+        select ID, NAME, TYPE_ID, CREATOR_ID, CREATE_TIME, DB_TYPE, SHOW_TYPE,SQLS,db_Id from jx_history_sql
+    </sql>
+
+    <select id="selectHistorySqlList" parameterType="com.ctjsoft.orderserver.order.domain.HistorySql" resultMap="HistorySqlResult">
+        <include refid="selectHistorySqlVo"/>
+        <where>
+            <if test="name != null  and name != ''"> and NAME like '%' ||#{name} || '%'</if>
+            <if test="typeId != null  and typeId != ''"> and TYPE_ID = #{typeId}</if>
+            <if test="creatorId != null  and creatorId != ''"> and CREATOR_ID = #{creatorId}</if>
+            <if test="createTime != null "> and CREATE_TIME = #{createTime}</if>
+            <if test="dbType != null  and dbType != ''"> and DB_TYPE = #{dbType}</if>
+            <if test="showType != null  and showType != ''"> and SHOW_TYPE = #{showType}</if>
+            <if test="sqls != null  and sqls != ''"> and sqls   like '%' ||#{sqls} || '%' </if>
+            <if test="dbId != null  and dbId != ''"> and db_Id = #{dbId}</if>
+        </where>
+        order by CREATE_TIME desc
+    </select>
+
+
+
+    <select id="selectHistorySqlVoList" parameterType="com.ctjsoft.orderserver.order.domain.HistorySqlVo" resultMap="HistorySqlResult">
+
+        select e.schema_title,c.user_real_name as creatorName,b.name as typeName,d.name as dbTypeName,a.db_Id,a.ID, a.NAME, a.TYPE_ID, a.CREATOR_ID, a.CREATE_TIME, a.DB_TYPE, a.SHOW_TYPE,SQLS
+        from DATA_ORDER.jx_history_sql a
+        left join DATA_ORDER.JX_COMMON_SQL_TYPE b  on a.TYPE_ID = b.id
+        left join DATA_ORDER.DATAGEAR_USER c  on a.CREATOR_ID = c.user_id
+        left join DATA_ORDER.JX_DRIVERS d  on a.DB_TYPE = d.id
+        left join DATA_ORDER.DATAGEAR_SCHEMA e  on a.db_id = e.schema_id
+
+        <where>
+            <if test="name != null  and name != ''"> and a.NAME like '%' ||#{name} || '%'</if>
+            <if test="typeId != null  and typeId != ''"> and a.TYPE_ID = #{typeId}</if>
+            <if test="creatorId != null  and creatorId != ''"> and a.CREATOR_ID = #{creatorId}</if>
+            <if test="createTime != null "> and a.CREATE_TIME = #{createTime}</if>
+            <if test="dbType != null  and dbType != ''"> and a.DB_TYPE = #{dbType}</if>
+            <if test="showType != null  and showType != ''"> and a.SHOW_TYPE = #{showType}</if>
+            <if test="sqls != null  and sqls != ''"> and a.sqls  like '%' ||#{sqls} || '%'  </if>
+            <if test="dbId != null  and dbId != ''"> and a.db_Id = #{dbId}</if>
+        </where>
+        order by a.CREATE_TIME desc
+
+    </select>
+
+
+    
+    <select id="selectHistorySqlById" parameterType="String" resultMap="HistorySqlResult">
+        <include refid="selectHistorySqlVo"/>
+        where ID = #{id}
+        order by  CREATE_TIME desc
+    </select>
+        
+    <insert id="insertHistorySql" parameterType="com.ctjsoft.orderserver.order.domain.HistorySql">
+        insert into jx_history_sql
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">ID,</if>
+            <if test="name != null">NAME,</if>
+            <if test="typeId != null">TYPE_ID,</if>
+            <if test="creatorId != null">CREATOR_ID,</if>
+            <if test="createTime != null">CREATE_TIME,</if>
+            <if test="dbType != null">DB_TYPE,</if>
+            <if test="showType != null">SHOW_TYPE,</if>
+            <if test="sqls != null">sqls,</if>
+            <if test="dbId != null">db_Id,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="name != null">#{name},</if>
+            <if test="typeId != null">#{typeId},</if>
+            <if test="creatorId != null">#{creatorId},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="dbType != null">#{dbType},</if>
+            <if test="showType != null">#{showType},</if>
+            <if test="sqls != null">#{sqls},</if>
+            <if test="dbId != null">#{dbId},</if>
+         </trim>
+    </insert>
+
+    <update id="updateHistorySql" parameterType="com.ctjsoft.orderserver.order.domain.HistorySql">
+        update jx_history_sql
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="name != null">NAME = #{name},</if>
+            <if test="typeId != null">TYPE_ID = #{typeId},</if>
+            <if test="creatorId != null">CREATOR_ID = #{creatorId},</if>
+            <if test="createTime != null">CREATE_TIME = #{createTime},</if>
+            <if test="dbType != null">DB_TYPE = #{dbType},</if>
+            <if test="showType != null">SHOW_TYPE = #{showType},</if>
+            <if test="sqls != null">sqls = #{sqls},</if>
+            <if test="dbId != null">db_Id = #{dbId},</if>
+        </trim>
+        where ID = #{id}
+    </update>
+
+    <delete id="deleteHistorySqlById" parameterType="String">
+        delete from jx_history_sql where ID = #{id}
+    </delete>
+
+    <delete id="deleteHistorySqlByIds" parameterType="String">
+        delete from jx_history_sql where ID in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

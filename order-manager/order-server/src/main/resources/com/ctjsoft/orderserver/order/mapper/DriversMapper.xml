@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ctjsoft.orderserver.order.mapper.DriversMapper">
+    
+    <resultMap type="com.ctjsoft.orderserver.order.domain.Drivers" id="DriversResult">
+        <result property="id"    column="id"    />
+        <result property="name"    column="name"    />
+        <result property="driverclassnames"    column="driverclassnames"    />
+        <result property="template"    column="template"    />
+        <result property="port"    column="port"    />
+
+    </resultMap>
+
+    <sql id="selectDriversVo">
+        select id, name ,driverclassnames,template,port from jx_drivers
+    </sql>
+
+    <select id="selectDriversList" parameterType="com.ctjsoft.orderserver.order.domain.Drivers" resultMap="DriversResult">
+        <include refid="selectDriversVo"/>
+        <where>
+            <if test="name != null  and name != ''"> and name like '%' ||#{name} || '%'</if>
+            <if test="driverclassnames != null  and driverclassnames != ''"> and driverclassnames like '%' ||#{driverclassnames} || '%'</if>
+            <if test="template != null  and template != ''"> and template like '%' ||#{template} || '%'</if>
+            <if test="port != null  and port != ''"> and port like '%' ||#{port} || '%'</if>
+        </where>
+        order by to_NUMBER( port )
+    </select>
+    
+    <select id="selectDriversById" parameterType="String" resultMap="DriversResult">
+        <include refid="selectDriversVo"/>
+        where id = #{id}
+        order by to_NUMBER( port )
+    </select>
+
+    <insert id="insertDrivers" parameterType="com.ctjsoft.orderserver.order.domain.Drivers">
+        insert into jx_drivers
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="name != null">name,</if>
+            <if test="driverclassnames != null">driverclassnames,</if>
+            <if test="template != null">template,</if>
+            <if test="port != null">port,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="name != null">#{name},</if>
+            <if test="driverclassnames != null">#{driverclassnames},</if>
+            <if test="template != null">#{template},</if>
+            <if test="port != null">#{port},</if>
+         </trim>
+    </insert>
+
+    <update id="updateDrivers" parameterType="com.ctjsoft.orderserver.order.domain.Drivers">
+        update jx_drivers
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="name != null">name = #{name},</if>
+            <if test="driverclassnames != null">driverclassnames = #{driverclassnames},</if>
+            <if test="template != null">template = #{template},</if>
+            <if test="port != null">port = #{port},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteDriversById" parameterType="String">
+        delete from jx_drivers where id = #{id}
+    </delete>
+
+    <delete id="deleteDriversByIds" parameterType="String">
+        delete from jx_drivers where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

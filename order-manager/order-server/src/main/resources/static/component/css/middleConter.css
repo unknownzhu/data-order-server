@@ -1,0 +1,84 @@
+@import url("../lib/layui/css/layui.css");
+@import url("common.css");
+.layui-body{
+	left: 0px;
+}
+.layui-layout{
+	padding: 20px;
+}
+.headerRow{
+	background: #FFFFFF;
+	padding: 20px;
+}
+.headerImg{
+	background: #E3F2FE;
+	padding: 10px;
+	float: left;
+	text-align: center;
+}
+.headerImg img{
+	width: 50px;
+	height: 50px;
+}
+.headerText{
+	float: left;
+	margin-left: 10px;
+}
+.headerText p:first-child{
+	margin-top: 0px;
+}
+.headerText p{
+	color: #6893BD;
+	margin-top: 4px;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+.headerText p span.pSpan{
+	color: #2667DF;
+	font-weight: bold;
+	font-size: 20px;
+}
+.headerText p i{
+	color: #88CE6A;
+	margin-left: 20px;
+	font-weight: bold;
+}
+/* 中间 */
+.conterRow{
+	margin-top: 10px;
+}
+.conterWarp{
+	border-top: 5px solid #00CCFF;
+	background: #FFFFFF;
+	padding: 10px 20px 10px 20px;
+}
+.conterWarp p{
+	height: 30px;
+	line-height: 20px;
+	border-bottom: 1px solid #E6E6E6;
+	font-size: 16px;
+	position: relative;
+}
+.conterWarp p span{
+	margin-left: 30px;
+}
+.conterDiv{
+	height: 280px;
+}
+.conterDiv img{
+	width: 100%;
+	height: 100%;
+}
+/* 加图标 */
+.iconVertical{
+	float: right;
+	color: #999999;
+}
+.logoImg{
+	width: 20px;
+	height: 20px;
+	position: absolute;
+	left: 0px;
+	top: 0px;
+}

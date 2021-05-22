@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ctjsoft.orderserver.order.mapper.CronJobLogMapper">
+    
+    <resultMap type="com.ctjsoft.orderserver.order.domain.CronJobLog" id="CronJobLogResult">
+        <result property="id"    column="ID"    />
+        <result property="cronJobId"    column="CRON_JOB_ID"    />
+        <result property="createTime"    column="CREATE_TIME"    />
+        <result property="status"    column="STATUS"    />
+        <result property="resulrInfo"    column="RESULR_INFO"    />
+    </resultMap>
+
+    <sql id="selectCronJobLogVo">
+        select ID, CRON_JOB_ID, CREATE_TIME, STATUS, RESULR_INFO from jx_cron_job_log
+    </sql>
+
+    <select id="selectCronJobLogList" parameterType="com.ctjsoft.orderserver.order.domain.CronJobLog" resultMap="CronJobLogResult">
+        <include refid="selectCronJobLogVo"/>
+        <where>  
+            <if test="cronJobId != null  and cronJobId != ''"> and CRON_JOB_ID = #{cronJobId}</if>
+            <if test="createTime != null "> and CREATE_TIME = #{createTime}</if>
+            <if test="status != null  and status != ''"> and STATUS = #{status}</if>
+            <if test="resulrInfo != null  and resulrInfo != ''"> and RESULR_INFO = #{resulrInfo}</if>
+        </where>
+        order by CREATE_TIME desc
+    </select>
+    
+    <select id="selectCronJobLogById" parameterType="String" resultMap="CronJobLogResult">
+        <include refid="selectCronJobLogVo"/>
+        where ID = #{id}
+        order by CREATE_TIME desc
+    </select>
+        
+    <insert id="insertCronJobLog" parameterType="com.ctjsoft.orderserver.order.domain.CronJobLog">
+        insert into jx_cron_job_log
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">ID,</if>
+            <if test="cronJobId != null">CRON_JOB_ID,</if>
+            <if test="createTime != null">CREATE_TIME,</if>
+            <if test="status != null">STATUS,</if>
+            <if test="resulrInfo != null">RESULR_INFO,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="cronJobId != null">#{cronJobId},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="status != null">#{status},</if>
+            <if test="resulrInfo != null">#{resulrInfo},</if>
+         </trim>
+    </insert>
+
+    <update id="updateCronJobLog" parameterType="com.ctjsoft.orderserver.order.domain.CronJobLog">
+        update jx_cron_job_log
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="cronJobId != null">CRON_JOB_ID = #{cronJobId},</if>
+            <if test="createTime != null">CREATE_TIME = #{createTime},</if>
+            <if test="status != null">STATUS = #{status},</if>
+            <if test="resulrInfo != null">RESULR_INFO = #{resulrInfo},</if>
+        </trim>
+        where ID = #{id}
+    </update>
+
+    <delete id="deleteCronJobLogById" parameterType="String">
+        delete from jx_cron_job_log where ID = #{id}
+    </delete>
+
+    <delete id="deleteCronJobLogByIds" parameterType="String">
+        delete from jx_cron_job_log where ID in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

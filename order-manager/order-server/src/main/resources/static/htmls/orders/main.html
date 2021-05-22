@@ -1,0 +1,937 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>工单管理列表</title>
+
+    <link rel="stylesheet" href="../../admin/css/load.css"/>
+    <link rel="stylesheet" href="../../admin/css/admin.css"/>
+    <link rel="stylesheet" href="../../component/pear/css/pear.css">
+    <link rel="stylesheet" href="../../component/zTree_v3/css/zTreeStyle/zTreeStyle.css">
+    <script src="../../component/layui/layui.js"></script>
+    <script src="../../component/pear/pear.js"></script>
+    <script src="../../component/jquery.min.js"></script>
+    <script src="../../component/zTree_v3/js/jquery.ztree.core.js"></script>
+    <script src="../common.js"></script>
+    <script src="../request.js"></script>
+
+
+    <!--<script src="/static/script/datagear-util.js"></script>-->
+
+
+</head>
+<body class="pear-container">
+<div class="layui-card">
+    <div class="layui-card-body">
+        <div class="col-sm-12 search-collapse">
+            <form id="formId" class="layui-form">
+
+                <div class="layui-form-item">
+                    <div style="float:none;">
+                        <label class="layui-form-label">工单名</label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="name" id="name" placeholder="请输入工单名" class="layui-input"/>
+                        </div>
+                        <label class="layui-form-label">流程名称</label>
+                        <div class="layui-input-inline">
+                            <select id="flowId" name="flowId"></select>
+                        </div>
+
+                        <label class="layui-form-label">数据库名称</label>
+                        <div class="layui-input-inline">
+                            <select id="dbId" name="dbId"></select>
+                        </div>
+
+
+                    </div>
+                    <button class="pear-btn pear-btn-md pear-btn-primary" lay-submit lay-filter="orders-query">
+                        <i class="layui-icon layui-icon-search"></i>
+                        查询
+                    </button>
+                    <button type="reset" class="pear-btn pear-btn-md">
+                        <i class="layui-icon layui-icon-refresh"></i>
+                        重置
+                    </button>
+                </div>
+                <div class="layui-form-item">
+
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div id="openDiv" style="display: none;margin-top: 20px">
+    <div class="layui-form-item layui-form-text" style="">
+        <label class="layui-form-label">送审意见：</label>
+        <div class="layui-input-block">
+                    <textarea name="reviewInfo" id="reviewInfo" placeholder="请输入送审意见" style="height: 300px;width: 90%"
+                              class="layui-textarea"></textarea>
+        </div>
+    </div>
+</div>
+
+
+<div id="reviewDiv" style="display: none;margin-top: 20px">
+    <div class="layui-form-item layui-form-text" style="">
+        <label class="layui-form-label">送审意见：</label>
+        <div class="layui-input-block">
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">定时任务：</label>
+                <div class="layui-input-block">
+                    <input type="radio" value="0" name='isSchedule' id="isSchedule" lay-filter="isSchedule" checked
+                           title="否"/>
+                    <input type="radio" value="1" name='isSchedule' id="isSchedule" lay-filter="isSchedule"
+                           title="是"/>
+                </div>
+            </div>
+
+            <textarea name="reviewInfo" id="reviewInfo" placeholder="请输入送审意见" style="height: 300px;width: 90%"
+                      class="layui-textarea"></textarea>
+        </div>
+    </div>
+</div>
+<script type="text/html" id="orders-toolbar">
+    <button id="addBtn" sec:authorize="hasPermission('/data-order-server/system/orders/add','system:orders:add')"
+            class="pear-btn pear-btn-primary pear-btn-md" lay-event="add">
+        <i class="layui-icon layui-icon-add-1"></i>
+        新增
+    </button>
+    <!--   <button sec:authorize="hasPermission('/data-order-server/system/orders/remove','system:orders:remove')"
+               class="pear-btn pear-btn-primary pear-btn-md" lay-event="batchRemove">
+           <i class="layui-icon layui-icon-delete"></i>
+           作废
+       </button>-->
+</script>
+
+
+<script type="text/html" id="orders-toolbar-done">
+    <!--   <button sec:authorize="hasPermission('/data-order-server/system/orders/add','system:orders:add')"
+             class="pear-btn pear-btn-primary pear-btn-md" lay-event="add">
+         <i class="layui-icon layui-icon-add-1"></i>
+         新增
+     </button>
+      <button sec:authorize="hasPermission('/data-order-server/system/orders/remove','system:orders:remove')"
+                class="pear-btn pear-btn-primary pear-btn-md" lay-event="batchRemove">
+            <i class="layui-icon layui-icon-delete"></i>
+            作废
+        </button>-->
+</script>
+
+<div class="layui-card">
+
+    <!--    <div class="layui-card-body">
+
+            <table id="orders-table" lay-filter="orders-table"></table>
+        </div>-->
+
+    <div class="layui-tab layui-tab-brief" lay-filter="ordersTab">
+        <ul class="layui-tab-title">
+            <li id="undo" class="layui-this">待办</li>
+            <li id="done">已办</li>
+        </ul>
+        <div class="layui-tab-content">
+
+            <div class="layui-tab-item   layui-show" height="100%">
+                <table id="orders-table" lay-filter="orders-table"></table>
+            </div>
+
+            <div class="layui-tab-item ">
+                <table id="orders-table-done" lay-filter="orders-table-done"></table>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+<th:block th:include="include :: footer"/>
+<script>
+
+    /* var tt = $.cookie('cookie_name');
+     console.log(tt);*/
+
+    /*   $('#name').bind('input propertychange', function () {
+           // $('#result').html($(this).val().length + ' characters');
+
+       });*/
+
+
+    var tabId = '';
+
+    //  var dataId = GetQueryString('id')=='undefined':''?GetQueryString('id');
+    var dbId = GetQueryString('dbId');
+    if (undefined == dbId) {
+        dbId = '';
+    }
+
+    layui.config({
+        dir: '../../component/layui/'
+    }).use(['element', 'table', 'form', 'jquery'], function () {
+        let table = layui.table;
+        let form = layui.form;
+        let $ = layui.jquery;
+
+
+        let prefix = "/data-order-server/system/orders/";
+
+        var element = layui.element;
+
+        element.on('tab(ordersTab)', function () {
+            tabId = this.getAttribute('id');
+        });
+
+        formDbSelect();
+        var element = layui.element;
+
+        function formDbSelect() {
+            var data = JSON.stringify({});
+            var resultData = request.post("/data-order-server/schema/list", data)
+            var opt = '<option value="" selected=""></option>';
+            //循环遍历
+            for (var i in resultData) {
+                var selected = '';
+                /*  if (resultData[i].userId == authorId) {
+                      selected = 'selected="selected"';
+                  }*/
+                opt += '<option ' + selected + '   value = "' + resultData[i].id + '">' + resultData[i].title + '</option>'
+            }
+            $("#dbId").html(opt);
+            form.render('select');
+        }
+
+        formFlowSelect();
+
+        function formFlowSelect() {
+            var data = JSON.stringify({});
+            var resultData = request.get("/data-order-server/system/flow/list", null).data
+            var opt = '<option value="" selected=""></option>';
+            //循环遍历
+            for (var i in resultData) {
+                var selected = '';
+                /*  if (resultData[i].userId == authorId) {
+                      selected = 'selected="selected"';
+                  }*/
+                opt += '<option ' + selected + '   value = "' + resultData[i].id + '">' + resultData[i].name + '</option>'
+            }
+            $("#flowId").html(opt);
+            form.render('select');
+        }
+
+        var execResult = "  <button sec:authorize=\"hasPermission('/data-order-server/system/orders/execResult','system:orders:execResult')\"\n" +
+            "                    class=\"pear-btn pear-btn-primary pear-btn-sm\" lay-event=\"execResult\">\n" +
+            "                执行结果\n" +
+            "            </button>\n";
+
+        var back = "  <button sec:authorize=\"hasPermission('/data-order-server/system/orders/back','system:orders:back')\"\n" +
+            "                    class=\"pear-btn pear-btn-primary pear-btn-sm\" lay-event=\"back\">\n" +
+            "                退回\n" +
+            "            </button>\n";
+        var reviewLog = "            <button sec:authorize=\"hasPermission('/data-order-server/system/orders/reviewLog','system:orders:reviewLog')\"\n" +
+            "                    class=\"pear-btn pear-btn-primary pear-btn-sm\" lay-event=\"reviewLog\">\n" +
+            "                操作日志\n" +
+            "            </button>\n";
+        var push = "            <button sec:authorize=\"hasPermission('/data-order-server/system/orders/push','system:orders:push')\"\n" +
+            "                    class=\"pear-btn pear-btn-primary pear-btn-sm\" lay-event=\"push\">\n" +
+            "                送审\n" +
+            "            </button>\n";
+
+
+        var review = "  <button sec:authorize=\"hasPermission('/data-order-server/system/orders/review','system:orders:review')\"\n" +
+            "                    class=\"pear-btn pear-btn-primary pear-btn-sm\" lay-event=\"review\">\n" +
+            "                审核\n" +
+            "            </button>\n";
+
+        var review1 = "  <button sec:authorize=\"hasPermission('/data-order-server/system/orders/review','system:orders:review')\"\n" +
+            "                    class=\"pear-btn pear-btn-primary pear-btn-sm\" lay-event=\"review1\">\n" +
+            "                通过\n" +
+            "            </button>\n";
+        /*    var review2 = "            <button sec:authorize=\"hasPermission('/data-order-server/system/orders/review','system:orders:review')\"\n" +
+                "                    class=\"pear-btn pear-btn-primary pear-btn-sm\" lay-event=\"review2\">\n" +
+                "               退回\n" +
+                "            </button>\n";*/
+        var detail = "            <button sec:authorize=\"hasPermission('/data-order-server/system/orders/detail','system:orders:detail')\"\n" +
+            "                    class=\"pear-btn pear-btn-primary pear-btn-sm\" lay-event=\"detail\">\n" +
+            "                详情\n" +
+            "            </button>\n";
+        var edit = "            <button sec:authorize=\"hasPermission('/data-order-server/system/orders/edit','system:orders:edit')\"\n" +
+            "                    class=\"pear-btn pear-btn-primary pear-btn-sm\" lay-event=\"edit\">\n" +
+            "                修改\n" +
+            "            </button>\n";
+        var remove = "            <button sec:authorize=\"hasPermission('/data-order-server/system/orders/remove','system:orders:remove')\"\n" +
+            "                    class=\"pear-btn pear-btn-primary pear-btn-sm\" lay-event=\"remove\">\n" +
+            "                作废\n" +
+            "            </button>";
+        var exec = "            <button sec:authorize=\"hasPermission('/data-order-server/system/orders/exec','system:orders:exec')\"\n" +
+            "                    class=\"pear-btn pear-btn-primary pear-btn-sm\" lay-event=\"exec\">\n" +
+            "                执行\n" +
+            "            </button>";
+
+        let cols = [
+            [
+                // {type: 'checkbox'},
+                {
+                    field: 'name',
+                    title: '工单名',
+                    templet: function (d) {
+                        if (d.reviewStatus == '3') {
+                            return '<p style="color: red">' + d.name + '</p>'
+                        }
+                        return d.name;
+                    }
+                },
+                {
+                    field: 'dbName',
+                    title: '数据库名称',
+                    templet: function (d) {
+                        if (d.reviewStatus == '3') {
+                            return '<p style="color: red">' + d.dbName + '</p>'
+                        }
+                        return d.dbName;
+                    }
+                },
+                {
+                    field: 'sqls',
+                    title: 'sql语句',
+                    templet: function (d) {
+                        if (d.reviewStatus == '3') {
+                            return '<p style="color: red">' + d.sqls + '</p>'
+                        }
+                        return d.sqls;
+                    }
+                },
+                {
+                    field: 'reviewStatus',
+                    title: '状态',
+                    templet: function (d) {
+                        if (d.reviewStatus == '0') {
+                            res = '草稿';
+                        } else if (d.reviewStatus == '1') {
+                            res = "待审核"
+                        } else if (d.reviewStatus == '2') {
+                            res = "审核通过"
+                        } else if (d.reviewStatus == '3') {
+                            res = '<p style="color: red">退回</p>';
+                        } else if (d.reviewStatus == '4') {
+                            res = '已完成';
+                        } else {
+                            res = '草稿';
+                        }
+                        return res;
+                    }
+                },
+                {
+                    field: 'executeStatus',
+                    title: '执行状态',
+                    templet: function (d) {
+                        if (d.executeStatus == '1') {
+                            res = '成功';
+                        } else if (d.executeStatus == '0') {
+                            res = '<p style="color: red">失败</p>';
+                        } else {
+                            if (d.reviewStatus == '3') {
+                                return '<p style="color: red">未执行</p>'
+                            } else {
+                                res = "未执行"
+                            }
+                        }
+                        return res;
+                    }
+                },
+                {
+                    field: 'flowName',
+                    title: '流程名称',
+                    templet: function (d) {
+                        if (d.reviewStatus == '3') {
+                            return '<p style="color: red">' + d.flowName + '</p>'
+                        }
+                        return d.flowName;
+                    }
+                },
+                {
+                    field: 'creatorName',
+                    title: '创建人',
+                    templet: function (d) {
+                        if (d.reviewStatus == '3') {
+                            return '<p style="color: red">' + d.creatorName + '</p>'
+                        }
+                        return d.creatorName;
+                    }
+                },
+                {
+                    field: 'createTime',
+                    title: '创建时间',
+                    templet: function (d) {
+                        if (d.reviewStatus == '3') {
+                            return '<p style="color: red">' + d.createTime + '</p>'
+                        }
+                        return d.createTime;
+                    }
+                },
+                {
+                    field: 'null',
+                    title: '操作', width: 400, align: 'left', templet: function (d) {
+                        var str = "";
+
+
+                        if (d.reviewStatus == '0' || d.reviewStatus == '3') {
+                            str = push +edit+ reviewLog + detail + remove;
+                        } else if (d.reviewStatus == '1') {
+                            //      str = back + review1 + review2 + reviewLog + detail;
+                            str = back + review1 + reviewLog + detail;
+                        } else if (d.reviewStatus == '2') {
+                            str = /*review +*/ reviewLog + detail;
+                            if (d.executeStatus != '1') {
+                                str = exec +  str ;
+                            }
+                        }
+                        return str;
+                    }
+                }
+            ]
+        ]
+
+        let colsDone = [
+            [
+                // {type: 'checkbox'},
+                {
+                    field: 'name',
+                    title: '工单名',
+                    templet: function (d) {
+                        if (d.reviewStatus == '3') {
+                            return '<p style="color: red">' + d.name + '</p>'
+                        }
+                        return d.name;
+                    }
+                },
+                {
+                    field: 'dbName',
+                    title: '数据库名称',
+                    templet: function (d) {
+                        if (d.reviewStatus == '3') {
+                            return '<p style="color: red">' + d.dbName + '</p>'
+                        }
+                        return d.dbName;
+                    }
+                },
+                {
+                    field: 'sqls',
+                    title: 'sql语句',
+                    templet: function (d) {
+                        if (d.reviewStatus == '3') {
+                            return '<p style="color: red">' + d.sqls + '</p>'
+                        }
+                        return d.sqls;
+                    }
+                },
+                {
+                    field: 'reviewStatus',
+                    title: '状态',
+                    templet: function (d) {
+                        if (d.reviewStatus == '9') {
+                            res = '作废';
+                        } else if (d.reviewStatus == '0') {
+                            res = '草稿';
+                        } else if (d.reviewStatus == '1') {
+                            res = "待审核"
+                        } else if (d.reviewStatus == '2') {
+                            res = "审核通过"
+                        } else if (d.reviewStatus == '3') {
+                            res = '<p style="color: red">退回</p>';
+                        }else if (d.reviewStatus == '4') {
+                            res = '已完成';
+                        }  else {
+                            res = '草稿';
+                        }
+                        return res;
+                    }
+                },
+                {
+                    field: 'executeStatus',
+                    title: '执行状态',
+                    templet: function (d) {
+                        if (d.executeStatus == '1') {
+                            res = '成功';
+                        } else if (d.executeStatus == '0') {
+                            res = '<p style="color: red">失败</p>';
+                        } else {
+                            if (d.reviewStatus == '3') {
+                                return '<p style="color: red">未执行</p>'
+                            } else {
+                                res = "未执行"
+                            }
+                        }
+                        return res;
+                    }
+                },
+                {
+                    field: 'flowName',
+                    title: '流程名称',
+                    templet: function (d) {
+                        if (d.reviewStatus == '3') {
+                            return '<p style="color: red">' + d.flowName + '</p>'
+                        }
+                        return d.flowName;
+                    }
+                },
+                {
+                    field: 'creatorName',
+                    title: '创建人',
+                    templet: function (d) {
+                        if (d.reviewStatus == '3') {
+                            return '<p style="color: red">' + d.creatorName + '</p>'
+                        }
+                        return d.creatorName;
+                    }
+                },
+                {
+                    field: 'createTime',
+                    title: '创建时间',
+                    templet: function (d) {
+                        if (d.reviewStatus == '3') {
+                            return '<p style="color: red">' + d.createTime + '</p>'
+                        }
+                        return d.createTime;
+                    }
+                },
+                {
+                    field: 'null',
+                    title: '操作', width: 350, align: 'left', templet: function (d) {
+                        var str = reviewLog + detail;
+                        if (d.reviewStatus == '4' && d.executeStatus == '1') {
+                            str += execResult;
+                        }  else if (d.reviewStatus == '4' && d.executeStatus == '0') {
+
+                            str += execResult;
+                            str += exec;
+                        }    // exec
+                        return str;
+                    }
+                }
+            ]
+        ]
+
+        table.render({
+            elem: '#orders-table',
+            //  url: prefix + 'data',
+            url: prefix + 'linkData?dbId=' + dbId + '&flowRightType=1',
+            page: true,
+            cols: cols,
+            skin: 'line',
+            toolbar: '#orders-toolbar',
+            defaultToolbar: [{
+                layEvent: 'refresh',
+                icon: 'layui-icon-refresh',
+            }, 'filter', 'print', 'exports'],
+
+            /*    done: function(res, curr, count){
+                    for(var i in res.data){		//遍历整个表格数据
+                        var item = res.data[i];		//获取当前行数据
+
+                        if(item.reviewStatus=='3'){
+                            $("#orders-table tr[data-index='" + i + "']").attr({"style":"color:red"});  //将当前行变成绿色
+                        }
+                    }
+                }*/
+
+
+        });
+     /*   var dataRight = request.get("/data-order-server/system/orders/getUserRight", true).data;
+        if (!dataRight) {
+            $(".layui-table-tool").css('display', 'none');
+            document.getElementById("addBtn").style.display = "none";
+        }*/
+
+        table.render({
+            elem: '#orders-table-done',
+            //  url: prefix + 'data',
+            url: prefix + 'linkData?dbId=' + dbId + '&flowRightType=0',
+            page: true,
+            cols: colsDone,
+            skin: 'line',
+            //  toolbar: '#orders-toolbar-done',
+            defaultToolbar: [{
+                layEvent: 'refresh',
+                icon: 'layui-icon-refresh',
+            }, 'filter', 'print', 'exports'],
+
+            /*   done: function(res, curr, count){
+                   for(var i in res.data){		//遍历整个表格数据
+                       var item = res.data[i];		//获取当前行数据
+                       if(item.reviewStatus=='3'){
+                           $("orders-table-done  [data-index='" + i + "']").attr({"style":"color:red"});  //将当前行变成绿色
+                       }
+                   }
+               }*/
+        });
+
+
+        function getStatus(status) {
+            console.log("111");
+            var str = '未送审';
+            var tmp = '，不可再次操作';
+            if (status == '1') {
+                str = '待审核' + tmp;
+            } else if (status == '2') {
+                str = '审核成功' + tmp
+            } else if (status == '3') {
+                str = '退回' + tmp
+            }
+            return str;
+        }
+
+        table.on('tool(orders-table)', function (obj) {
+            if (obj.event === 'remove') {
+                window.remove(obj);
+            } else if (obj.event === 'exec') {
+                window.exec(obj);
+            } else if (obj.event === 'edit') {
+                window.edit(obj);
+            } else if (obj.event === 'detail') {
+                window.detail(obj);
+            } else if (obj.event === 'reviewLog') {
+                window.reviewLog(obj, 'push', '', '送审');
+            } else if (obj.event === 'back') {
+                if (obj.data.reviewStatus != 1) {
+                    layer.msg(getStatus(obj.data.reviewStatus), {icon: 2, time: 2000});
+                    return;
+                }
+                window.update(obj, 'back', '3', '退回');
+            } else if (obj.event === 'push') {
+               /* if (obj.data.reviewStatus >= 1) {
+                    layer.msg(getStatus(obj.data.reviewStatus), {icon: 2, time: 2000});
+                    return;
+                }*/
+                window.update(obj, 'push', '1', '送审');
+            } else if (obj.event === 'review') {
+                /*     if (obj.data.reviewStatus != 1) {
+                         layer.msg(getStatus(obj.data.reviewStatus), {icon: 2, time: 2000});
+                         return;
+                     }*/
+                window.review(obj, 'review', 2, '审核');
+            } else if (obj.event === 'review1') {
+                if (obj.data.reviewStatus != 1) {
+                    layer.msg(getStatus(obj.data.reviewStatus), {icon: 2, time: 2000});
+                    return;
+                }
+                window.update(obj, 'review', 2, '审核通过');
+            } else if (obj.event === 'review2') {
+                if (obj.data.reviewStatus != 1) {
+                    layer.msg(getStatus(obj.data.reviewStatus), {icon: 2, time: 2000});
+                    return;
+                }
+                window.update(obj, 'review', 3, '退回');
+            }
+        });
+
+
+        table.on('tool(orders-table-done)', function (obj) {
+            if (obj.event === 'detail') {
+                window.detail(obj);
+            } else if (obj.event === 'reviewLog') {
+                window.reviewLog(obj, 'push', '', '送审');
+            } else if (obj.event === 'execResult') {
+                window.execResult(obj);
+            }  else if (obj.event === 'exec') {
+                window.exec(obj);
+            } else if (obj.event === 'back') {
+                if (obj.data.reviewStatus != 1) {
+                    layer.msg(getStatus(obj.data.reviewStatus), {icon: 2, time: 2000});
+                    return;
+                }
+                window.update(obj, 'back', '', '退回');
+            }
+        });
+
+        table.on('toolbar(orders-table)', function (obj) {
+            if (obj.event === 'add') {
+                window.add();
+            } else if (obj.event === 'refresh') {
+                window.refresh();
+            } else if (obj.event === 'batchRemove') {
+                window.batchRemove(obj);
+            }
+        });
+
+        form.on('submit(orders-query)', function (data) {
+            console.log('reload');
+
+            if (tabId == 'done') {
+                table.reload('orders-table-done', {where: data.field, url: prefix + 'linkData?dbId=' + dbId + '&flowRightType=0' });
+            } else {
+                table.reload('orders-table', {where: data.field ,url: prefix + 'linkData?dbId=' + dbId + '&flowRightType=1'  });
+            }
+            return false;
+        });
+
+        window.add = function () {
+            layer.open({
+                type: 2,
+                title: '新增工单',
+                shade: 0.1,
+                area: ['100%', '100%'],
+                content: 'add.html'
+            });
+        }
+        window.detail = function (obj) {
+            layer.open({
+                type: 2,
+                title: '工单详情',
+                shade: 0.1,
+                area: ['100%', '100%'],
+                content: 'detail.html?id=' + obj.data['id']
+            });
+        };
+        window.reviewLog = function (obj) {
+            layer.open({
+                type: 2,
+                //   title: '工单'+obj.data.name+'操作日志',
+                title: '操作日志',
+                shade: 0.1,
+                area: ['100%', '100%'],
+                content: '../orderReviewLog/main.html?id=' + obj.data['id']
+            });
+        };
+
+        window.exec = function (obj) {
+            console.log("11");
+            $("#reviewInfo").val("");
+            layer.confirm('确定执行该工单的语句？ \n ' +obj.data.sqls , {
+                btn: ['执行','关闭'] //可以无限个按钮
+                ,btn1: function(index, layero){
+
+                }
+            }, function(index, layero){
+                var data = {};
+                data.id = obj.data.id;
+             //   var resultData = request.put("/data-order-server/system/orders/update?type=" + 'exec' + '&status=' + '4' + '&info=' + $("#reviewInfo").val(), JSON.stringify(data));
+
+
+                layer.close(index);
+                let loading = layer.load();
+                $.ajax({
+                    url: '/data-order-server/system/orders/update?type=' + 'exec' + '&status=' + '4' + '&info=' + $("#reviewInfo").val(),
+                    contentType: "application/json;charset=UTF-8",
+                    dataType: 'json',
+                    type: 'put',
+                    data: JSON.stringify(data),
+                    success: function (result) {
+                        layer.close(loading);
+                        if (result.success  == true ) {  // 成功
+                            layer.msg('操作成功，详见执行日志', {icon: 1, time: 1000}, function () {
+                                table.reload('orders-table');
+                                table.reload('orders-table-done');
+                            });
+                        } else { // 失败
+                            layer.msg('操作失败，详见执行日志', {icon: 2, time: 1000}, function () {
+                                table.reload('orders-table');
+                                table.reload('orders-table-done');
+                            });
+
+                        }
+                    }
+                })
+
+
+              /*  if (resultData.success == true) {
+                    layer.msg('执行成功', {icon: 1, time: 1000}, function () {
+                        layer.close(index);
+                        table.reload('orders-table');
+                        table.reload('orders-table-done');
+                    });
+                } else {
+                    layer.msg(info + '失败', {icon: 2, time: 2000});
+                }*/
+            });
+
+
+           /* layer.open({
+                type: 1,
+                area: ['40%'],
+                fix: false,
+                //不固定
+                maxmin: true,
+                shade: 0.3,
+                title: '执行语句',
+                content: $("#openDiv"),
+                btn: ['执行', '取消'],
+                btn1: function (index, layero) {
+                    var data = {};
+                    data.id = obj.data.id;
+                    var resultData = request.put("/data-order-server/system/orders/exec?type=" + 'exec' + '&status=' + status + '&info=' + $("#reviewInfo").val(), JSON.stringify(data));
+
+                    if (resultData.success == true) {
+                        layer.msg(info + '成功', {icon: 1, time: 1000}, function () {
+                            layer.close(index);
+                            table.reload('orders-table');
+                            table.reload('orders-table-done');
+                        });
+                    } else {
+                        layer.msg(info + '失败', {icon: 2, time: 2000});
+                    }
+                },
+                btn2: function (index, layero) {
+                    //点击第二个按钮处理逻辑
+                }
+            });*/
+        }
+
+        window.execResult = function (obj) {
+            layer.open({
+                type: 2,
+                title: '执行日志',
+                shade: 0.1,
+                area: ['100%', '100%'],
+                content: '../orderSqlLog/main.html?orderId=' + obj.data['id']
+            });
+        }
+
+        window.review = function (obj) {
+
+            $("#reviewInfo").val("");
+            layer.open({
+                type: 1,
+                area: ['40%'],
+                fix: false,
+                //不固定
+                maxmin: true,
+                shade: 0.3,
+                title: '审核工单',
+                content: $("#reviewDiv"),
+                btn: [info, '取消'],
+                btn1: function (index, layero) {
+                    var data = {};
+                    data.id = obj.data.id;
+                    var resultData = request.put("/data-order-server/system/orders/update?type=" + type + '&status=' + status + '&info=' + $("#reviewInfo").val(), JSON.stringify(data));
+
+                    if (resultData.success == true) {
+                        layer.msg(info + '成功', {icon: 1, time: 1000}, function () {
+                            layer.close(index);
+                            table.reload('orders-table');
+                            table.reload('orders-table-done');
+                        });
+                    } else {
+                        layer.msg(info + '失败', {icon: 2, time: 2000});
+                    }
+                },
+                btn2: function (index, layero) {
+                    //点击第二个按钮处理逻辑
+                }
+            });
+
+
+        }
+
+
+        window.update = function (obj, type, status, info) {
+
+            $("#reviewInfo").val("");
+            layer.open({
+                type: 1,
+                area: ['40%'],
+                fix: false,
+                //不固定
+                maxmin: true,
+                shade: 0.3,
+                title: info,
+                content: $("#openDiv"),
+                btn: [info, '取消'],
+                btn1: function (index, layero) {
+                    var data = {};
+                    data.id = obj.data.id;
+                    var resultData = request.put("/data-order-server/system/orders/update?type=" + type + '&status=' + status + '&info=' + $("#reviewInfo").val(), JSON.stringify(data));
+
+                    if (resultData.success == true) {
+                        layer.msg(info + '成功', {icon: 1, time: 1000}, function () {
+                            layer.close(index);
+                            table.reload('orders-table');
+                            table.reload('orders-table-done');
+                        });
+                    } else {
+                        layer.msg(info + '失败', {icon: 2, time: 2000});
+                    }
+                },
+                btn2: function (index, layero) {
+                    //点击第二个按钮处理逻辑
+                }
+            });
+        }
+
+        window.edit = function (obj) {
+            layer.open({
+                type: 2,
+                title: '修改工单',
+                shade: 0.1,
+                area: ['100%', '100%'],
+                content: 'edit.html?id=' + obj.data['id']
+            });
+        }
+
+        window.remove = function (obj) {
+            layer.confirm('确定要作废该工单', {icon: 3, title: '提示'}, function (index) {
+                layer.close(index);
+                let loading = layer.load();
+                $.ajax({
+                    url: prefix + "remove/" + obj.data['id'],
+                    dataType: 'json',
+                    type: 'delete',
+                    success: function (result) {
+                        layer.close(loading);
+                        if (result.success) {
+                            layer.msg(result.msg, {icon: 1, time: 1000}, function () {
+                                //obj.del();
+                                table.reload('orders-table');
+                                table.reload('orders-table-done');
+                            });
+                        } else {
+                            layer.msg(result.msg, {icon: 2, time: 1000});
+                        }
+                    }
+                })
+            });
+        }
+
+        window.batchRemove = function (obj) {
+            let data = table.checkStatus(obj.config.id).data;
+            if (data.length === 0) {
+                layer.msg("未选中数据", {icon: 3, time: 1000});
+                return false;
+            }
+            let ids = "";
+            for (let i = 0; i < data.length; i++) {
+                ids += data[i].id + ",";
+            }
+            ids = ids.substr(0, ids.length - 1);
+            layer.confirm('确定要作废这些工单管理', {icon: 3, title: '提示'}, function (index) {
+                layer.close(index);
+                let loading = layer.load();
+                $.ajax({
+                    url: prefix + "batchRemove",
+                    dataType: 'json',
+                    data: {"ids": ids},
+                    type: 'delete',
+                    success: function (result) {
+                        layer.close(loading);
+                        if (result.success) {
+                            layer.msg(result.msg, {icon: 1, time: 1000}, function () {
+                                table.reload('orders-table');
+                                table.reload('orders-table-done');
+                            });
+                        } else {
+                            layer.msg(result.msg, {icon: 2, time: 1000});
+                        }
+                    }
+                })
+            });
+        }
+
+        window.refresh = function (param) {
+
+            table.reload('orders-table', {where: param   });
+        }
+
+    })
+
+
+</script>
+</body>
+</html>

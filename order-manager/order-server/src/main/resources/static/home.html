@@ -1,0 +1,1150 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>layout 后台大布局 - Layui</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="../css/common.css" media="all">
+    <link rel="stylesheet" href="../plugins/layui/layui/css/layui.css"
+          media="all">
+    <link rel="stylesheet" href="../plugins/layui/layui/formSelects-v4.css"
+          media="all">
+    <script src="../js/util/jquery-1.9.0.js"></script>
+    <script type="text/javascript" src="../js/util/jquery.cookie.js"></script>
+    <script type="text/javascript" src="../js/util/common.js"></script>
+    <script src="../plugins/layui/layui/layui.js"></script>
+    <script src="../js/model/request.js"></script>
+    <script src="../js/model/ws.js"></script>
+    <script src="../plugins/layui/layui/formSelects-v4.min.js"></script>
+    <script src="../js/xm-select.js"></script>
+    <script src="../lib/layui/layui.js"></script>
+    <script src="../js/com.js"></script>
+    <script src="../js/util/verifyFormUtil.js"></script>
+    <script src="../js/util/layui_verify.js"></script>
+</head>
+<style>
+    .layui-layout-body {
+        overflow: auto;
+    }
+    .layui-form-label{
+        width: 180px!important;
+    }
+    .layui-input-block{
+        margin-left: 210px!important;
+    }
+</style>
+<body class="layui-layout-body">
+<div class="layui-body layuiBodyLeft">
+    <div class="bodyDiv">
+        <form id="formId" class="layui-form" style="width: 90%" method="post">
+            <div class="layui-form-item">
+                <label class="layui-form-label"><i style="color: red">*&nbsp;</i>行政e21ewqeq33区划</label>
+                <div class="layui-input-block">
+                    <!--<select name="regionId" id="regionId" lay-filter="regionId" lay-search="">-->
+                    <!--</select>-->
+                    <div id="demo1" class="xm-select-demo"></div>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label"><i style="color: red">*&nbsp;</i>标题</label>
+                <div class="layui-input-block">
+                    <input placeholder="请输入标题" id="title" name="title" lay-verify="required|lenth_Max200"
+                           class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">描述</label>
+                <div class="layui-input-block">
+                    <input placeholder="请输入描述" id="remark" name="remark" lay-verify="lenth_Max500"
+                           class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label"><i style="color: red">*&nbsp;</i>底部信息</label>
+                <div class="layui-input-block">
+                    <input type="text" class="layui-input" id="footer" name="footer" lay-verify="required|lenth_Max100"
+                           placeholder="请输入底部信息">
+                </div>
+            </div>
+
+
+<!--            <div class="layui-form-item">-->
+<!--                <label class="layui-form-label">计费规则描述</label>-->
+<!--                <div class="layui-input-block">-->
+<!--                    <input type="text" class="layui-input" id="chargingRule" name="chargingRule" lay-verify="lenth_Max100"-->
+<!--                           placeholder="请输入计费规则描述">-->
+<!--                </div>-->
+<!--            </div>-->
+            <!--<div class="layui-form-item">-->
+                <!--<label class="layui-form-label"><i style="color: red">*&nbsp;</i>中介机构确认时限（小时）</label>-->
+                <!--<div class="layui-input-block">-->
+                    <!--<input type="text" class="layui-input" id="overtime" name="overtime" lay-verify="required|Integer1_99"-->
+                           <!--placeholder="请输入中介机构确认时限" >-->
+                <!--</div>-->
+            <!--</div>-->
+            <div class="layui-form-item">
+                <label class="layui-form-label"><i style="color: red">*&nbsp;</i>剩余评审天数</label>
+                <div class="layui-input-block">
+                    <input type="text" class="layui-input" id="reviewDay" name="reviewDay" lay-verify="Integer1_999_not_required"
+                           placeholder="请输入剩余评审天数">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label"><i style="color: red">*&nbsp;</i>最大上传文件大小(M)</label>
+                <div class="layui-input-block">
+                    <input type="text" class="layui-input" id="maxUploadSize" name="maxUploadSize" lay-verify="Integer1_999_not_required"
+                           placeholder="请输入最大上传文件大小">
+                </div>
+            </div>
+<!--            <div class="layui-form-item">-->
+<!--                <label class="layui-form-label">最大金钱数</label>-->
+<!--                <div class="layui-input-block">-->
+<!--                    <input type="text" class="layui-input" id="maxMoney" name="maxMoney" lay-verify="money_not_required"-->
+<!--                           placeholder="请输入最大金钱数">-->
+<!--                </div>-->
+<!--            </div>-->
+            <div class="layui-form-item">
+                <label class="layui-form-label"><i style="color: red">*&nbsp;</i>报表服务地址</label>
+                <div class="layui-input-block">
+                    <input type="text" class="layui-input" id="report_url" name="report_url" lay-verify="required|url"
+                           placeholder="请输入报表服务地址">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label"><i style="color: red">*&nbsp;</i>短信地址</label>
+                <div class="layui-input-block">
+                    <input type="text" class="layui-input" id="smsUserurl" name="smsUserurl" lay-verify="lenth_Max200"
+                           placeholder="请输入短信地址">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label"><i style="color: red">*&nbsp;</i>短信账号</label>
+                <div class="layui-input-block">
+                    <input type="text" class="layui-input" id="smsUsercode" name="smsUsercode" lay-verify="lenth_Max200"
+                           placeholder="请输入短信账号">
+                </div>
+            </div>
+
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">短信密码</label>
+                <div class="layui-input-block">
+                    <input type="text" class="layui-input" id="smsPassword" name="smsPassword" lay-verify="lenth_Max50"
+                           placeholder="请输入短信密码">
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label"><i style="color: red">*&nbsp;</i>指定联系人角色</label>
+                <div class="layui-input-block">
+                    <select name="roleId" id="roleId" lay-filter="roleId" lay-search="" lay-verify="required|lenth_Max50">
+
+
+                    </select>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label"><i style="color: red">*&nbsp;</i>中介机构角色</label>
+                <div class="layui-input-block">
+                    <select name="intermediaryId" id="intermediaryId" lay-filter="intermediaryId" lay-search="" lay-verify="required|lenth_Max50">
+
+
+                    </select>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label"><i style="color: red">*&nbsp;</i>单位角色</label>
+                <div class="layui-input-block">
+                    <select name="unitRole" id="unitRole" lay-filter="unitRole" lay-search="" lay-verify="required|lenth_Max50">
+
+
+                    </select>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label"><i style="color: red">*&nbsp;</i>中介机构类型</label>
+                <div class="layui-input-block">
+                    <select name="intermediaryType" id="intermediaryType" lay-filter="intermediaryType" lay-search="" lay-verify="required|lenth_Max50">
+
+
+                    </select>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">短信模板</label>
+                <div class="layui-input-block">
+                    <select name="messageId" id="messageId" lay-filter="messageId" lay-search="">
+
+
+                    </select>
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">预算报送必填附件</label>
+                <div class="layui-input-block">
+                    <select name="inputUploadFileType" id="inputUploadFileType" xm-select="inputUploadFileType"
+                            xm-select-skin="normal" lay-filter="inputUploadFileType">
+
+
+                    </select>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">结算报送必填附件</label>
+                <div class="layui-input-block">
+                    <select name="jsInputUploadFileType" id="jsInputUploadFileType" xm-select="jsInputUploadFileType"
+                            xm-select-skin="normal" lay-filter="jsInputUploadFileType">
+
+
+                    </select>
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">预算报送非必填附件</label>
+                <div class="layui-input-block">
+                    <select name="noneedInputUploadFileType" id="noneedInputUploadFileType"
+                            xm-select="noneedInputUploadFileType" xm-select-skin="normal" lay-filter="noneedInputUploadFileType">
+
+
+                    </select>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">结算报送非必填附件</label>
+                <div class="layui-input-block">
+                    <select name="jsNoneedInputUploadFileType" id="jsNoneedInputUploadFileType"
+                            xm-select="jsNoneedInputUploadFileType" xm-select-skin="normal" lay-filter="jsNoneedInputUploadFileType">
+
+
+                    </select>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">自动开启的流程</label>
+                <div class="layui-input-block">
+                    <select name="enableAutoStart" id="enableAutoStart" xm-select="enableAutoStart"
+                            xm-select-skin="normal" lay-filter="enableAutoStart" xm-select-height="72px">
+                            <option value="1" >预算-备案制-机构考核</option>
+                            <option value="2" >预算-评审制-机构考核</option>
+                            <option value="3" >预算-自审制-机构考核</option>
+                            <option value="4" >结算-备案制-机构考核</option>
+                            <option value="5" >结算-评审制-机构考核</option>
+                            <option value="6" >结算-自审制-机构考核</option>
+                            <option value="7" >费用管理</option>
+                    </select>
+                </div>
+            </div>
+
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">是否自动抽取中介机构</label>
+                <div class="layui-input-block">
+                    <input type="radio" name="autoChouqu" value="1" lay-filter="autoChouqu" title="是">
+                    <input type="radio" name="autoChouqu" value="0" checked="checked" lay-filter="autoChouqu" title="否">
+                </div>
+            </div>
+
+            <div class="layui-form-item" pane="">
+                <label class="layui-form-label"><i style="color: red">*&nbsp;</i>流程允许的类型</label>
+                <div class="layui-input-block">
+                    <input type="checkbox" name="allowFlowType" value="1" lay-skin="primary" title="备案制" >
+                    <input type="checkbox" name="allowFlowType" value="2" lay-skin="primary" title="评审制" >
+                    <input type="checkbox" name="allowFlowType" value="3" lay-skin="primary" title="自审制">
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">短信发送方式</label>
+                <div class="layui-input-block">
+                    <input type="radio" name="sendSmsType" value="1" checked="checked"
+                           lay-filter="sendSmsType" title="http">
+                    <input type="radio"
+                         name="sendSmsType" value="2"
+                         lay-filter=sendSmsType
+                         title="webService">
+                    <input type="radio" name="sendSmsType"
+                           value="3"
+                           lay-filter=sendSmsType
+                           title="mq中间件">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">是否限制机构确认时间</label>
+                <div class="layui-input-block">
+                    <input type="radio" name="deadline" value="1" checked="checked"
+                           lay-filter="deadline" title="是">
+                    <input
+                            type="radio" name="deadline" value="0"
+                            lay-filter="deadline" title="否">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">是否合并摇号</label>
+                <div class="layui-input-block">
+                    <input type="radio" name="is_total_lot_number" value="1" checked="checked"
+                           lay-filter="is_total_lot_number" title="是">
+                    <input
+                        type="radio" name="is_total_lot_number" value="0"
+                        lay-filter="is_total_lot_number" title="否">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">系统图标</label>
+                <div class="layui-input-block">
+                    <input type="file" accept=".png,.jpg,.icon"
+                           onchange="fileChange(this,'logo');"> <img alt="" src=""
+                                                                     id="logoId">
+                    <input type="hidden" name="logo" id="logo">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label"><i style="color: red">*&nbsp;</i>网站icon</label>
+                <div class="layui-input-block">
+                    <input type="file" accept=".png,.jpg,.icon"  lay-reqText="请上传网站icon"
+                           onchange="fileChange(this,'icon');"/> <img alt="" src="" id="iconId"/>
+                    <input type="hidden" lay-verify="required" name="icon" id="icon">
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <div class="layui-input-block" style="float: right;">
+                    <button type="button" lay-filter="demo1" class="layui-btn" lay-submit="" id="saveId">保存</button>
+                    <!--<button type="button" lay-filter="demo2" class="layui-btn" lay-submit="" id="chose">取消</button>-->
+                </div>
+            </div> <div class="layui-form-item">
+
+        </div>
+
+        </form>
+    </div>
+</div>
+
+<script type="text/javascript">
+    var object = store.get("userInfo", true);//用户信息
+    var region_id = "";
+    if (object != undefined && object != "") {
+        region_id = object.region_code;
+    }
+    var objectName = ws.util.getQueryString("objectName");
+    // var region_id = ws.util.getQueryString("regionCode");
+    var id = ws.util.getQueryString("id");
+
+
+
+    layui.use(['form', 'table', 'laydate', 'formSelects', 'layer'], function () {
+        var form = layui.form;
+        var table = layui.table;
+        var laydate = layui.laydate;
+        var formSelects = layui.formSelects;
+        dtree = layui.dtree;
+        var regionIds = "";
+        // var dataJson = ws.tzps.getUserRegionAndRegionByUserId();
+        var dataJson = ws.tzps.getUserRegionByUserId(object.userId);
+        if (dataJson) {
+            var data = toTree(dataJson.data,false);
+            var demo1 = xmSelect.render({
+                el: '#demo1',
+                model: { icon: 'hidden',label: { type: 'radio' } },
+                filterable:true,
+                repeat: true,
+                clickClose: true,
+                height: '250px',
+                radio: true,
+                tree: {
+                    show: true,
+                    strict: true,
+                    expandedKeys: ["36"]
+                },
+                on: function(data){
+                    var change = data.change;
+                    selectDemo(change[0]);
+                    if(data.isAdd ){
+                        return data.change.slice(0, 1);
+                    }
+
+                },
+                // height: '250',
+                data:data
+            });
+            for (var i = 0; i < dataJson.length; i++) {
+                if (i == 0) {
+                    regionIds = dataJson[i].id;
+                } else {
+                    regionIds += "," + dataJson[i].id;
+                }
+            }
+        }
+
+        var system = "";
+        if (id) {
+            system = ws.tzps.getSystemById(id);
+            if (system) {
+                $("#title").val(system.title);
+                $("#regionId").val(system.regionId);
+                $("#report_url").val(system.report_url);
+                $("#remark").val(system.remark);
+                $("#footer").val(system.footer);
+                $("input[name='sendSmsType'][value='" + system.sendSmsType + "']").attr('checked', true);
+                $("input[name='is_total_lot_number'][value='" + system.isTotalLotNumber + "']").attr('checked', true);
+                $("input[name='deadline'][value='" + system.deadline + "']").attr('checked', true);
+                $("input[name='autoChouqu'][value='" + system.autoChouqu + "']").attr('checked', true);
+
+                if(system.allowFlowType){
+                    var flowTypes = system.allowFlowType.split(",");
+                    for(let i=0;i<flowTypes.length;i++){
+                        let v = flowTypes[i];
+                        $("input:checkbox[name='allowFlowType'][value='"+ v +"']").attr('checked','true');
+                    }
+                }
+
+                $("#logoId").attr("src", system.logo);
+                $("#iconId").attr("src", system.icon);
+                $("#roleId").val(system.roleId);
+                $("#intermediaryId").val(system.intermediaryId);
+                $("#unitRole").val(system.unitRole);
+                $("#intermediaryType").val(system.intermediaryType);
+                $("#logo").val(system.logo);
+                $("#icon").val(system.icon);
+                $("#chargingRule").val(system.chargingRule);
+                $("#overtime").val(system.overtime);
+                $("#reviewDay").val(system.reviewDay);
+                $("#maxUploadSize").val(system.maxUploadSize);
+                $("#maxMoney").val(system.maxMoney);
+                $("#messageId").val(system.messageId);
+//                $("#regionId").val(system.regionId);
+                demo1.setValue([system.regionId]);
+                $("#smsUsercode").val(system.smsUsercode);
+                $("#smsUserurl").val(system.smsUserurl);
+                form.render();
+                if (system.inputUploadFileType) {
+                    formSelects.value('inputUploadFileType', system.inputUploadFileType.split(","));
+                }
+                if (system.jsInputUploadFileType) {
+                    formSelects.value('jsInputUploadFileType', system.jsInputUploadFileType.split(","));
+                }
+                if (system.noneedInputUploadFileType) {
+                    formSelects.value('noneedInputUploadFileType', system.noneedInputUploadFileType.split(","));
+                }
+
+                if (system.enableAutoStartFlow) {
+                    formSelects.value('enableAutoStart', system.enableAutoStartFlow.split(","));
+                }
+
+
+            }
+
+        }
+
+        var selectArr = demo1.getValue();
+        var regionIdCode = system.regionId;
+        if (selectArr.length > 0 || regionIdCode != '' ) {
+            var selectRegionId='';
+            if(selectArr.length > 0){
+                selectRegionId = selectArr[0].id;
+            }else{
+                selectRegionId=regionIdCode;
+            }
+            ws.tzps.getRoleList(selectRegionId, function (d) {
+                if (d && d.length > 0) {
+                    var str = "<option value=''>请选择角色</option>";
+                    for (var i = 0; i < d.length; i++) {
+                        str += "<option value='" + d[i].id + "'>" + d[i].name + "</option>";
+                    }
+                    $("#roleId").html(str);
+                    $("#intermediaryId").html(str);
+                    $("#unitRole").html(str);
+                    form.render();
+                }
+            });
+            ws.tzps.getIntermediaryType(selectRegionId, function (d) {
+                if (d && d.length > 0) {
+                    var str = "<option value=''>请选择类型</option>";
+                    for (var i = 0; i < d.length; i++) {
+                        str += "<option value='" + d[i].id + "'>" + d[i].name + "</option>";
+                    }
+                    $("#intermediaryType").html(str);
+                    form.render();
+                }
+            });
+            layui.formSelects.on('noneedInputUploadFileType', function(id, vals, val, isAdd, isDisabled){
+                var inputUploadFileType = formSelects.value('inputUploadFileType', 'val')
+                 //如果return false, 那么将取消本次操作
+                if(inputUploadFileType!=''){
+                    for(var i=0;i<inputUploadFileType.length;i++) {
+                        inputUploadFileTypeOne = inputUploadFileType[i];
+                            nosee_F_idOne = val.id;
+                            if (inputUploadFileTypeOne==nosee_F_idOne) {
+                                layer.msg("预算报送非必填附件不能与预算报送必填附件一致！！！");
+                                return false;
+                        }
+                    }
+                }
+
+            });
+            layui.formSelects.on('jsNoneedInputUploadFileType', function(id, vals, val, isAdd, isDisabled){
+                var jsInputUploadFileType = formSelects.value('jsInputUploadFileType', 'val')
+                //如果return false, 那么将取消本次操作
+                if(jsInputUploadFileType!=''){
+                    for(var i=0;i<jsInputUploadFileType.length;i++) {
+                        jsInputUploadFileTypeOne = jsInputUploadFileType[i];
+                        nosee_F_idOne = val.id;
+                        if (jsInputUploadFileTypeOne==nosee_F_idOne) {
+                            layer.msg("结算报送非必填附件不能与结算报送必填附件一致！！！");
+                            return false;
+                        }
+                    }
+                }
+
+            });
+            layui.formSelects.on('inputUploadFileType', function(id, vals, val, isAdd, isDisabled){
+                var noneedInputUploadFileType = formSelects.value('noneedInputUploadFileType', 'val')
+                //如果return false, 那么将取消本次操作
+                if(noneedInputUploadFileType!=''){
+                    for(var i=0;i<noneedInputUploadFileType.length;i++) {
+                        noneedInputUploadFileType = noneedInputUploadFileType[i];
+                        nosee_F_idOne = val.id;
+                        if (noneedInputUploadFileType==nosee_F_idOne) {
+                            layer.msg("报送必填附件不能与报送非必填附件一致！！！");
+                            return false;
+                        }
+                    }
+                }
+
+            });
+            layui.formSelects.on('jsInputUploadFileType', function(id, vals, val, isAdd, isDisabled){
+                var jsNoneedInputUploadFileType = formSelects.value('jsNoneedInputUploadFileType', 'val')
+                //如果return false, 那么将取消本次操作
+                if(jsNoneedInputUploadFileType!=''){
+                    for(var i=0;i<jsNoneedInputUploadFileType.length;i++) {
+                        jsNoneedInputUploadFileType = jsNoneedInputUploadFileType[i];
+                        nosee_F_idOne = val.id;
+                        if (jsNoneedInputUploadFileType==nosee_F_idOne) {
+                            layer.msg("报送必填附件不能与报送非必填附件一致！！！");
+                            return false;
+                        }
+                    }
+                }
+
+            });
+            formSelects.data("inputUploadFileType", "server", {
+                type: "get",
+                url: BASE_URL + "/rule/invFileType/listAllByNoPage?type=1&region_id=" + selectRegionId,
+                keyName: "name",
+                keyVal: "id",
+                success: function (id, url, searchVal, result) {
+                    if (system) {
+                        $("#title").val(system.title);
+                        $("#remark").val(system.remark);
+                        $("#footer").val(system.footer);
+                        $("input[name='sendSmsType'][value='" + system.sendSmsType + "']").attr('checked', true);
+                        $("input[name='is_total_lot_number'][value='" + system.isTotalLotNumber + "']").attr('checked', true);
+                        $("input[name='deadline'][value='" + system.deadline + "']").attr('checked', true);
+                        $("#logoId").attr("src", system.logo);
+                        $("#iconId").attr("src", system.icon);
+                        $("#roleId").val(system.roleId);
+                        $("#intermediaryId").val(system.intermediaryId);
+                        $("#unitRole").val(system.unitRole);
+                        $("#intermediaryType").val(system.intermediaryType);
+                        $("#logo").val(system.logo);
+                        $("#icon").val(system.icon);
+                        $("#chargingRule").val(system.chargingRule);
+                        $("#overtime").val(system.overtime);
+                        $("#reviewDay").val(system.reviewDay);
+                        $("#maxUploadSize").val(system.maxUploadSize);
+                        $("#maxMoney").val(system.maxMoney);
+                        $("#messageId").val(system.messageId);
+//                        $("#regionId").val(system.regionId);
+                        demo1.setValue([system.regionId]);
+                        $("#smsUsercode").val(system.smsUsercode);
+                        $("#smsUserurl").val(system.smsUserurl);
+                        form.render();
+                        if (system.inputUploadFileType) {
+                            formSelects.value('inputUploadFileType', system.inputUploadFileType.split(","));
+                        }
+
+
+                    }
+                }
+            });
+            formSelects.data("jsInputUploadFileType", "server", {
+                type: "get",
+                url: BASE_URL + "/rule/invFileType/listAllByNoPage?type=1&region_id=" + selectRegionId,
+                keyName: "name",
+                keyVal: "id",
+                success: function (id, url, searchVal, result) {
+                    if (system) {
+                        $("#title").val(system.title);
+                        $("#remark").val(system.remark);
+                        $("#footer").val(system.footer);
+                        $("input[name='sendSmsType'][value='" + system.sendSmsType + "']").attr('checked', true);
+                        $("input[name='is_total_lot_number'][value='" + system.isTotalLotNumber + "']").attr('checked', true);
+                        $("input[name='deadline'][value='" + system.deadline + "']").attr('checked', true);
+                        $("#logoId").attr("src", system.logo);
+                        $("#iconId").attr("src", system.icon);
+                        $("#roleId").val(system.roleId);
+                        $("#intermediaryId").val(system.intermediaryId);
+                        $("#unitRole").val(system.unitRole);
+                        $("#intermediaryType").val(system.intermediaryType);
+                        $("#logo").val(system.logo);
+                        $("#icon").val(system.icon);
+                        $("#chargingRule").val(system.chargingRule);
+                        $("#overtime").val(system.overtime);
+                        $("#reviewDay").val(system.reviewDay);
+                        $("#maxUploadSize").val(system.maxUploadSize);
+                        $("#maxMoney").val(system.maxMoney);
+                        $("#messageId").val(system.messageId);
+//                        $("#regionId").val(system.regionId);
+                        demo1.setValue([system.regionId]);
+                        $("#smsUsercode").val(system.smsUsercode);
+                        $("#smsUserurl").val(system.smsUserurl);
+                        form.render();
+                        if (system.jsInputUploadFileType) {
+                            formSelects.value('jsInputUploadFileType', system.jsInputUploadFileType.split(","));
+                        }
+
+
+                    }
+                }
+            });
+
+            formSelects.data("noneedInputUploadFileType", "server", {
+                type: "get",
+                url: BASE_URL + "/rule/invFileType/listAllByNoPage?type=1&region_id=" + selectRegionId,
+                keyName: "name",
+                keyVal: "id",
+                success: function (id, url, searchVal, result) {
+                    if (system) {
+                        $("#title").val(system.title);
+                        $("#remark").val(system.remark);
+                        $("#footer").val(system.footer);
+                        $("input[name='sendSmsType'][value='" + system.sendSmsType + "']").attr('checked', true);
+                        $("input[name='is_total_lot_number'][value='" + system.isTotalLotNumber + "']").attr('checked', true);
+                        $("input[name='deadline'][value='" + system.deadline + "']").attr('checked', true);
+                        $("#logoId").attr("src", system.logo);
+                        $("#iconId").attr("src", system.icon);
+                        $("#roleId").val(system.roleId);
+                        $("#intermediaryId").val(system.intermediaryId);
+                        $("#unitRole").val(system.unitRole);
+                        $("#intermediaryType").val(system.intermediaryType);
+                        $("#logo").val(system.logo);
+                        $("#icon").val(system.icon);
+                        $("#chargingRule").val(system.chargingRule);
+                        $("#overtime").val(system.overtime);
+                        $("#reviewDay").val(system.reviewDay);
+                        $("#maxUploadSize").val(system.maxUploadSize);
+                        $("#maxMoney").val(system.maxMoney);
+                        $("#messageId").val(system.messageId);
+//                        $("#regionId").val(system.regionId);
+                        demo1.setValue([system.regionId]);
+                        $("#smsUsercode").val(system.smsUsercode);
+                        $("#smsUserurl").val(system.smsUserurl);
+                        if (system.noneedInputUploadFileType) {
+                            formSelects.value('noneedInputUploadFileType', system.noneedInputUploadFileType.split(","));
+                        }
+                        form.render();
+
+                    }
+                }
+            });
+            formSelects.data("jsNoneedInputUploadFileType", "server", {
+                type: "get",
+                url: BASE_URL + "/rule/invFileType/listAllByNoPage?type=1&region_id=" + selectRegionId,
+                keyName: "name",
+                keyVal: "id",
+                success: function (id, url, searchVal, result) {
+                    if (system) {
+                        $("#title").val(system.title);
+                        $("#remark").val(system.remark);
+                        $("#footer").val(system.footer);
+                        $("input[name='sendSmsType'][value='" + system.sendSmsType + "']").attr('checked', true);
+                        $("input[name='is_total_lot_number'][value='" + system.isTotalLotNumber + "']").attr('checked', true);
+                        $("input[name='deadline'][value='" + system.deadline + "']").attr('checked', true);
+                        $("#logoId").attr("src", system.logo);
+                        $("#iconId").attr("src", system.icon);
+                        $("#roleId").val(system.roleId);
+                        $("#intermediaryId").val(system.intermediaryId);
+                        $("#unitRole").val(system.unitRole);
+                        $("#intermediaryType").val(system.intermediaryType);
+                        $("#logo").val(system.logo);
+                        $("#icon").val(system.icon);
+                        $("#chargingRule").val(system.chargingRule);
+                        $("#overtime").val(system.overtime);
+                        $("#reviewDay").val(system.reviewDay);
+                        $("#maxUploadSize").val(system.maxUploadSize);
+                        $("#maxMoney").val(system.maxMoney);
+                        $("#messageId").val(system.messageId);
+//                        $("#regionId").val(system.regionId);
+                        demo1.setValue([system.regionId]);
+                        $("#smsUsercode").val(system.smsUsercode);
+                        $("#smsUserurl").val(system.smsUserurl);
+                        if (system.jsNoneedInputUploadFileType) {
+                            formSelects.value('jsNoneedInputUploadFileType', system.jsNoneedInputUploadFileType.split(","));
+                        }
+                        form.render();
+
+                    }
+                }
+            });
+            var messageJson = ws.tzps.listByNoPage(selectRegionId);
+            if (messageJson) {
+                for (var i = 0; i < messageJson.length; i++) {
+                    var str = "<option value=''>请选择短信模板</option>";
+                    for (var i = 0; i < messageJson.length; i++) {
+                        str += "<option value='" + messageJson[i].id + "'>" + messageJson[i].name + "</option>";
+                    }
+                    $("#messageId").html(str);
+                    form.render();
+                }
+            }
+        }
+
+        function selectDemo(data) {
+            $("#roleId").html("");
+            $("#intermediaryId").html("");
+            $("#unitRole").html("");
+            $("#intermediaryType").html("");
+            form.render();
+
+            if(data.code.length==6) {
+
+                ws.tzps.getRoleList(data.value, function (d) {
+                    if (d && d.length > 0) {
+                        var str = "<option value=''>请选择角色</option>";
+                        for (var i = 0; i < d.length; i++) {
+                            str += "<option value='" + d[i].id + "'>" + d[i].name + "</option>";
+                        }
+                        $("#roleId").html(str);
+                        $("#intermediaryId").html(str);
+                        $("#unitRole").html(str);
+                        form.render();
+                    }
+                });
+                ws.tzps.getIntermediaryType(data.value, function (d) {
+                    if (d && d.length > 0) {
+                        var str = "<option value=''>请选择类型</option>";
+                        for (var i = 0; i < d.length; i++) {
+                            str += "<option value='" + d[i].id + "'>" + d[i].name + "</option>";
+                        }
+                        $("#intermediaryType").html(str);
+                        form.render();
+                    }
+                });
+
+                formSelects.data("inputUploadFileType", "server", {
+                    type: "get",
+                    url: BASE_URL + "/rule/invFileType/listAllByNoPage?type=1&region_id=" + data.value,
+                    keyName: "name",
+                    keyVal: "id",
+                    success: function (id, url, searchVal, result) {
+                        if (system) {
+                            $("#title").val(system.title);
+                            $("#remark").val(system.remark);
+                            $("#footer").val(system.footer);
+                            $("input[name='sendSmsType'][value='" + system.sendSmsType + "']").attr('checked', true);
+                            $("input[name='is_total_lot_number'][value='" + system.isTotalLotNumber + "']").attr('checked', true);
+                            $("input[name='deadline'][value='" + system.deadline + "']").attr('checked', true);
+                            $("#logoId").attr("src", system.logo);
+                            $("#iconId").attr("src", system.icon);
+                            $("#roleId").val(system.roleId);
+                            $("#intermediaryId").val(system.intermediaryId);
+                            $("#unitRole").val(system.unitRole);
+                            $("#intermediaryType").val(system.intermediaryType);
+                            $("#logo").val(system.logo);
+                            $("#icon").val(system.icon);
+                            $("#chargingRule").val(system.chargingRule);
+                            $("#overtime").val(system.overtime);
+                            $("#reviewDay").val(system.reviewDay);
+                            $("#maxUploadSize").val(system.maxUploadSize);
+                            $("#maxMoney").val(system.maxMoney);
+                            $("#messageId").val(system.messageId);
+//                        $("#regionId").val(system.regionId);
+//                         demo1.setValue([system.regionId]);
+                            $("#smsUsercode").val(system.smsUsercode);
+                            $("#smsUserurl").val(system.smsUserurl);
+                            if (system.inputUploadFileType) {
+                                formSelects.value('inputUploadFileType', system.inputUploadFileType.split(","));
+                            }
+                            form.render();
+
+                        }
+                    }
+                });
+
+                formSelects.data("jsInputUploadFileType", "server", {
+                    type: "get",
+                    url: BASE_URL + "/rule/invFileType/listAllByNoPage?type=1&region_id=" + data.value,
+                    keyName: "name",
+                    keyVal: "id",
+                    success: function (id, url, searchVal, result) {
+                        if (system) {
+                            $("#title").val(system.title);
+                            $("#remark").val(system.remark);
+                            $("#footer").val(system.footer);
+                            $("input[name='sendSmsType'][value='" + system.sendSmsType + "']").attr('checked', true);
+                            $("input[name='is_total_lot_number'][value='" + system.isTotalLotNumber + "']").attr('checked', true);
+                            $("input[name='deadline'][value='" + system.deadline + "']").attr('checked', true);
+                            $("#logoId").attr("src", system.logo);
+                            $("#iconId").attr("src", system.icon);
+                            $("#roleId").val(system.roleId);
+                            $("#intermediaryId").val(system.intermediaryId);
+                            $("#unitRole").val(system.unitRole);
+                            $("#intermediaryType").val(system.intermediaryType);
+                            $("#logo").val(system.logo);
+                            $("#icon").val(system.icon);
+                            $("#chargingRule").val(system.chargingRule);
+                            $("#overtime").val(system.overtime);
+                            $("#reviewDay").val(system.reviewDay);
+                            $("#maxUploadSize").val(system.maxUploadSize);
+                            $("#maxMoney").val(system.maxMoney);
+                            $("#messageId").val(system.messageId);
+//                        $("#regionId").val(system.regionId);
+//                         demo1.setValue([system.regionId]);
+                            $("#smsUsercode").val(system.smsUsercode);
+                            $("#smsUserurl").val(system.smsUserurl);
+                            if (system.jsInputUploadFileType) {
+                                formSelects.value('jsInputUploadFileType', system.jsInputUploadFileType.split(","));
+                            }
+                            form.render();
+
+                        }
+                    }
+                });
+                formSelects.data("noneedInputUploadFileType", "server", {
+                    type: "get",
+                    url: BASE_URL + "/rule/invFileType/listAllByNoPage?type=1&region_id=" + data.value,
+                    keyName: "name",
+                    keyVal: "id",
+                    success: function (id, url, searchVal, result) {
+                        if (system) {
+                            $("#title").val(system.title);
+                            $("#report_url").val(system.report_url);
+                            $("#remark").val(system.remark);
+                            $("#footer").val(system.footer);
+                            $("input[name='sendSmsType'][value='" + system.sendSmsType + "']").attr('checked', true);
+                            $("input[name='is_total_lot_number'][value='" + system.isTotalLotNumber + "']").attr('checked', true);
+                            $("input[name='deadline'][value='" + system.deadline + "']").attr('checked', true);
+                            $("#logoId").attr("src", system.logo);
+                            $("#iconId").attr("src", system.icon);
+                            $("#roleId").val(system.roleId);
+                            $("#intermediaryId").val(system.intermediaryId);
+                            $("#unitRole").val(system.unitRole);
+                            $("#intermediaryType").val(system.intermediaryType);
+                            $("#logo").val(system.logo);
+                            $("#icon").val(system.icon);
+                            $("#chargingRule").val(system.chargingRule);
+                            $("#overtime").val(system.overtime);
+                            $("#reviewDay").val(system.reviewDay);
+                            $("#maxUploadSize").val(system.maxUploadSize);
+                            $("#maxMoney").val(system.maxMoney);
+                            $("#messageId").val(system.messageId);
+//                        $("#regionId").val(system.regionId);
+//                         demo1.setValue([system.regionId]);
+                            $("#smsUsercode").val(system.smsUsercode);
+                            $("#smsUserurl").val(system.smsUserurl);
+                            if (system.noneedInputUploadFileType) {
+                                formSelects.value('noneedInputUploadFileType', system.noneedInputUploadFileType.split(","));
+                            }
+                            form.render();
+
+                        }
+                    }
+                });
+                formSelects.data("jsNoneedInputUploadFileType", "server", {
+                    type: "get",
+                    url: BASE_URL + "/rule/invFileType/listAllByNoPage?type=1&region_id=" + data.value,
+                    keyName: "name",
+                    keyVal: "id",
+                    success: function (id, url, searchVal, result) {
+                        if (system) {
+                            $("#title").val(system.title);
+                            $("#report_url").val(system.report_url);
+                            $("#remark").val(system.remark);
+                            $("#footer").val(system.footer);
+                            $("input[name='sendSmsType'][value='" + system.sendSmsType + "']").attr('checked', true);
+                            $("input[name='is_total_lot_number'][value='" + system.isTotalLotNumber + "']").attr('checked', true);
+                            $("input[name='deadline'][value='" + system.deadline + "']").attr('checked', true);
+                            $("#logoId").attr("src", system.logo);
+                            $("#iconId").attr("src", system.icon);
+                            $("#roleId").val(system.roleId);
+                            $("#intermediaryId").val(system.intermediaryId);
+                            $("#unitRole").val(system.unitRole);
+                            $("#intermediaryType").val(system.intermediaryType);
+                            $("#logo").val(system.logo);
+                            $("#icon").val(system.icon);
+                            $("#chargingRule").val(system.chargingRule);
+                            $("#overtime").val(system.overtime);
+                            $("#reviewDay").val(system.reviewDay);
+                            $("#maxUploadSize").val(system.maxUploadSize);
+                            $("#maxMoney").val(system.maxMoney);
+                            $("#messageId").val(system.messageId);
+//                        $("#regionId").val(system.regionId);
+//                         demo1.setValue([system.regionId]);
+                            $("#smsUsercode").val(system.smsUsercode);
+                            $("#smsUserurl").val(system.smsUserurl);
+                            if (system.jsNoneedInputUploadFileType) {
+                                formSelects.value('jsNoneedInputUploadFileType', system.jsNoneedInputUploadFileType.split(","));
+                            }
+                            form.render();
+
+                        }
+                    }
+                });
+                var messageJson = ws.tzps.listByNoPage(data.value);
+                if (messageJson) {
+                    for (var i = 0; i < messageJson.length; i++) {
+                        var str = "<option value=''>请选择短信模板</option>";
+                        for (var i = 0; i < messageJson.length; i++) {
+                            str += "<option value='" + messageJson[i].id + "'>" + messageJson[i].name + "</option>";
+                        }
+                        $("#messageId").html(str);
+                        form.render();
+                    }
+                }
+            }
+        };
+
+
+        //layui.$('#saveId').on('click', function () {
+        form.on('submit(demo1)', function(data){
+            var selectArr = demo1.getValue();
+            var regionId = '';
+            if(selectArr.length > 0){
+                regionId = selectArr[0].id;
+            }
+            //$("#formId").submit();
+            var title = $("#title").val();
+
+            var remark = $("#remark").val();
+            var footer = $("#footer").val();
+            var sendSmsType = $('input[name="sendSmsType"]:checked ').val();
+            var is_total_lot_number = $('input[name="is_total_lot_number"]:checked ').val();
+            var autoChouqu = $('input[name="autoChouqu"]:checked ').val();
+
+            var deadline = $('input[name="deadline"]:checked ').val();
+            var roleId = $("#roleId").val();
+            var intermediaryId = $("#intermediaryId").val();
+            var unitRole = $("#unitRole").val();
+            var intermediaryType = $("#intermediaryType").val();
+            var logo = $("#logo").val();
+            var icon = $("#icon").val();
+
+            var chargingRule = $("#chargingRule").val();
+            var overtime = $("#overtime").val();
+            var reviewDay = $("#reviewDay").val();
+            var maxUploadSize = $("#maxUploadSize").val();
+            var maxMoney = $("#maxMoney").val();
+            var report_url = $("#report_url").val();
+            var messageId = $("#messageId").val();
+//            var regionId = $("#regionId").val();
+
+            var smsUsercode = $("#smsUsercode").val();
+            var smsUserurl = $("#smsUserurl").val();
+            var report_url = $("#report_url").val();
+
+            var smsPassword = $("#smsPassword").val();
+            var roleName = "";
+            var messageName = "";
+            if (roleId) {
+                roleName = $("#roleId option:selected").text()
+            }
+            if (intermediaryId) {
+                roleName = $("#intermediaryId option:selected").text()
+            }
+            if (unitRole) {
+                roleName = $("#unitRole option:selected").text()
+            }
+            if (intermediaryType) {
+                roleName = $("#intermediaryType option:selected").text()
+            }
+            if (messageId) {
+                messageName = $("#messageId option:selected").text()
+            }
+
+            if (!overtime) {
+                overtime = 0;
+            }
+
+            var inputUploadFileType = formSelects.value('inputUploadFileType', 'val')
+            var inputUploadFileTypes = "";
+            if (inputUploadFileType && inputUploadFileType.length > 0) {
+                for (var i = 0; i < inputUploadFileType.length; i++) {
+                    if (i == 0) {
+                        inputUploadFileTypes = inputUploadFileType[i];
+                    } else {
+                        inputUploadFileTypes += "," + inputUploadFileType[i];
+                    }
+                }
+            }
+
+            var jsInputUploadFileType = formSelects.value('jsInputUploadFileType', 'val')
+            var jsInputUploadFileTypes = "";
+            if (jsInputUploadFileType && jsInputUploadFileType.length > 0) {
+                for (var i = 0; i < jsInputUploadFileType.length; i++) {
+                    if (i == 0) {
+                        jsInputUploadFileTypes = jsInputUploadFileType[i];
+                    } else {
+                        jsInputUploadFileTypes += "," + jsInputUploadFileType[i];
+                    }
+                }
+            }
+            var noneedInputUploadFileType = formSelects.value('noneedInputUploadFileType', 'val')
+            var noneedInputUploadFileTypes = "";
+            if (noneedInputUploadFileType && noneedInputUploadFileType.length > 0) {
+                for (var i = 0; i < noneedInputUploadFileType.length; i++) {
+                    if (i == 0) {
+                        noneedInputUploadFileTypes = noneedInputUploadFileType[i];
+                    } else {
+                        noneedInputUploadFileTypes += "," + noneedInputUploadFileType[i];
+                    }
+                }
+            }
+            var jsNoneedInputUploadFileType = formSelects.value('jsNoneedInputUploadFileType', 'val')
+            var jsNoneedInputUploadFileTypes = "";
+            if (jsNoneedInputUploadFileType && jsNoneedInputUploadFileType.length > 0) {
+                for (var i = 0; i < jsNoneedInputUploadFileType.length; i++) {
+                    if (i == 0) {
+                        jsNoneedInputUploadFileTypes = jsNoneedInputUploadFileType[i];
+                    } else {
+                        jsNoneedInputUploadFileTypes += "," + jsNoneedInputUploadFileType[i];
+                    }
+                }
+            }
+            //自动开启的流程
+            var enableAutoStartArr = formSelects.value('enableAutoStart', 'val');
+            var enableAutoStarts = "";
+            if(enableAutoStartArr && enableAutoStartArr.length>0){
+                enableAutoStarts = enableAutoStartArr.join(",");
+            }
+
+            var chk_value =[];
+            var allowFlowType ="";
+            $('input[name="allowFlowType"]:checked').each(function(){
+                chk_value.push($(this).val());
+            });
+            if(chk_value && chk_value.length > 0){
+                allowFlowType = chk_value.join(",");
+            }else{
+                layer.msg("请选择流程允许的类型!", {icon: 5});
+                return false;
+            }
+
+            var data = {
+                title: title,
+                remark: remark,
+                footer: footer,
+                roleId: roleId,
+                intermediaryId: intermediaryId,
+                unitRole: unitRole,
+                intermediaryType: intermediaryType,
+                roleName: roleName,
+                logo: logo,
+                icon: icon,
+                sendSmsType: sendSmsType,
+                is_total_lot_number: is_total_lot_number,
+                autoChouqu:autoChouqu,
+                allowFlowType:allowFlowType,
+                enableAutoStartFlow:enableAutoStarts,
+                deadline: deadline,
+                chargingRule: chargingRule,
+                overtime: overtime,
+                reviewDay: reviewDay,
+                maxUploadSize: maxUploadSize,
+                maxMoney: maxMoney,
+                messageId: messageId,
+                messageName: messageName,
+                inputUploadFileType: inputUploadFileTypes,
+                jsInputUploadFileType: jsInputUploadFileTypes,
+                noneedInputUploadFileType: noneedInputUploadFileTypes,
+                jsNoneedInputUploadFileType: jsNoneedInputUploadFileTypes,
+                regionId: regionId,
+                smsUsercode: smsUsercode,
+                smsUserurl: smsUserurl,
+                smsPassword: smsPassword,
+                report_url: report_url
+
+
+            }
+            if (id) {
+                data.id = id;
+            }
+            ws.tzps.addOrUpdateCurrentSystem(data, function (ret) {
+                if (ret) {
+                    if (ret.code == '0000') {
+                        layer.msg("修改成功", {icon: 1});
+                        var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+                        // location.reload();//刷新父页面，注意一定要在关闭当前iframe层之前执行刷新
+                        parent.layer.close(index); //再执行关闭
+                        // parent.location.reload();
+                        // window.parent.location.reload();
+                        // window.location.reload(true);
+                        // myCookie.set("roleId", roleId, false, 3650);
+                        // myCookie.set("is_total_lot_number", is_total_lot_number, false, 3650)
+                    } else {
+                        layer.alert(ret.msg);
+                    }
+                }
+            });
+            return false;
+        });
+        form.on('submit(demo2)', function(data){
+            alert("111");
+
+        });
+    });
+
+    function getFileURL(file) {
+        let getUrl = null;
+        if (window.createObjectURL !== undefined) { // basic
+            getUrl = window.createObjectURL(file);
+        } else if (window.URL !== undefined) { // mozilla(firefox)
+            getUrl = window.URL.createObjectURL(file);
+        } else if (window.webkitURL !== undefined) { // webkit or chrome
+            getUrl = window.webkitURL.createObjectURL(file);
+        }
+        return getUrl;
+    }
+
+    function fileChange(target, id) {
+        var fileSize = 0;
+        var file = null;
+        if (!target.files) {
+            var filePath = target.value;
+            var fileSystem = new ActiveXObject("Scripting.FileSystemObject");
+            file = fileSystem.GetFile(filePath);
+            fileSize = file.Size;
+        } else {
+            file = target.files[0];
+            fileSize = file.size;
+        }
+        var size = fileSize / 1024;
+        if (size > 1000) {
+            layer.alert("附件不能大于1M");
+            target.value = "";
+            return
+        }
+        var name = target.value;
+        var fileName = name.substring(name.lastIndexOf(".") + 1).toLowerCase();
+        if (fileName != "png" && fileName != "jpg" && fileName != "icon") {
+            layer.alert("请选择png,jpg等图片格式文件上传！");
+            target.value = "";
+            return
+        }
+        var reader = new FileReader();
+        reader.onload = function (evt) {
+            $("#" + id + "Id").attr("src", evt.target.result);
+            $("#" + id).val(evt.target.result);
+        }
+        reader.readAsDataURL(file);
+
+    }
+
+</script>
+</body>
+</html>

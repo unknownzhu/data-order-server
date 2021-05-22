@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <!-- <th:block th:include="include :: header('定时任务日志列表')"    /> --><link rel="stylesheet" href="../../admin/css/load.css"/>
+    <link rel="stylesheet" href="../../admin/css/admin.css"/>
+    <link rel="stylesheet" href="../../component/pear/css/pear.css">
+    <link rel="stylesheet" href="../../component/zTree_v3/css/zTreeStyle/zTreeStyle.css">
+    <script src="../../component/layui/layui.js"></script>
+    <script src="../../component/pear/pear.js"></script>
+    <script src="../../component/jquery.min.js"></script>
+    <script src="../../component/zTree_v3/js/jquery.ztree.core.js"></script>
+    <script src="../common.js"></script>
+    <script src="../request.js"></script>
+</head>
+<body class="pear-container">
+     <div class="layui-card">
+        <div class="layui-card-body">
+            <div class="col-sm-12 search-collapse">
+                <form id="formId" class="layui-form">
+
+                    <div class="layui-form-item">
+                            <label class="layui-form-label">任务id：</label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="cronJobId" placeholder="请输入任务id" class="layui-input" />
+                        </div>
+                           
+                        <label class="layui-form-label">执行状态：</label>
+                        <div class="layui-input-inline">
+                            <select name="status"   dict-code="input" >
+                                <option value="">所有</option>
+                            </select>
+                        </div>
+                            <label class="layui-form-label">执行结果：</label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="resulrInfo" placeholder="请输入执行结果" class="layui-input" />
+                        </div>
+                        <button class="pear-btn pear-btn-md pear-btn-primary" lay-submit lay-filter="log-query">
+                        <i class="layui-icon layui-icon-search"></i>
+                        查询
+                    </button>
+                    <button type="reset" class="pear-btn pear-btn-md">
+                        <i class="layui-icon layui-icon-refresh"></i>
+                        重置
+                    </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+     </div>
+         <div class="layui-card">
+             <div class="layui-card-body">
+                 <table id="log-table" lay-filter="log-table"></table>
+
+                 <script type="text/html" id="log-toolbar">
+                     <button  sec:authorize="hasPermission('/data-order-server/system/log/add','system:log:add')"  class="pear-btn pear-btn-primary pear-btn-md" lay-event="add">
+                         <i class="layui-icon layui-icon-add-1"></i>
+                         新增
+                     </button>
+                     <button  sec:authorize="hasPermission('/data-order-server/system/log/remove','system:log:remove')"   class="pear-btn pear-btn-primary pear-btn-md" lay-event="batchRemove">
+                         <i class="layui-icon layui-icon-delete"></i>
+                         删除
+                     </button>
+                 </script>
+
+                 <script type="text/html" id="log-bar">
+                     <button  sec:authorize="hasPermission('/data-order-server/system/log/edit','system:log:edit')"   class="pear-btn pear-btn-primary pear-btn-sm" lay-event="edit"><i class="layui-icon layui-icon-edit"></i>
+                     </button>
+                     <button  sec:authorize="hasPermission('/data-order-server/system/log/remove','system:log:remove')"   class="pear-btn pear-btn-primary pear-btn-sm" lay-event="remove"><i class="layui-icon layui-icon-delete"></i>
+                     </button>
+                 </script>
+             </div>
+         </div>
+    <th:block th:include="include :: footer" />
+         <script>
+             layui.use(['table', 'form', 'jquery' ], function () {
+                 let table = layui.table;
+                 let form = layui.form;
+                 let $ = layui.jquery;
+
+                 let prefix = "/data-order-server/system/log/";
+
+                 let cols = [
+                     [
+                         {type: 'checkbox'},
+                         {
+                             field: 'id',
+                             title: '主键'
+                         },
+                        {
+                             field: 'cronJobId',
+                             title: '任务id'
+                        },
+                        {
+                             field: 'createTime',
+                             title: '执行时间'
+                        },
+                        {
+                             field: 'status',
+                             title: '执行状态'
+                        },
+                        {
+                             field: 'resulrInfo',
+                             title: '执行结果'
+                        },
+                         {title: '操作', toolbar: '#log-bar', align: 'center', width: 230}
+                     ]
+                 ]
+
+                 table.render({
+                     elem: '#log-table',
+                     url: prefix + 'data',
+                     page: true,
+                     cols: cols,
+                     skin: 'line',
+                     toolbar: '#log-toolbar',
+                     defaultToolbar: [{
+                         layEvent: 'refresh',
+                         icon: 'layui-icon-refresh',
+                     }, 'filter', 'print', 'exports']
+                 });
+
+                 table.on('tool(log-table)', function (obj) {
+                     if (obj.event === 'remove') {
+                         window.remove(obj);
+                     } else if (obj.event === 'edit') {
+                         window.edit(obj);
+                     }
+                 });
+
+                 table.on('toolbar(log-table)', function (obj) {
+                     if (obj.event === 'add') {
+                         window.add();
+                     } else if (obj.event === 'refresh') {
+                         window.refresh();
+                     } else if (obj.event === 'batchRemove') {
+                         window.batchRemove(obj);
+                     }
+                 });
+
+                 form.on('submit(log-query)', function (data) {
+                     table.reload('log-table', {where: data.field})
+                     return false;
+                 });
+
+                 window.add = function () {
+                     layer.open({
+                         type: 2,
+                         title: '新增定时任务日志',
+                         shade: 0.1,
+                         area: ['100%', '100%'],
+                         content: 'add.html'
+                     });
+                 }
+
+                 window.edit = function (obj) {
+                     layer.open({
+                         type: 2,
+                         title: '修改定时任务日志',
+                         shade: 0.1,
+                         area: ['100%', '100%'],
+                         content: 'edit.html?id=' + obj.data['id']
+                     });
+                 }
+
+                 window.remove = function (obj) {
+                     layer.confirm('确定要删除该定时任务日志', {icon: 3, title: '提示'}, function (index) {
+                         layer.close(index);
+                         let loading = layer.load();
+                         $.ajax({
+                             url: prefix + "remove/" + obj.data['id'],
+                             dataType: 'json',
+                             type: 'delete',
+                             success: function (result) {
+                                 layer.close(loading);
+                                 if (result.success) {
+                                     layer.msg(result.msg, {icon: 1, time: 1000}, function () {
+                                          table.reload('log-table');
+                                     });
+                                 } else {
+                                     layer.msg(result.msg, {icon: 2, time: 1000});
+                                 }
+                             }
+                         })
+                     });
+                 }
+
+                 window.batchRemove = function (obj) {
+                     let data = table.checkStatus(obj.config.id).data;
+                     if (data.length === 0) {
+                         layer.msg("未选中数据", {icon: 3, time: 1000});
+                         return false;
+                     }
+                     let ids = "";
+                     for (let i = 0; i < data.length; i++) {
+                         ids += data[i].id + ",";
+                     }
+                     ids = ids.substr(0, ids.length - 1);
+                     layer.confirm('确定要删除这些定时任务日志', {icon: 3, title: '提示'}, function (index) {
+                         layer.close(index);
+                         let loading = layer.load();
+                         $.ajax({
+                             url: prefix + "batchRemove",
+                             dataType: 'json',
+                             data: {"ids":ids},
+                             type: 'delete',
+                             success: function (result) {
+                                 layer.close(loading);
+                                 if (result.success) {
+                                     layer.msg(result.msg, {icon: 1, time: 1000}, function () {
+                                         table.reload('log-table');
+                                     });
+                                 } else {
+                                     layer.msg(result.msg, {icon: 2, time: 1000});
+                                 }
+                             }
+                         })
+                     });
+                 }
+
+                 window.refresh = function (param) {
+                     table.reload('log-table', {where: param});
+                 }
+             })
+         </script>
+</body>
+</html>

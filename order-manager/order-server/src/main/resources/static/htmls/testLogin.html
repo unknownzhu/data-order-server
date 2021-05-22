@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+
+
+<body>
+<table class="layui-hide" id="errorRec" lay-filter="errorRec"></table>
+
+<script>
+
+    if ("") {
+
+    }
+    $.ajax({
+        type: "post",
+        url: "127.0.0.1:/data-order-server/jxStdDatabaseDataDicionary/save",
+        dataType: 'text',
+        cache: false,
+        contentType: "application/json",
+        data: JSON.stringify(updateData),
+        success: function (redata) {
+            layer.msg("操作成功!", {icon: 1, time: 2000});
+            location.reload();
+        },
+        error: function (redata) {
+            window.parent.postMessage('update_error-' + redata, '*');
+        }
+    });
+
+
+
+
+</script>
+
+
+</body>
+</html>

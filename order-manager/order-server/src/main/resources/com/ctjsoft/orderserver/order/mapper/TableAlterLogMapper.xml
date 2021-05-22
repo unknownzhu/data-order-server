@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ctjsoft.orderserver.order.mapper.TableAlterLogMapper">
+
+
+
+    <resultMap type="com.ctjsoft.orderserver.order.domain.TableAlterLog" id="TableAlterLogResult">
+        <result property="id"    column="ID"    />
+        <result property="orderId"    column="ORDER_ID"    />
+        <result property="creatorId"    column="CREATOR_ID"    />
+        <result property="creatorName"    column="CREATOR_NAME"    />
+        <result property="createTime"    column="CREATE_TIME"    />
+        <result property="sqls"    column="sqls"    />
+    </resultMap>
+
+    <sql id="selectTableAlterLogVo">
+        select ID, ORDER_ID, CREATOR_ID, CREATOR_NAME, CREATE_TIME, sqls from jx_table_alter_log
+    </sql>
+
+    <select id="selectTableAlterLogList" parameterType="com.ctjsoft.orderserver.order.domain.TableAlterLog" resultMap="TableAlterLogResult">
+        <include refid="selectTableAlterLogVo"/>
+        <where>  
+            <if test="orderId != null  and orderId != ''"> and ORDER_ID = #{orderId}</if>
+            <if test="creatorId != null  and CREATOR_ID != ''"> and INFO = #{creatorId}</if>
+            <if test="createTime != null "> and CREATE_TIME = #{createTime}</if>
+            <if test="sqls != null "> and sqls = #{sqls}</if>
+        </where>
+        order by CREATE_TIME desc
+    </select>
+    
+    <select id="selectTableAlterLogById" parameterType="String" resultMap="TableAlterLogResult">
+        <include refid="selectTableAlterLogVo"/>
+        where ID = #{id}
+        order by CREATE_TIME desc
+    </select>
+        
+    <insert id="insertTableAlterLog" parameterType="com.ctjsoft.orderserver.order.domain.TableAlterLog">
+        insert into jx_table_alter_log
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">ID,</if>
+            <if test="orderId != null">ORDER_ID,</if>
+            <if test="creatorId != null">CREATOR_ID,</if>
+            <if test="createTime != null">CREATE_TIME,</if>
+            <if test="creatorName != null">CREATOR_NAME,</if>
+            <if test="sqls != null">sqls,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="orderId != null">#{orderId},</if>
+            <if test="creatorId != null">#{creatorId},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="creatorName != null">#{creatorName},</if>
+            <if test="sqls != null">#{sqls},</if>
+         </trim>
+    </insert>
+
+    <update id="updateTableAlterLog" parameterType="com.ctjsoft.orderserver.order.domain.TableAlterLog">
+        update jx_table_alter_log
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="orderId != null">ORDER_ID = #{orderId},</if>
+            <if test="creatorId != null">CREATOR_ID = #{creatorId},</if>
+            <if test="createTime != null">CREATE_TIME = #{createTime},</if>
+            <if test="creatorName != null">CREATOR_NAME = #{creatorName},</if>
+            <if test="sqls != null">sqls = #{sqls},</if>
+        </trim>
+        where ID = #{id}
+    </update>
+
+    <delete id="deleteTableAlterLogById" parameterType="String">
+        delete from jx_table_alter_log where ID = #{id}
+    </delete>
+
+    <delete id="deleteTableAlterLogByIds" parameterType="String">
+        delete from jx_table_alter_log where ID in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ctjsoft.orderserver.analyze.mapper.JxStdTableMapper">
+	<resultMap id="BaseResultMap" type="com.ctjsoft.orderserver.analyze.domain.StdTable">
+		<id column="ID" jdbcType="VARCHAR" property="id" />
+		<result column="COMPANY_CODE" jdbcType="VARCHAR"
+			property="companyCode" />
+		<result column="SYSTEM_CODE" jdbcType="VARCHAR"
+			property="systemCode" />
+		<result column="BUSINESS_CODE" jdbcType="VARCHAR"
+			property="businessCode" />
+		<result column="TABLE_CODE" jdbcType="VARCHAR"
+			property="tableCode" />
+		<result column="IN_TABLE_CODE" jdbcType="VARCHAR"
+			property="tableInCode" />
+		<result column="TABLE_NAME" jdbcType="VARCHAR"
+			property="tableName" />
+		<result column="TABLE_CN_NAME" jdbcType="VARCHAR"
+			property="tableCnName" />
+		<result column="TABLE_DES" jdbcType="VARCHAR"
+			property="tableDes" />
+		<result column="BUSINESS_KEY" jdbcType="VARCHAR"
+			property="businessKey" />
+		<result column="IS_STANDARD" jdbcType="NUMERIC"
+			property="isStandard" />
+		<result column="VERSION" jdbcType="NUMERIC" property="version" />
+		<result column="CHANGE_VERSION" jdbcType="NUMERIC"
+			property="changeVersion" />
+		<result column="UPDATE_TIME" jdbcType="TIMESTAMP"
+			property="updateTime" />
+		<result column="UPDATE_USER" jdbcType="VARCHAR"
+			property="updateUser" />
+		<result column="CREATE_TIME" jdbcType="TIMESTAMP"
+			property="createTime" />
+		<result column="CREATE_USER" jdbcType="VARCHAR"
+			property="createUser" />
+		<result column="CATALOG_ENUM_ID" jdbcType="NUMERIC"
+			property="catalogEnumId" />
+		<result column="TABLE_TYPE" jdbcType="NUMERIC"
+			property="tableType" />
+		<result column="CHECK_RESULT" jdbcType="NUMERIC"
+			property="checkResult" />
+		<result column="FAIL_REASON" jdbcType="VARCHAR"
+			property="failReason" />
+		<result column="STD_TYPE" jdbcType="NUMERIC" property="stdType" />
+		<result column="IS_DELETED" jdbcType="NUMERIC"
+			property="isDeleted" />
+		<result column="IS_WZZX" jdbcType="NUMERIC" property="isWzzx" />
+		<result column="IS_YYZW" jdbcType="NUMERIC" property="isYyzw" />
+		<result column="IS_JQRJ" jdbcType="NUMERIC" property="isJqrj" />
+		<result column="IS_JRRJ" jdbcType="NUMERIC" property="isJrrj" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		ID, COMPANY_CODE, SYSTEM_CODE, BUSINESS_CODE,
+		TABLE_CODE,IN_TABLE_CODE,
+		TABLE_NAME,
+		TABLE_CN_NAME,
+		TABLE_DES,
+		BUSINESS_KEY, IS_STANDARD,
+		VERSION, CHANGE_VERSION, UPDATE_TIME,
+		UPDATE_USER,
+		CREATE_TIME,
+		CREATE_USER, CATALOG_ENUM_ID, TABLE_TYPE,
+		STD_TYPE, IS_DELETED,
+		CHECK_RESULT,
+		FAIL_REASON,IS_WZZX,IS_YYZW,IS_JQRJ,IS_JRRJ
+	</sql>
+
+	<select id="selectCZBTable" resultMap="BaseResultMap">
+		select * from STD_TABLE_CZB
+		where IS_DELETED = #{isDeleted}
+		<if test="version != null">
+			AND VERSION &lt;= #{version}
+			AND CHANGE_VERSION &gt; #{version}
+		</if>
+
+		AND
+		<foreach collection="businessEnumList" item="item" index="index"  open="(" separator="or" close=")">
+			table_name LIKE CONCAT(#{item},'%')
+		</foreach>
+
+		AND STD_TYPE = #{stdType}
+	</select>
+
+	<select id="getEvaluaAreaByDataBaseId" resultMap="BaseResultMap" >
+    select * from (
+      select table_code,table_name,table_cn_name from STD_TABLE
+      where   BUSINESS_CODE in(select business_id  from STD_DATABASE_RELATION where DATABASE_ID = #{dataBaseId,jdbcType=VARCHAR})
+
+        union all
+      select table_code,table_name,table_cn_name from STD_TABLE_CZB
+      where   BUSINESS_CODE in(select business_id  from STD_DATABASE_RELATION  where DATABASE_ID = #{dataBaseId,jdbcType=VARCHAR})
+     )  order by  table_code
+    </select>
+
+
+</mapper>

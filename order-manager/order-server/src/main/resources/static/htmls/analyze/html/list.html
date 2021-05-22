@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>数据库管理</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+		<link rel="stylesheet" href="../prodDbManage.css">
+		<link rel="stylesheet" href="../../../lib/layui_ext/dtree/dtree.css">
+		<link rel="stylesheet" href="../../../lib/layui_ext/dtree/font/dtreefont.css">
+
+		<!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
+		<!--[if lt IE 9]>
+    <script src="../../js-js/html5.min.js"></script>
+    <script src="../../js-js/respond.min.js"></script>
+
+    <![endif]-->
+		<style>
+			.layui-layer-btn0{
+				height: 28px!important;
+				line-height: 28px!important;
+				margin: 5px 5px 0!important;
+				padding: 0 15px!important;
+				border: 1px solid #dedede!important;
+				background-color: #fff!important;
+				color: #333!important;
+				border-radius: 2px!important;
+				font-weight: 400!important;
+				cursor: pointer!important;
+				text-decoration: none!important;
+			}
+			.layui-layer-btn1{
+				border-color: #1E9FFF!important;
+				background-color: #1E9FFF!important;
+				color: #fff!important;
+			}
+
+		/*	.html {
+				　　overflow-x: hidden;
+
+				　　overflow-y: hidden;
+
+			}*/
+
+		</style>
+	</head>
+	<body class="layui-layout-body">
+		<div class="layui-body">
+			<div class="bodyDiv">
+
+
+                <div class="layuiBodyHeaderEstab">
+                    <form style="float: left;" class="layui-form" action="">
+                        <select id="dataSourceId" name="dataSourceId" lay-filter="sourceSelect">
+                            <option value="">请选择数据源</option>
+                        </select>
+                    </form>
+                    <!--<div style="float: right;position: relative;" class="layui-input-inline">
+                        <input id="keywords" type="text" name="title" lay-verify="title" autocomplete="off" placeholder="请输入关键字" class="layui-input">
+                        <i class="layui-icon layui-icon-search searchIcon"></i>
+                    </div>
+                    <button onclick="delMetadata()" type="button" class="layui-btn layui-btn-primary">删除</button>
+                    <button onclick="editMetadata()" type="button" class="layui-btn layui-btn-primary">编辑</button>
+                    <button onclick="addMetadata()" type="button" class="layui-btn">新增</button>-->
+                </div>
+
+                <iframe id="basicHtml"  style="width: 100%;display:none "> </iframe>
+				<!--<table class="layui-hide" id="currentTableId" lay-filter="currentTableFilter"></table>-->
+			</div>
+		</div>
+		<div class="layui-side">
+			<div class="bodyDiv">
+				<div style="width: 100%;" class="layui-input-inline">
+				    <input style="height: 35px;" class="layui-input" id="searchInput" value="" placeholder="输入查询节点内容...">
+				</div>
+				<ul id="demoTree" class="dtree"></ul>
+			</div>
+		</div>
+		<!-- 操作 -->
+		<script type="text/html" id="currentTableBar">
+			<a class="layui-btn layui-btn-primary layui-btn-xs data-count-edit" lay-event="edit" style="color: #2667DF;border: 1px solid #ffffff">数据库管控</a>
+			<!--<a class="layui-btn layui-btn-primary layui-btn-xs data-count-delete" lay-event="delete" style="color: #2667DF;border: 1px solid #ffffff">删除</a>-->
+		</script>
+		<script src="../../../js/common.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../../../lib/layui/layui.js"></script>
+		<script src="../../../ws/request.js"></script>
+		<script src="../../../js/jquery-1.11.1.min.js" type="text/javascript" charset="utf-8"></script>
+		<!--内容-->
+		<script>
+			var dataTiering = '';
+			layui.extend({
+			    dtree: '{/}../../../lib/layui_ext/dtree/dtree'
+			}).use(['element', 'layer', 'form', 'layedit', 'jquery', 'table', 'dtree'], function() {
+				var $ = layui.jquery,
+				    layer = layui.layer,
+				    form = layui.form,
+				    layedit = layui.layedit,
+				    element = layui.element,
+				    table = layui.table,
+				    dtree = layui.dtree
+
+				$(document).ready(function() {
+				    $.ajax({
+				        //请求方式
+				        type: "get",
+				        //请求的媒体类型
+				        contentType: "application/json;charset=UTF-8",
+				        //请求地址
+				        url:  "/manager/dataHierarchy/listLog",
+				        //数据，json字符串
+				        // 请求成功
+				        success: function(result) {
+				            var test=toTree(result.data);
+				            var dataTieringInfo=result.data;
+
+				            var DTree = dtree.render({
+				                elem: "#demoTree",
+				                data: toTree(result.data),
+				                type: 'load',
+				                dataStyle: "layuiStyle",
+				                initLevel: "3",
+				                response: {
+				                    message: "msg",
+				                    statusName: "code", //返回标识（必填）
+				                    statusCode: '0000',
+				                    rootName: "data",
+				                    treeId: "id",
+				                    parentId: "parentId",
+				                    title: 'myName',
+				                    childName: "children"
+				                },
+				                defaultRequest: {
+				                    id: "id",
+				                    parentId: "parentId",
+				                    title: 'myName',
+				                    childName: 'children'
+				                },
+				                done: function(data, obj, first) {
+				                    if (first) {
+				                        //默认点击
+				                        let parmtClick = dtree.click("demoTree", "148409651eb54c718de9102d9d26eb4f");
+				                        $(document).unbind("keydown");
+				                        $(document).keydown(function(event) {
+				                            let Key = event.keyCode;
+				                            if(Key == 13){
+				                                var value = $("#searchInput").val();
+				                                if (value) {
+				                                    var flag = DTree.searchNode(value); // 内置方法查找节点
+				                                    if (!flag) {
+				                                            window.parent.layer.msg("该名称节点不存在！", {
+				                                            icon: 5
+				                                        });
+				                                    }
+				                                } else {
+				                                    DTree.menubarMethod().refreshTree(); // 内置方法刷新树
+				                                }
+				                            }
+				                        });
+				                    }
+				                }
+				            });
+                            dtree.on("node(demoTree)", function(obj) {
+                                let context = obj.param.context;
+                                let id = obj.param.nodeId;
+                                let leng = obj.childParams.length;
+
+								$("#basicHtml").css("display", "none");
+								$("#dataSourceId").empty();
+								form.render(); //菜单渲染 把内容加载进去
+                                if (id && leng == 0) {
+                                    //加载数据源
+                                    $.ajax({
+                                        url: FLOW_URL6 + '/strategy/queryDataSourceByTiering?dataTiering=' + id,
+                                        dataType: 'json',
+                                        type: 'get',
+                                        success: function(data) {
+                                            if (data.data[0]) {
+                                                $("#dataSourceId").empty();
+                                                $('#dataSourceId').append(new Option('请选择数据源', ''));
+                                                $.each(data.data[0].children, function(index, item) {
+                                                    $('#dataSourceId').append(new Option(item.name, item.id)); //往下拉菜单里添加元素
+                                                });
+                                                form.render(); //菜单渲染 把内容加载进去
+                                            };
+                                        }
+                                    });
+                                };
+                            });
+
+				        },
+				        //请求失败，包含具体的错误信息
+				        error: function(e) {
+				        }
+				    });
+				});
+
+                //监听数据源选择
+                form.on('select(sourceSelect)', function(data) {
+                    let val = $('#keywords').val();
+                    let dataSourceId = data.value;
+                    if (dataSourceId) {
+                        //databaseId
+                        $("#basicHtml").css("display", "inline");
+						$("#basicHtml").css("height", "720px");
+                        document.getElementById('basicHtml').src="basic.html?dbId="+dataSourceId;
+                    } else {
+                        layer.msg('请选择数据源！');
+                    };
+                });
+                $(document).keydown(function(event) {
+                    let dataSourceId = $('#dataSourceId option:selected').val();
+                    let Key = event.keyCode;
+                    if (Key == 13) {
+                        let keywords = $('#keywords').val();
+                        tableInsFun(keywords, dataSourceId);
+                    };
+                });
+                $('.searchIcon').click(function() {
+                    let dataSourceId = $('#dataSourceId option:selected').val();
+                    let keywords = $('#keywords').val();
+                    tableInsFun(keywords, dataSourceId);
+                });
+
+
+
+				function searchTable(dataTiering){
+					var searchInfo = $("#keywords");
+					/**
+					 * 监听搜索操作
+					 */
+					form.on('submit(data-search-btn)', function(data) {
+						var main = '148409651eb54c718de9102d9d26eb4f';
+						if (dataTiering !== null && dataTiering !== undefined && dataTiering !== main) {
+							table.reload('idDataTieringTable', {
+								url: FLOW_URL5 + '/strategy/queryDataSource?dataTiering=' + dataTiering,
+								where: {
+									keyword: searchInfo.val()
+								}
+							}, 'data');
+						} else {
+							table.reload('idCurrentTable', {
+								url: FLOW_URL5 + '/strategy/queryDataSource',
+								where: {
+									keyword: searchInfo.val()
+								}
+							}, 'data');
+						}
+						return false;
+					});
+				};
+				/**
+				 * 新增数据源
+				 */
+				var i = 1;
+				$("#addDatasource").click(function() {
+					var iframe_add;
+					var index = layer.open({
+						title: '添加数据源',
+						id: 'addDatasourceLayer',
+						type: 2,
+						shade: 0.2,
+						btn: ['测试连接', '确定', '取消'],
+						resize: false,
+						shadeClose: true,
+						area: ['40%', '70%'],
+						content: './add.html',
+						success: function(layero) {
+							i++;
+							iframe_add = document.getElementById('layui-layer-iframe' + i);
+						},
+						yes: function(index) {
+							iframe_add.contentWindow.postMessage('test', '*');
+							window.addEventListener('message', function(event) {
+								var eventData = event.data;
+								var res = eventData.split('-');
+								if (res[0] === 'test_success') {
+									i++;
+									layer.alert(res[1], function(index) {
+										layer.close(index);
+									});
+								} else if (res[0] === 'test_error') {
+									if(res[1]!==null&&res[1]!==undefined){
+										i++;
+										layer.alert(res[1], function(index) {
+											layer.close(index);
+										});
+									}else {
+										i++;
+										layer.alert("测试失败，请联系管理员", function(index) {
+											layer.close(index);
+										});
+
+									}
+								}
+							});
+
+						},
+						btn2: function(index) {
+							iframe_add.contentWindow.postMessage('click', '*');
+							window.addEventListener('message', function(event) {
+								var eventData = event.data;
+								var res = eventData.split('-');
+								if (res[0] === 'success') {
+									i++;
+									layer.alert(res[1],function (index) {
+										layer.close(index);
+									});
+									layer.close(index);
+									table.reload('idDataTieringTable',{});
+								} else if (res[0] === 'error') {
+									if(res[1]!==null&&res[1]!==undefined){
+										i++;
+										layer.alert(res[1], function(index) {
+											layer.close(index);
+										});
+									}else {
+										i++;
+										layer.alert("新增失败，请联系管理员", function(index) {
+											layer.close(index);
+										});
+									}
+								}
+							});
+							return false;
+						}
+					});
+					$(window).on("resize", function() {
+						layer.full(index);
+					});
+				});
+
+				//监听表格复选选择框
+				table.on('checkbox(currentTableFilter)', function(obj) {
+				});
+
+				table.on('tool(currentTableFilter)', function(obj) {
+					var data = obj.data;
+					if (obj.event === 'edit') {
+						var iframe_edit;
+						var index = layer.open({
+							title: '标准库管控',
+							id: 'addDatasourceLayer',
+							type: 2,
+							shade: 0.2,
+						//	btn: ['测试连接', '确定', '取消'],
+							resize: false,
+							shadeClose: true,
+							area: ['100%', '100%'],
+							content: './basic.html?dbId=' + data.id,
+							success: function(layero) {
+								i++;
+								iframe_edit = document.getElementById('layui-layer-iframe' + i);
+							},
+							yes: function(index) {
+								iframe_edit.contentWindow.postMessage('test', '*');
+								window.addEventListener('message', function(event) {
+									var eventData = event.data;
+									var res = eventData.split('-');
+									if (res[0] === 'test_success') {
+										i++;
+										layer.alert(res[1], function(index) {
+											layer.close(index);
+										});
+									} else if (res[0] === 'test_error') {
+										if(res[1]!==null&&res[1]!==undefined){
+											i++;
+											layer.alert(res[1], function(index) {
+												layer.close(index);
+											});
+										}else {
+											i++;
+											layer.alert('测试失败，请联系管理员', function(index) {
+												layer.close(index);
+											});
+
+										}
+									}
+								});
+							},
+							btn2: function(index) {
+								iframe_edit.contentWindow.postMessage('click', '*');
+								window.addEventListener('message', function(event) {
+									var eventData = event.data;
+									var res = eventData.split('-');
+									if (res[0] === 'update_success') {
+										i++;
+										layer.alert(res[1], function(index) {
+											table.reload('idDataTieringTable',{});
+											layer.close(index);
+										});
+										layer.close(index);
+									} else if (res[0] === 'update_error') {
+										if(res[1]!==null&&res[1]!==undefined){
+											i++;
+											layer.alert(res[1], function(index) {
+												layer.close(index);
+											});
+										}else {
+											i++;
+											layer.alert("更新失败，请联系管理员", function(index) {
+												layer.close(index);
+											});
+
+										}
+									}
+								});
+								return false;
+							}
+						});
+
+						$(window).on("resize", function() {
+							layer.full(index);
+						});
+					} else if (obj.event === 'delete') {
+						i++;
+						layer.confirm('确定删除', function(index) {
+							$.ajax({
+								type: "post",
+								url: FLOW_URL5 + "/strategy/delDataSource?id=" + data.id,
+								dataType: 'text',
+								cache: false,
+								contentType: "application/json",
+								data: JSON.stringify(data.id),
+								success: function(redata) {
+									i++;
+									layer.alert(redata);
+									if (redata === '删除数据源成功') {
+										obj.del();
+									}
+									layer.close(index);
+								}
+							});
+						});
+					}
+				})
+			})
+
+			function toTree(data) { // 删除 所有 children,以防止多次调用
+			    data.forEach(function(item) {
+			        delete item.children;
+			    }); // 将数据存储为 以 id 为 KEY 的 map 索引数据列
+			    var map = {};
+			    data.forEach(function(item) {
+			        item.label = item.myName;
+			        item.name = item.myName;
+			        map[item.id] = item;
+			    });
+			    var val = [];
+			    data.forEach(function(item) { // 以当前遍历项，的pid,去map对象中找到索引的id
+			        var parent = map[item.parentId]; // 如果找到索引，那么说明此项不在顶级当中,那么需要把此项添加到，他对应的父级中
+			        if (parent) {
+			            (parent.children || (parent.children = [])).push(item);
+			        } else { //如果没有在map中找到对应的索引ID,那么直接把 当前的item添加到 val结果集中，作为顶级
+			            val.push(item);
+			        }
+			    });
+			    return val;
+			}
+		</script>
+	</body>
+</html>

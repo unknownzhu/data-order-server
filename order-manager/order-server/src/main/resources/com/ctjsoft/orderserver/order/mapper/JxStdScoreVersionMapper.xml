@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ctjsoft.orderserver.analyze.mapper.JxStdScoreVersionMapper">
+    <resultMap id="ScoreRelationMap" type="com.ctjsoft.orderserver.analyze.domain.JxScoreRelationDetailVo">
+        <id column="ID" jdbcType="VARCHAR" property="id"/>
+        <result column="NAME" jdbcType="VARCHAR" property="name"/>
+        <result column="CODE" jdbcType="VARCHAR" property="code"/>
+        <result column="SCORE" jdbcType="NUMERIC" property="score"/>
+        <result column="CONTENT_DES" jdbcType="VARCHAR" property="contentDes"/>
+        <result column="DEFAULT_VALUE" jdbcType="NUMERIC" property="defaultValue"/>
+        <result column="PROPORTION" jdbcType="NUMERIC" property="proportion"/>
+        <result column="SCORE_TYPE" jdbcType="NUMERIC" property="scoreType"/>
+        <result column="STD_TYPE" jdbcType="NUMERIC" property="stdType"/>
+
+    </resultMap>
+    <sql id="Base_Column_List">
+        ID, SCORE_VERSION, SCODE_NAME, SUM_SCORE
+    </sql>
+    <sql id="Score_Relation_List">
+        ssc.ID, CODE, NAME, SCORE, CONTENT_DES, DEFAULT_VALUE, PROPORTION
+    </sql>
+    <select id="jxSelectRelation" resultMap="ScoreRelationMap">
+        select
+        <include refid="Score_Relation_List"/>
+        from STD_SCORE_CONTENT ssc left join STD_SCORE_RELATION ssr on ssc.ID = ssr.SCORE_CONTENT_ID
+        where ssc.PARENT_CODE = #{parentCode,jdbcType=VARCHAR}
+        order by ssc.CONTENT_ORDER
+    </select>
+
+
+    <select id="jxSecondLevelSelectRelation" resultMap="ScoreRelationMap">
+        select
+        ssc.ID, ssc.CODE, ssc.NAME, ssr.SCORE, ssc.CONTENT_DES, ssc.DEFAULT_VALUE,
+         ssr.PROPORTION,ssc.parent_code,temp.NAME as score_type,ssc.std_type
+        FROM STD_SCORE_CONTENT ssc
+        LEFT JOIN STD_SCORE_RELATION   ssr
+        ON ssc.ID = ssr.SCORE_CONTENT_ID
+        left join STD_SCORE_CONTENT temp
+        on  ssc.parent_code = temp.code
+
+        WHERE ssc.PARENT_CODE
+        in(
+        select  ssc.id
+        FROM STD_SCORE_CONTENT ssc
+        WHERE ssc.PARENT_CODE = #{parentCode,jdbcType=VARCHAR}
+        )
+        <if test="mark != null">
+            and
+            (
+                ssc.name like concat(concat('%',#{mark,jdbcType=VARCHAR}),'%')
+                or  ssc.content_des like concat(concat('%',#{mark,jdbcType=VARCHAR}),'%')
+            )
+        </if>
+        order by temp.NAME
+    </select>
+
+</mapper>

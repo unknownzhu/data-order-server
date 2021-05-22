@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ctjsoft.orderserver.order.mapper.CronJobMapper">
+    
+    <resultMap type="com.ctjsoft.orderserver.order.domain.CronJobVo" id="CronJobResult">
+        <result property="id"    column="ID"    />
+        <result property="cronId"    column="CRON_ID"    />
+        <result property="orderId"    column="ORDER_ID"    />
+        <result property="createTime"    column="CREATE_TIME"    />
+        <result property="creatorId"    column="CREATOR_ID"    />
+        <result property="status"    column="STATUS"    />
+        <result property="updateTime"    column="UPDATE_TIME"    />
+
+        <result property="cronName"    column="CRON_NAME"    />
+        <result property="cronText"    column="CRON_TEXT"    />
+        <result property="orderName"    column="ORDER_NAME"    />
+        <result property="creatorName"    column="CREATOR_NAME"    />
+    </resultMap>
+
+    <sql id="selectCronJobVo">
+        select ID, CRON_ID, ORDER_ID, CREATE_TIME, CREATOR_ID, STATUS, UPDATE_TIME   from jx_cron_job
+    </sql>
+
+    <select id="selectCronJobList" parameterType="com.ctjsoft.orderserver.order.domain.CronJob" resultMap="CronJobResult">
+        <include refid="selectCronJobVo"/>
+        <where>
+            <if test="id != null  and id != ''"> and ID = #{id}</if>
+            <if test="cronId != null  and cronId != ''"> and CRON_ID = #{cronId}</if>
+            <if test="orderId != null  and orderId != ''"> and ORDER_ID = #{orderId}</if>
+            <if test="createTime != null "> and CREATE_TIME = #{createTime}</if>
+            <if test="creatorId != null  and creatorId != ''"> and CREATOR_ID = #{creatorId}</if>
+            <if test="status != null  and status != ''"> and STATUS = #{status}</if>
+            <if test="updateTime != null "> and UPDATE_TIME = #{updateTime}</if>
+        </where>
+        order by UPDATE_TIME desc
+    </select>
+
+
+    <select id="linkPageData" parameterType="com.ctjsoft.orderserver.order.domain.CronJobVo" resultMap="CronJobResult">
+
+        select a.ID, a.CRON_ID, a.ORDER_ID, a.CREATE_TIME, a.CREATOR_ID, a.STATUS, a.UPDATE_TIME,
+        b.name as cron_Name,b.cron as cron_Text,c.name as order_Name,d.user_real_name as CREATOR_NAME
+        from jx_cron_job a left join jx_cron b on a.cron_id = b.id left join jx_orders c on a.order_id = c.id
+            left join datagear_user d on  d.user_id = a.creator_id
+
+        <where>
+            <if test="id != null  and id != ''"> and a.ID = #{id}</if>
+            <if test="cronId != null  and cronId != ''"> and a.CRON_ID = #{cronId}</if>
+            <if test="orderId != null  and orderId != ''"> and a.ORDER_ID = #{orderId}</if>
+            <if test="createTime != null "> and a.CREATE_TIME = #{createTime}</if>
+            <if test="creatorId != null  and creatorId != ''"> and a.CREATOR_ID = #{creatorId}</if>
+            <if test="status != null  and status != ''"> and a.STATUS = #{status}</if>
+            <if test="updateTime != null "> and a.UPDATE_TIME = #{updateTime}</if>
+
+            <if test="cronName != null "> and b.name like '%' ||#{cronName} || '%' </if>
+            <if test="cronText != null "> and b.cron like '%' ||#{cronText} || '%' </if>
+            <if test="orderName != null ">   and c.name   like '%' ||#{orderName} || '%'</if>
+            <if test="creatorName != null "> and d.user_real_name  like '%' ||#{creatorName} || '%' </if>
+        </where>
+        order by a.UPDATE_TIME desc
+    </select>
+
+
+    <select id="selectCronJobById" parameterType="String" resultMap="CronJobResult">
+        <include refid="selectCronJobVo"/>
+        where ID = #{id}
+        order by UPDATE_TIME desc
+    </select>
+
+    <insert id="insertCronJob" parameterType="com.ctjsoft.orderserver.order.domain.CronJob">
+        insert into jx_cron_job
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">ID,</if>
+            <if test="cronId != null">CRON_ID,</if>
+            <if test="orderId != null">ORDER_ID,</if>
+            <if test="createTime != null">CREATE_TIME,</if>
+            <if test="creatorId != null">CREATOR_ID,</if>
+            <if test="status != null">STATUS,</if>
+            <if test="updateTime != null">UPDATE_TIME,</if>
+
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="cronId != null">#{cronId},</if>
+            <if test="orderId != null">#{orderId},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="creatorId != null">#{creatorId},</if>
+            <if test="status != null">#{status},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+
+         </trim>
+    </insert>
+
+    <update id="updateCronJob" parameterType="com.ctjsoft.orderserver.order.domain.CronJob">
+        update jx_cron_job
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="cronId != null">CRON_ID = #{cronId},</if>
+            <if test="orderId != null">ORDER_ID = #{orderId},</if>
+            <if test="createTime != null">CREATE_TIME = #{createTime},</if>
+            <if test="creatorId != null">CREATOR_ID = #{creatorId},</if>
+            <if test="status != null">STATUS = #{status},</if>
+            <if test="updateTime != null">UPDATE_TIME = #{updateTime},</if>
+        </trim>
+        where ID = #{id}
+    </update>
+
+    <delete id="deleteCronJobById" parameterType="String">
+        delete from jx_cron_job where ID = #{id}
+    </delete>
+
+    <delete id="deleteCronJobByIds" parameterType="String">
+        delete from jx_cron_job where ID in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

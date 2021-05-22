@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+<head>
+     <title>新增工单</title>
+    <link rel="stylesheet" href="../../admin/css/load.css"/>
+    <link rel="stylesheet" href="../../admin/css/admin.css"/>
+    <link rel="stylesheet" href="../../component/pear/css/pear.css">
+    <link rel="stylesheet" href="../../component/zTree_v3/css/zTreeStyle/zTreeStyle.css">
+    <script src="../../component/layui/layui.js"></script>
+    <script src="../../component/pear/pear.js"></script>
+    <script src="../../component/jquery.min.js"></script>
+    <script src="../../component/zTree_v3/js/jquery.ztree.core.js"></script>
+    <script src="../common.js"></script>
+    <script src="../request.js"></script>
+</head>
+<body>
+    <form class="layui-form">
+        <div class="mainBox">
+            <div class="main-container">
+            <div class="layui-form-item">
+                <label class="layui-form-label">工单主键：</label>
+                <div class="layui-input-block">
+                    <input type="text" name="id" placeholder="请输入工单主键" class="layui-input" />
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">工单名：</label>
+                <div class="layui-input-block">
+                    <input type="text" name="name" placeholder="请输入工单名" class="layui-input" />
+                </div>
+            </div>
+                <div class="layui-form-item layui-form-text">
+                    <label class="layui-form-label">sql 语句：</label>
+                    <div class="layui-input-block">
+                        <textarea name="sqls" placeholder="请输入内容" style="height: 200px;" class="layui-textarea"></textarea>
+                    </div>
+                </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">申请原因：</label>
+                <div class="layui-input-block">
+                    <input type="text" name="reason" placeholder="请输入申请原因" class="layui-input" />
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">影响行数：</label>
+                <div class="layui-input-block">
+                    <input type="text" name="rowCount" placeholder="请输入影响行数" class="layui-input" />
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">数据库id：</label>
+                <div class="layui-input-block">
+                    <input type="text" name="dbId" placeholder="请输入数据库id" class="layui-input" />
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">定时任务</label>
+                <div class="layui-input-block">
+                    <input type="text" name="isSchedule" placeholder="定时任务" class="layui-input" />
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">cron表达式：</label>
+                <div class="layui-input-block">
+                    <input type="text" name="cron" placeholder="请输入cron表达式" class="layui-input" />
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">状态</label>
+                <div class="layui-input-block">
+                    <div class="radio-box" radio-dict-code="input" name="reviewStatus">
+                    </div>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">执行状态</label>
+                <div class="layui-input-block">
+                    <div class="radio-box" radio-dict-code="input" name="executeStatus">
+                    </div>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">流程id：</label>
+                <div class="layui-input-block">
+                    <input type="text" name="flowId" placeholder="请输入流程id" class="layui-input" />
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">送审时间：</label>
+                <div class="col-sm-8">
+                    <div class="input-group date">
+                        <input type="text" name="pushTime" class="layui-input" id="pushTime"  lay-required>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">审核时间：</label>
+                <div class="col-sm-8">
+                    <div class="input-group date">
+                        <input type="text" name="reviewTime" class="layui-input" id="reviewTime"  lay-required>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">创建人id：</label>
+                <div class="layui-input-block">
+                    <input type="text" name="createorId" placeholder="请输入创建人id" class="layui-input" />
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">送审人id：</label>
+                <div class="layui-input-block">
+                    <input type="text" name="pusherId" placeholder="请输入送审人id" class="layui-input" />
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">审核人id：</label>
+                <div class="layui-input-block">
+                    <input type="text" name="reviewerId" placeholder="请输入审核人id" class="layui-input" />
+                </div>
+            </div>
+            </div>
+        </div>
+        <div class="bottom">
+            <div class="button-container">
+                <button type="submit" class="layui-btn layui-btn-normal layui-btn-sm" lay-submit="" lay-filter="orders-save">
+                    <i class="layui-icon layui-icon-ok"></i>
+                    提交
+                </button>
+                <button type="reset" class="layui-btn layui-btn-primary layui-btn-sm">
+                    <i class="layui-icon layui-icon-refresh"></i>
+                    重置
+                </button>
+            </div>
+        </div>
+    </form>
+</body>
+<th:block th:include="include :: footer" />
+<script th:inline="javascript">
+
+    layui.use(['form', 'jquery','laydate'], function () {
+        let form = layui.form;
+        let $ = layui.jquery;
+        let laydate = layui.laydate;
+
+        let prefix = "/data-order-server/system/orders/"
+
+                        laydate.render({
+                            elem: '#pushTime'
+                        });
+                        laydate.render({
+                            elem: '#reviewTime'
+                        });
+
+        form.on('submit(orders-save)', function (data) {
+            for(var key in data.field){
+                var type=$(data.form).find("input[name='"+key+"']").attr("type");
+                if(type=="checkbox"){
+                    var value="";
+                    $(data.form).find("input[name='"+key+"']:checked").each(function(){
+                        value+=$(this).val()+",";
+                    })
+                    if(value!=""){
+                        value=value.substr(0,value.length-1);
+                        data.field[key]=value;
+                    }
+
+                }
+            }
+            $.ajax({
+                url: prefix+'save',
+                data: JSON.stringify(data.field),
+                dataType: 'json',
+                contentType: 'application/json',
+                type: 'post',
+                success: function (result) {
+                    if (result.success) {
+                        layer.msg(result.msg, {icon: 1, time: 1000}, function () {
+                            parent.layer.close(parent.layer.getFrameIndex(window.name));
+                            parent.layui.table.reload("orders-table");
+                        });
+                    } else {
+                        layer.msg(result.msg, {icon: 2, time: 1000});
+                    }
+                }
+            })
+            return false;
+        });
+    });
+</script>
+</html>

@@ -1,0 +1,95 @@
+[
+  {
+    "name": "MySQL",
+    "driverclassnames": "com.mysql.cj.jdbc.Driver ,com.mysql.jdbc.Driver",
+    "template": "jdbc:mysql://{host}:{port}/{name}",
+    "port": "3306"
+  },
+  {
+    "name": "Hive",
+    "driverclassnames": "org.apache.hive.jdbc.HiveDriver",
+    "template": "jdbc:hive2://{host}:{port}/{name}",
+    "port": "10000",
+    "name": "default"
+  },
+  {
+    "name": "Kylin",
+    "driverclassnames": "org.apache.kylin.jdbc.Driver",
+    "template": "jdbc:kylin://{host}:{port}/{name}",
+    "port": "7070"
+  },
+  {
+    "name": "Presto",
+    "driverclassnames": "com.facebook.presto.jdbc.PrestoDriver ,io.prestosql.jdbc.PrestoDriver",
+    "template": "jdbc:presto://{host}:{port}/{name}"
+  },
+  {
+    "name": "ClickHouse",
+    "driverclassnames": "ru.yandex.clickhouse.ClickHouseDriver",
+    "template": "jdbc:clickhouse://{host}:{port}/{name}",
+    "port": "8123"
+  },
+  {
+    "name": "Impala",
+    "driverclassnames": "com.cloudera.impala.jdbc41.Driver",
+    "template": "jdbc:impala://{host}:{port}/{name}"
+  },
+  {
+    "name": "Phoenix",
+    "driverclassnames": "org.apache.phoenix.jdbc.PhoenixDriver",
+    "template": "jdbc:phoenix://{host}:{port}/{name}"
+  },
+  {
+    "name": "Drill",
+    "driverclassnames": "org.apache.drill.jdbc.Driver",
+    "template": "jdbc:drill:zk={host}:{port}/{name}",
+    "port": "2181"
+  },
+  {
+    "name": "Derby",
+    "driverclassnames": "org.apache.derby.jdbc.ClientDriver",
+    "template": "jdbc:derby://{host}:{port}/{name}",
+    "port": "1527"
+  },
+  {
+    "name": "SQLite",
+    "driverclassnames": "org.sqlite.JDBC",
+    "template": "jdbc:sqlite:{name}"
+  },
+  {
+    "name": "PostgreSQL",
+    "driverclassnames": "org.postgresql.Driver",
+    "template": "jdbc:postgresql://{host}:{port}/{name}",
+    "port": "5432"
+  },
+  {
+    "name": "Oracle",
+    "driverclassnames": "oracle.jdbc.driver.OracleDriver",
+    "template": "jdbc:oracle:thin:@{host}:{port}/{name}",
+    "port": "1521"
+  },
+  {
+    "name": "SQL Server",
+    "driverclassnames": "com.microsoft.sqlserver.jdbc.SQLServerDriver ,com.microsoft.jdbc.sqlserver.SQLServerDriver",
+    "template": "jdbc:sqlserver://{host}:{port};DatabaseName={name}",
+    "port": "1433"
+  },
+  {
+    "name": "DB2",
+    "driverclassnames": "com.ibm.db2.jdbc.net.DB2Driver",
+    "template": "jdbc:db2://{host}:{port}/{name}",
+    "port": "50000"
+  },
+  {
+    "name": "Sybase",
+    "driverclassnames": "com.sybase.jdbc3.jdbc.SybDriver ,com.sybase.jdbc2.jdbc.SybDriver",
+    "template": "jdbc:sybase:Tds:{host}:{port}/{name}",
+    "port": "5000"
+  },
+  {
+    "name": "Elasticsearch",
+    "driverclassnames": "org.elasticsearch.xpack.sql.jdbc.EsDriver ,org.elasticsearch.xpack.sql.jdbc.jdbc.JdbcDriver",
+    "template": "jdbc:es://http://{host}:{port}",
+    "port": "9200"
+  }
+]

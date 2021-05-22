@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div style="font-size: 20px">
+    <div id="main"></div>
+
+</div>
+<script>
+
+    var SERVER_NAME = '';
+   // if (location.host.substr(0, 6) == '10.108') {
+         SERVER_NAME = SERVER_NAME + "/data-order-server";
+   // }
+    //
+    let a = document.createElement("a");//创建一个对象（标签）命名为btn
+    a.innerHTML =
+        "    <br><a href='" + SERVER_NAME + "/driverEntity/query' target='_blank'> 数据源驱动程序 </a>\n" +
+        "    <br><a href='" + SERVER_NAME + "/schemaUrlBuilder/editScriptCode' target='_blank'> 数据源URL构建器 </a>\n" +
+        "    <br><a href='" + SERVER_NAME + "/authorization/data_source/query' target='_blank'> 数据源授权 </a>\n" +
+        "    <br><a href='" + SERVER_NAME + "/schema/query' target='_blank'> 数据源配置 </a>\n" +
+
+
+        "    <br><a href='" + SERVER_NAME + "/user/pagingQuery' target='_blank'> 用户 </a>\n" +
+        "    <br><a href='" + SERVER_NAME + "/role/pagingQuery' target='_blank'> 角色 </a>\n" +
+        "    <br><a href='" + SERVER_NAME + "/user/personalSet' target='_blank'> 个人设置 </a>\n" +
+        "    <br> <br> <br>" +
+
+
+        "    <br><a href='" +/* SERVER_NAME + "/htmls/rander.html?url=" +*/ SERVER_NAME + "/htmls/orders/main.html' target='_blank'>工单管理 </a>\n" +
+        "    <br><a href='" +/* SERVER_NAME + "/htmls/rander.html?url=" +*/ SERVER_NAME + "/htmls/orderReviewLog/main.html' target=ank'> 工单送审日志</a>\n" +
+　 "    <br> <br> <br>\n" +
+        "    <br><a href='" +/* SERVER_NAME + "/htmls/rander.html?url=" +*/ SERVER_NAME + "/' target='_blank'>查询工具 </a>\n" +
+    /*    "    <br><a href='" +/!* SERVER_NAME + "/htmls/rander.html?url=" +*!/ SERVER_NAME + "/analyze.html' target=ank'>数据库管控</a>\n" +*/
+        "    <br><a href='" +/* SERVER_NAME + "/htmls/rander.html?url=" +*/ SERVER_NAME + "/htmls/analyze.html' target=ank'>数据库管控111</a>\n" +
+        "    <br><a href='" +/* SERVER_NAME + "/htmls/rander.html?url=" +*/ SERVER_NAME + "/htmls/commonSql/main.html' target=ank'>常用语句 </a>\n" +
+        "    <br><a href='" +/* SERVER_NAME + "/htmls/rander.html?url=" +*/ SERVER_NAME + "/htmls/historySql/main.html' target=ank'>历史语句 </a>\n" +
+        "    <br><a href='" +/* SERVER_NAME + "/htmls/rander.html?url=" +*/ SERVER_NAME + "/htmls/commonSqlType/main.html' target=ank'>语句类型 </a>\n" +
+        "    <br><a href='" +/* SERVER_NAME + "/htmls/rander.html?url=" +*/ SERVER_NAME + "/htmls/cron/main.html' target=ank'> 定时表达式配置 </a>\n" +
+        "    <br><a href='" +/* SERVER_NAME + "/htmls/rander.html?url=" +*/ SERVER_NAME + "/htmls/cronJob/main.html' target=ank'> 定时任务管理 </a>\n" +
+        "    <br><a href='" +/* SERVER_NAME + "/htmls/rander.html?url=" +*/ SERVER_NAME + "/htmls/cronJobLog/main.html' target=ank'> 定时任务日志 </a>\n" +
+        "    <br><a href='" +/* SERVER_NAME + "/htmls/rander.html?url=" +*/ SERVER_NAME + "/htmls/flow/main.html' target=ank'> 流程管理 </a>\n" +
+　  "    <br> <br> <br>\n" +
+        "    <br><a href='" +/* SERVER_NAME + "/htmls/rander.html?url=" +*/ SERVER_NAME + "htmls/orderSqlLog/main.html?username=admin&password=1' target=ank'> orderSqlLog/main.html </a>";
+
+    document.getElementById("main").append(a);
+
+</script>
+</body>
+</html>

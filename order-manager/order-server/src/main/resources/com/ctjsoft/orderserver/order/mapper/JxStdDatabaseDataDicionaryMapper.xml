@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ctjsoft.orderserver.analyze.mapper.JxStdDatabaseDataDicionaryMapper">
+    <resultMap id="BaseResultMap" type="com.ctjsoft.orderserver.analyze.domain.JxStdDatabaseDataDicionary">
+        <id column="ID" jdbcType="VARCHAR" property="id"/>
+        <result column="TABLE_NAME" jdbcType="VARCHAR" property="tableName"/>
+        <result column="CHINESE_NAME" jdbcType="VARCHAR" property="chineseName"/>
+        <result column="TYPE" jdbcType="VARCHAR" property="type"/>
+        <result column="ENTITY_NAME" jdbcType="VARCHAR" property="entityName"/>
+        <result column="LOGICAL_TABLE" jdbcType="VARCHAR" property="logicalTable"/>
+        <result column="USERNAME" jdbcType="VARCHAR" property="username"/>
+        <result column="BUSINESS_CLASSFi" jdbcType="VARCHAR" property="businessClassfi"/>
+        <result column="DETECTION_RESULT" jdbcType="VARCHAR" property="detectionResult"/>
+        <result column="ILLUSTRATE" jdbcType="VARCHAR" property="illustrate"/>
+        <result column="DATABASE_ID" jdbcType="VARCHAR" property="databaseId"/>
+        <result column="TABLE_ROW_SIZE" jdbcType="VARCHAR" property="tableRowSize"/>
+        <result column="TABLE_ROW_CHANGE_TIME" jdbcType="VARCHAR" property="tableRowChangeTime"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        ID, CODE, NAME, TYPE, DRIVER, URL, USERNAME, PWD, DES, MODEL_NAME, BUSINESS, VERSION,DATABASE_ID,TABLE_ROW_SIZE,TABLE_ROW_CHANGE_TIME
+    </sql>
+
+    <select id="batchInsert" parameterType="java.util.List">
+      insert all
+        <foreach collection='list' item='item' separator=''>
+            into std_database_data_dicionary (ID,TABLE_NAME,CHINESE_NAME,DATABASE_ID) values
+            (#{item.id},#{item.tableName},#{item.chineseName},#{item.databaseId})
+      </foreach>
+      select * from dual
+    </select>
+
+    <update id="update" parameterType="com.ctjsoft.orderserver.analyze.domain.JxStdDatabaseDataDicionary">
+        update std_database_data_dicionary
+        <set>
+            <if test="chineseName != null">
+                CHINESE_NAME = #{chineseName,jdbcType=VARCHAR},
+            </if>batchUpdate
+            <if test="type != null">
+                type = #{type,jdbcType=VARCHAR},
+            </if>
+            <if test="entityName != null">
+                ENTITY_NAME = #{entityName,jdbcType=VARCHAR},
+            </if>
+            <if test="logicalTable != null">
+                LOGICAL_TABLE = #{logicalTable,jdbcType=VARCHAR},
+            </if>
+            <if test="businessClassfi != null">
+                BUSINESS_CLASSFi = #{businessClassfi,jdbcType=VARCHAR},
+            </if>
+            <if test="detectionResult != null">
+                DETECTION_RESULT = #{detectionResult,jdbcType=VARCHAR},
+            </if>
+            <if test="illustrate != null">
+                ILLUSTRATE = #{illustrate,jdbcType=VARCHAR},
+            </if>
+            <if test="tableRowSize != null">
+                TABLE_ROW_SIZE = #{tableRowSize,jdbcType=VARCHAR},
+            </if>
+            <if test="tableRowChangeTime != null">
+                TABLE_ROW_CHANGE_TIME = #{tableRowChangeTime,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where ID = #{id,jdbcType=VARCHAR}
+    </update>
+    <select id="list" resultMap="BaseResultMap">
+        select * from std_database_data_dicionary
+    </select>
+    <select id="loadByDatabaseId" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select * from std_database_data_dicionary where DATABASE_ID = #{databaseId}
+    </select>
+    <!--批量修改-->
+    <update id="batchUpdate" parameterType="java.util.List">
+        <foreach collection="list" index="index" item="item" open="begin" separator=";" close=";end;">
+            UPDATE std_database_data_dicionary
+            <set>
+                <if test="item.chineseName != null">
+                    CHINESE_NAME = #{item.chineseName,jdbcType=VARCHAR},
+                </if>
+                detection_result = '1'
+            </set>
+            WHERE ID=#{item.id,jdbcType=VARCHAR}
+        </foreach>
+    </update>
+
+
+    <!--批量修改表数据行数-->
+    <update id="tableRowNumChange" parameterType="java.util.List">
+        <foreach collection="list" index="index" item="item" open="begin" separator=";" close=";end;">
+            UPDATE std_database_data_dicionary
+            <set>
+                TABLE_ROW_SIZE = #{item.tableRowSize,jdbcType=VARCHAR},
+                TABLE_ROW_CHANGE_TIME = #{item.tableRowChangeTime,jdbcType=VARCHAR},
+            </set>
+            WHERE TABLE_NAME=#{item.tableName,jdbcType=VARCHAR} and DATABASE_ID =  #{item.databaseId}
+        </foreach>
+    </update>
+    <!--批量删除-->
+    <delete id="batchDelete" parameterType="java.util.List">
+        delete from std_database_data_dicionary where id in
+        <foreach collection="list" item="item" index="index" separator="," open="(" close=")">
+            #{item.id}
+        </foreach>
+    </delete>
+
+    <select id="listByGroupCount" resultType="java.util.HashMap">
+        select DATABASE_ID as key,count(1) as value from STD_DATABASE_DATA_DICIONARY GROUP BY DATABASE_ID
+    </select>
+
+    <select id="loadByDbIdAndKeyword" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select * from std_database_data_dicionary where DATABASE_ID = #{databaseId} and (CHINESE_NAME like '%${keyword}%' or TABLE_NAME like '%${keyword}%')
+    </select>
+
+    <select id="selectByDbIdAndTableName" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select * from std_database_data_dicionary where DATABASE_ID = #{databaseId} and   TABLE_NAME =   #{tableName}
+    </select>
+
+
+
+    <select id="loadByDbIdAndKeywordPage" parameterType="java.lang.String" resultMap="BaseResultMap">
+
+        SELECT * FROM(
+        SELECT ROWNUM WN,RN.* FROM (
+             select  *  from std_database_data_dicionary
+             where DATABASE_ID = #{databaseId}
+
+             <if test="keyword !=null and keyword!='' ">
+                 and (CHINESE_NAME like '%${keyword}%' or TABLE_NAME like '%${keyword}%')
+             </if>
+
+        )RN
+        )WN where  WN &lt;=  #{page} * #{limit} AND WN > #{limit} * (#{page} -1)
+    </select>
+
+
+
+    <select id="loadByDbIdAndKeywordCount" parameterType="java.lang.String" resultType="java.lang.String">
+        select count(1) from std_database_data_dicionary
+        where DATABASE_ID = #{databaseId}
+        <if test="keyword !=null and keyword!='' ">
+            and (CHINESE_NAME like '%${keyword}%' or TABLE_NAME like '%${keyword}%')
+        </if>
+
+    </select>
+
+
+
+
+
+</mapper>

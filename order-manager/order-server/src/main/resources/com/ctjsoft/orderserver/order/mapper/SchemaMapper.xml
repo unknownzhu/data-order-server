@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ctjsoft.orderserver.order.mapper.SchemaMapper">
+
+
+    <select id="selectTableSpace"    >
+        select schema_id  as schemaId,
+			 TABLESPACE_NAME_1 as  tablespaceName,
+			 total_1 as total,
+			 used_1 as used,
+			 free_1 as free
+			 from DATAGEAR_SCHEMA
+    </select>
+
+    <update id="updateDbSpsce" parameterType="String" >
+        update DATAGEAR_SCHEMA
+        set tablespace_name_1 = #{tablespace_name},
+            total_1 = #{total},
+            used_1 = #{used},
+            free_1 = #{free}
+        where schema_id = #{id}
+    </update>
+
+    <update id="updateDbStatus" parameterType="String" >
+        update DATAGEAR_SCHEMA
+        set status = #{status}
+        where schema_id = #{id}
+    </update>
+
+
+</mapper>

@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ctjsoft.orderserver.order.mapper.CommonSqlTypeMapper">
+    
+    <resultMap type="com.ctjsoft.orderserver.order.domain.CommonSqlType" id="CommonSqlTypeResult">
+        <result property="id"    column="ID"    />
+        <result property="name"    column="NAME"    />
+        <result property="isNormal"    column="IS_NORMAL"    />
+    </resultMap>
+
+    <sql id="selectCommonSqlTypeVo">
+        select ID, NAME,IS_NORMAL from jx_common_sql_type
+    </sql>
+
+    <select id="selectCommonSqlTypeList" parameterType="com.ctjsoft.orderserver.order.domain.CommonSqlType" resultMap="CommonSqlTypeResult">
+        <include refid="selectCommonSqlTypeVo"/>
+        <where>
+            <if test="name != null  and name != ''"> and NAME like '%' ||#{name} || '%'</if>
+            <if test="isNormal != null  and isNormal != ''"> and IS_NORMAL like '%' ||#{isNormal} || '%'</if>
+        </where>
+    </select>
+    
+    <select id="selectCommonSqlTypeById" parameterType="String" resultMap="CommonSqlTypeResult">
+        <include refid="selectCommonSqlTypeVo"/>
+        where ID = #{id}
+    </select>
+        
+    <insert id="insertCommonSqlType" parameterType="com.ctjsoft.orderserver.order.domain.CommonSqlType">
+        insert into jx_common_sql_type
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">ID,</if>
+            <if test="name != null">NAME,</if>
+            <if test="isNormal != null">IS_NORMAL,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="name != null">#{name},</if>
+            <if test="isNormal != null">#{isNormal},</if>
+         </trim>
+    </insert>
+
+    <update id="updateCommonSqlType" parameterType="com.ctjsoft.orderserver.order.domain.CommonSqlType">
+        update jx_common_sql_type
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="name != null">NAME = #{name},</if>
+            <if test="isNormal != null">IS_NORMAL = #{isNormal},</if>
+        </trim>
+        where ID = #{id}
+    </update>
+
+    <delete id="deleteCommonSqlTypeById" parameterType="String">
+        delete from jx_common_sql_type where ID = #{id}
+    </delete>
+
+    <delete id="deleteCommonSqlTypeByIds" parameterType="String">
+        delete from jx_common_sql_type where ID in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

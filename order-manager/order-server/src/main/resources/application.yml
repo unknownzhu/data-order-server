@@ -1,0 +1,51 @@
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://127.0.0.1:9502/eureka/
+  instance:
+    prefer-ip-address: true
+    instance-id: 127.0.0.1:8090
+    ip-address: 127.0.0.1
+    non-secure-port: 8090
+
+mybatis:
+  configuration:
+    call-setters-on-nulls: true
+
+spring:
+  application:
+    name: data-order-server
+  main:
+    allow-bean-definition-overriding: true
+  mvc:
+    date-format: yyyy-MM-dd HH:mm:ss
+    #static-path-pattern: /static/**
+    static-path-pattern: /**
+server:
+  port: 8090
+  ip: 10.108.71.151
+  servlet:
+    context-path: /data-order-server
+#  servlet:
+#    context-path: /data-order-server
+#这个配置将覆盖mybatis原生配置，因为mapper的xml文件在不同项目中，这里以此方式将两者合并，在启动服务时代理xml文件，详见CoreConfig.java.sqlSessionFactory()
+mybatisXmlPath: classpath*:org/datagear/management/mapper/*.xml,classpath*:com/ctjsoft/orderserver/analyze/mapper/datasource/*.xml,classpath*:com/ctjsoft/orderserver/order/mapper/*.xml,classpath*:com/ctjsoft/orderserver/analyze/mapper/dataSourceAnalyze/*.xml
+
+logging:
+  level:
+    org.datagear.management.mapper: debug
+    org.datagear.management.domain: debug
+    #com.ctjsoft.orderserver.analyze.mapper.datasource.: debug
+    #com.ctjsoft.orderserver.analyze.mapper.dataSourceAnalyze: debug
+    com.ctjsoft.orderserver.analyze.mapper: debug
+    com.ctjsoft.orderserver.order.mapper: debug
+datasource:
+  driverClassName: oracle.jdbc.driver.OracleDriver
+  url: jdbc:oracle:thin:@10.108.6.182:1521/orcl
+  #url: jdbc:oracle:thin:@127.0.0.1:1521/orclpdb
+  username: DATA_ORDER
+  password: 123456
+
+stdCheckCron: 0 0 0 * * ?
+#是否验证密码登陆： 0 不验证 1 验证
+loginByPassword: 0

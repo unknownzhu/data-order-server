@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ctjsoft.orderserver.analyze.mapper.JxStdDatabaseDataDicCRecordMapper">
+    <resultMap id="BaseResultMap" type="com.ctjsoft.orderserver.analyze.domain.JxStdDatabaseDataDicChangeRecord">
+        <id column="ID" jdbcType="VARCHAR" property="id"/>
+        <result column="TABLE_ID" jdbcType="VARCHAR" property="tableId"/>
+        <result column="TABLE_NAME" jdbcType="VARCHAR" property="tableName"/>
+        <result column="TYPE" jdbcType="INTEGER" property="type"/>
+        <result column="REMARK" jdbcType="VARCHAR" property="remark"/>
+        <result column="DATABASE_ID" jdbcType="VARCHAR" property="databaseId"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        ID, TABLE_ID, TABLE_NAME, TYPE, REMARK, DATABASE_ID
+    </sql>
+
+    <insert id="insert" parameterType="com.ctjsoft.orderserver.analyze.domain.JxStdDatabaseDataDicChangeRecord">
+        insert into std_database_dic_change_record(id,table_id,table_name,type,remark,DATABASE_ID)
+        values(#{id},#{tableId},#{tableName},#{type},#{remark},#{databaseId})
+    </insert>
+
+    <select id="search" parameterType="java.util.Map" resultMap="BaseResultMap">
+        select * from std_database_dic_change_record where 1=1
+        <if test="databaseId!=null">
+            and database_id = #{databaseId}
+        </if>
+    </select>
+
+    <select id="list" resultMap="BaseResultMap">
+        select * from std_database_dic_change_record where 1=1
+    </select>
+
+    <select id="loadByDatabaseId" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select * from std_database_dic_change_record where DATABASE_ID = #{databaseId}
+    </select>
+
+    <select id="batchInsert" parameterType="java.util.List">
+        insert all
+        <foreach collection='list' item='item' separator=''>
+            into std_database_dic_change_record (ID,TABLE_ID,TABLE_NAME,TYPE,REMARK,DATABASE_ID) values (#{item.id},#{item.tableId},#{item.tableName},#{item.type},#{item.remark},#{item.databaseId})
+        </foreach>
+        select * from dual
+    </select>
+
+    <select id="listByGroupCount" resultType="java.util.HashMap">
+        select DATABASE_ID as key,count(1) as value from std_database_dic_change_record GROUP BY DATABASE_ID
+    </select>
+
+<!--
+    <select id="loadByDbIdAndKeyword" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select * from std_database_dic_change_record where DATABASE_ID = #{databaseId} and (TABLE_NAME like '%${keyword}%' or REMARK like '%${keyword}%')
+    </select>
+-->
+
+
+
+
+    <select id="loadByDbIdAndKeyword" parameterType="java.lang.String" resultMap="BaseResultMap">
+
+        SELECT * FROM(
+        SELECT ROWNUM WN,RN.*
+        FROM (
+        select * from std_database_dic_change_record where DATABASE_ID = #{databaseId}
+        <if test="keyword!=null and keyword!=''">
+            and (TABLE_NAME like '%${keyword}%' or REMARK like '%${keyword}%')
+        </if>
+        )RN
+        )WN where  WN &lt;=  #{page} * #{limit} AND WN > #{limit} * (#{page} -1)
+    </select>
+
+    <select id="loadByDbIdAndKeywordCount" parameterType="java.lang.String" resultType="java.lang.String">
+        select count(1) from std_database_dic_change_record where DATABASE_ID = #{databaseId}
+        <if test="keyword!=null and keyword!=''">
+            and (TABLE_NAME like '%${keyword}%' or REMARK like '%${keyword}%')
+        </if>
+    </select>
+
+
+
+</mapper>

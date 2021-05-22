@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>新增数据源</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+    <link rel="stylesheet" href="../../../component/layui/css/layui.css" media="all">
+    <script src="../../../component/layui/layui.js" charset="utf-8"></script>
+
+
+
+
+    <link rel="stylesheet" href="../../../admin/css/admin.css"/>
+    <link rel="stylesheet" href="../../../component/pear/css/pear.css">
+    <link rel="stylesheet" href="../../../component/zTree_v3/css/zTreeStyle/zTreeStyle.css">
+    <script src="../../../component/layui/layui.js"></script>
+    <script src="../../../component/pear/pear.js"></script>
+    <script src="../../../component/jquery.min.js"></script>
+    <script src="../../../component/zTree_v3/js/jquery.ztree.core.js"></script>
+    <script src="../../common.js"></script>
+    <script src="../../request.js"></script>
+
+    <style type="text/css">
+        .redstar {
+            color: red;
+            margin-right: 5px;
+        }
+
+        .layui-form {
+            margin-left: 20px;
+        }
+
+        .layui-form-item {
+            width: 600px;
+            /*height: 35px;*/
+        }
+
+        .layui-field-title {
+            color: #ffffff;
+        }
+
+        .database {
+            width: 170px !important;
+            float: right !important;
+            margin-right: 0 !important;
+        }
+
+        .layui-input-block button {
+            float: right;
+            margin-left: 15px;
+            height: 35px;
+            width: 70px;
+            /*background:#2667DF;*/
+            padding: 0;
+        }
+
+        .yes {
+            background: #2667DF;
+        }
+
+        .cancel:hover {
+            border: 1px solid #2667DF;
+            color: #2667DF;
+        }
+
+        .layui-table-cell {
+            font-size:14px;
+            padding:0 5px;
+            height:auto;
+            overflow:visible;
+            text-overflow:inherit;
+            white-space:normal;
+            word-break: break-all;
+        }
+
+
+        .modal-content {
+            height: 100%;
+            margin: 0px;
+            background-color: #a09898;
+        }
+
+        .layui-table-cell {
+            padding: 0 !important;
+
+        }
+
+
+        .layui-form-select .layui-input {
+            border: none;
+            background: none;
+        }
+
+        .layui-input {
+            padding-top: 0 !important;
+            margin-top: 0 !important;
+            height: 32px;
+        }
+
+    </style>
+</head>
+<body style="overflow: auto;overflow-x: hidden;zoom: 1;">
+
+
+<script type="text/html" id="dbtablesBar">
+
+    <a href="#" class="layui-table-link" lay-event="look">查看</a>
+    <a href="#" class="layui-table-link" lay-event="history">历史</a>
+</script>
+
+<script type="text/html" id="errorRecBar">
+
+</script>
+
+
+<script type="text/html" id="commonSql-bar">
+    <button sec:authorize="hasPermission('/data-order-server/system/commonSql/copy','system:commonSql:copy')"
+            class="pear-btn pear-btn-primary pear-btn-sm" lay-event="copy">
+        复制语句
+    </button>
+
+</script>
+
+<script type="text/html" id="historySql-bar">
+    <button sec:authorize="hasPermission('/data-order-server/system/commonSql/copy','system:commonSql:copy')"
+            class="pear-btn pear-btn-primary pear-btn-sm" lay-event="copy">
+        复制语句
+    </button>
+    <button sec:authorize="hasPermission('/data-order-server/system/commonSql/addCommon','system:commonSql:addCommon')"
+            class="pear-btn pear-btn-primary pear-btn-sm" lay-event="addCommon">
+        添加为常用
+    </button>
+</script>
+
+<form class="layui-form">
+    <script type="text/html" id="selectTpl">
+        <select name="type" id="entityName" class="entityName"
+                lay-filter="entityName" lay-search></select>
+    </script>
+
+</form>
+
+<div class="layuimini-container">
+    <div class="layuimini-main">
+
+        <div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief">
+
+            <ul class="layui-tab-title">
+                <li class="layui-this">数据字典</li>
+                <li>变更记录</li>
+                <li>扫描日志</li>
+            </ul>
+            <div class="layui-tab-content" style="height: 100px;">
+
+
+              <!--  <div class="layui-tab-item   layui-show" height="100%" id="queryIframe"  name="queryIframe">
+
+                </div>-->
+
+             <!--   <div class="layui-tab-item " height="100%">
+                    <table id="commonSql-table" lay-filter="commonSql-table"></table>
+
+                </div>
+
+                <div class="layui-tab-item ">
+
+                    <table id="historySql-table" lay-filter="historySql-table"></table>
+
+                </div>
+-->
+
+                <div class="layui-tab-item  layui-show">
+                    <button-icon style="background: none;margin-top: 3px;" type="button"
+                                 class="layui-btn layui-btn-sm layui-btn-primary"
+                                 lay-submit="" id="reScan"> 重新扫描
+                    </button-icon>
+                    <button-icon style="background: none;margin-top: 3px;" type="button"
+                                 class="layui-btn layui-btn-sm layui-btn-primary"
+                                 lay-submit="" id="refreshDbTables"> 刷新
+                    </button-icon>
+                    <!--     <button-icon style="background: none;margin-top: 3px;" type="button"
+                                      class="layui-btn layui-btn-sm layui-btn-primary"
+                                      lay-submit="" id="save"> 保存
+                         </button-icon>-->
+
+
+                    <button-icon style="background: none;margin-top: 3px;float: right " type="button"
+                                 class="layui-btn layui-btn-sm layui-btn-primary"
+                                 lay-submit="" id="queryDbtables"> 查询
+                    </button-icon>
+                    <div style="position: relative;float: right " class="layui-input-inline">
+                        <input style="height: 30px;margin-top: 3px; "
+                               id="keyword" type="text" name="title" lay-verify="title" autocomplete="off"
+                               placeholder="请输入表名" class="layui-input">
+                    </div>
+
+
+                    <table class="layui-hide" id="dbtables" lay-filter="dbtables"></table>
+                </div>
+
+
+                <div class="layui-tab-item">
+                    <button-icon style="background: none;margin-top: 3px;" type="button"
+                                 class="layui-btn layui-btn-sm layui-btn-primary"
+                                 lay-submit="" id="refreshErrorRec"> 刷新
+                    </button-icon>
+
+
+                    <button-icon style="background: none;margin-top: 3px;float: right " type="button"
+                                 class="layui-btn layui-btn-sm layui-btn-primary"
+                                 id="queryQueRec"> 查询
+                    </button-icon>
+                    <div style="position: relative;float: right " class="layui-input-inline">
+                        <input style="height: 30px;margin-top: 3px; "
+                               id="queRecKeyword" type="text" name="title" lay-verify="title" autocomplete="off"
+                               placeholder="请输入字段名或字段名" class="layui-input">
+                    </div>
+                    <div style="position: relative;float: right " class="layui-input-inline">
+                        <select lay-search name="columnName" id='columnName' style="width: 100px " class="layui-input "
+                                lay-filter='columnName' lay-search>
+                        </select>
+                    </div>
+                    <div style='position: relative;float: right ' class="layui-input-inline">
+                        <select name="tableName" id='tableName' style="width: 100px " class="layui-input "
+                                lay-filter='tableName' lay-search>
+                        </select>
+                    </div>
+                    <table class="layui-hide" id="errorRec" lay-filter="errorRec"></table>
+                </div>
+
+                <div class="layui-tab-item">
+                    <button-icon style="background: none;margin-top: 3px;" type="button"
+                                 class="layui-btn layui-btn-sm layui-btn-primary"
+                                 lay-submit="" id="refreshScanInfo"> 刷新
+                    </button-icon>
+
+                    <table class="layui-hide" id="scanLog" lay-filter="scanLog"></table>
+                </div>
+
+
+
+
+                <table class="layui-hide" id="difference" lay-filter="difference"></table>
+
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+<div id="timeDiv" style="display: none"></div>
+
+
+<script src="../../../component/layui/layui.js" charset="utf-8"></script>
+<script src="../../../component/js/coustomizeEvent.js"></script>
+<script src="../../../component/js/jquery-1.9.0.js"></script>
+<script type="text/javascript" src="../../../component/js/common/jquery.cookie.js"></script>
+<script type="text/javascript" src="../../../component/js/common.js"></script>
+<script src="../timLine.js" charset="utf-8"></script>
+<script src="../basic.js" charset="utf-8"></script>
+<script src="../../../component/lib/dist/xm-select.js" charset="utf-8"></script>
+<script src="../../../component/lib/dist/xm-select.js" charset="utf-8"></script>
+<script src="../../../htmls/common.js"></script>
+
+
+
+<!--<script src="/component/layui/layui.js" charset="utf-8"></script>
+<script src="/component/js/coustomizeEvent.js"></script>
+<script src="/component/js/jquery-1.9.0.js"></script>
+<script type="text/javascript" src="/component/js/common/jquery.cookie.js"></script>
+<script type="text/javascript" src="/component/js/common.js"></script>
+<script src="../timLine.js" charset="utf-8"></script>
+<script src="../basic.js" charset="utf-8"></script>
+<script src="/component/lib/dist/xm-select.js" charset="utf-8"></script>
+<script src="/component/lib/dist/xm-select.js" charset="utf-8"></script>
+<script src="/htmls/common.js"></script>-->
+
+</body>
+</html>

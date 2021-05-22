@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ctjsoft.orderserver.order.mapper.OrderSqlLogMapper">
+    
+    <resultMap type="com.ctjsoft.orderserver.order.domain.OrderSqlLog" id="OrderSqlLogResult">
+        <result property="id"    column="ID"    />
+        <result property="orderId"    column="ORDER_ID"    />
+        <result property="info"    column="INFO"    />
+        <result property="createTime"    column="CREATE_TIME"    />
+        <result property="cronJobId"    column="CRON_JOB_ID"    />
+        <result property="sqls"    column="SQLS"    />
+        <result property="flowId"    column="FLOW_ID"    />
+        <result property="schemaId"    column="schema_Id"    />
+
+    </resultMap>
+
+    <sql id="selectOrderSqlLogVo">
+        select ID, ORDER_ID, INFO, CREATE_TIME, CRON_JOB_ID,sqls,flow_Id,schema_Id from jx_order_sql_log
+    </sql>
+
+    <select id="selectOrderSqlLogList" parameterType="com.ctjsoft.orderserver.order.domain.OrderSqlLog" resultMap="OrderSqlLogResult">
+        <include refid="selectOrderSqlLogVo"/>
+        <where>  
+            <if test="orderId != null  and orderId != ''"> and ORDER_ID = #{orderId}</if>
+            <if test="info != null  and info != ''"> and INFO = #{info}</if>
+            <if test="createTime != null "> and CREATE_TIME = #{createTime}</if>
+            <if test="cronJobId != null  and cronJobId != ''"> and CRON_JOB_ID = #{cronJobId}</if>
+            <if test="sqls != null  and sqls != ''"> and sqls = #{sqls}</if>
+            <if test="flowId != null  and flowId != ''"> and flow_Id = #{flowId}</if>
+            <if test="schemaId != null  and schemaId != ''"> and schema_Id = #{schemaId}</if>
+
+
+            <if test="today != null  and today != ''"> and  to_char(create_time,'yyyymmdd' )   = #{today}</if>
+
+
+        </where>
+        order by CREATE_TIME desc
+    </select>
+    
+    <select id="selectOrderSqlLogById" parameterType="String" resultMap="OrderSqlLogResult">
+        <include refid="selectOrderSqlLogVo"/>
+        where ID = #{id}
+        order by CREATE_TIME desc
+    </select>
+        
+    <insert id="insertOrderSqlLog" parameterType="com.ctjsoft.orderserver.order.domain.OrderSqlLog">
+        insert into jx_order_sql_log
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">ID,</if>
+            <if test="orderId != null">ORDER_ID,</if>
+            <if test="info != null">INFO,</if>
+            <if test="createTime != null">CREATE_TIME,</if>
+            <if test="cronJobId != null">CRON_JOB_ID,</if>
+            <if test="sqls != null">sqls,</if>
+            <if test="flowId != null">flow_Id,</if>
+            <if test="schemaId != null">schema_Id,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="orderId != null">#{orderId},</if>
+            <if test="info != null">#{info},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="cronJobId != null">#{cronJobId},</if>
+            <if test="sqls != null">#{sqls},</if>
+            <if test="flowId != null">#{flowId},</if>
+            <if test="schemaId != null">#{schemaId},</if>
+         </trim>
+    </insert>
+
+    <update id="updateOrderSqlLog" parameterType="com.ctjsoft.orderserver.order.domain.OrderSqlLog">
+        update jx_order_sql_log
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="orderId != null">ORDER_ID = #{orderId},</if>
+            <if test="info != null">INFO = #{info},</if>
+            <if test="createTime != null">CREATE_TIME = #{createTime},</if>
+            <if test="cronJobId != null">CRON_JOB_ID = #{cronJobId},</if>
+            <if test="sqls != null">sqls = #{sqls},</if>
+            <if test="flowId != null">flow_Id = #{flowId},</if>
+            <if test="schemaId != null">schema_Id = #{schemaId},</if>
+        </trim>
+        where ID = #{id}
+    </update>
+
+    <delete id="deleteOrderSqlLogById" parameterType="String">
+        delete from jx_order_sql_log where ID = #{id}
+    </delete>
+
+    <delete id="deleteOrderSqlLogByIds" parameterType="String">
+        delete from jx_order_sql_log where ID in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ctjsoft.orderserver.analyze.mapper.JxStdDatabaseQuestionRecordMapper">
+    <resultMap id="BaseResultMap" type="com.ctjsoft.orderserver.analyze.domain.JxStdDatabaseQuestionRecord">
+
+        <id column="ID" jdbcType="VARCHAR" property="id"/>
+        <result column="TABLE_NAME" jdbcType="VARCHAR" property="tableName"  />
+        <result column="COLUMN_NAME" jdbcType="VARCHAR" property="columnName"/>
+        <result column="TYPE" jdbcType="NUMERIC" property="type"/>
+        <result column="DATABASE_ID" jdbcType="VARCHAR" property="databaseId"/>
+        <result column="CREATE_TIME" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="STATUS" jdbcType="VARCHAR" property="status"/>
+        <result column="entity_name" jdbcType="VARCHAR" property="entityName"/>
+
+
+
+        <result column="column_type" jdbcType="VARCHAR" property="columnType"/>
+
+        <result column="table_id" jdbcType="VARCHAR" property="tableId"/>
+        <result column="is_newest" jdbcType="VARCHAR" property="isNewest"/>
+        <result column="chinese_name" jdbcType="VARCHAR" property="chineseName"/>
+        <result column="length" jdbcType="VARCHAR" property="length"/>
+        <result column="is_primary" jdbcType="VARCHAR" property="isPrimary"/>
+        <result column="default_value" jdbcType="VARCHAR" property="defaultValue"/>
+        <result column="remark" jdbcType="VARCHAR" property="REMARK"/>
+        <result column="is_empty" jdbcType="VARCHAR" property="isEmpty"/>
+        <result column="order_Id" jdbcType="VARCHAR" property="orderId"/>
+        <result column="scan_Id" jdbcType="VARCHAR" property="scanId"/>
+
+
+    </resultMap>
+    <sql id="Base_Column_List">
+        ID, CODE, NAME, TYPE, DRIVER, URL, USERNAME, PWD, DES, MODEL_NAME, BUSINESS, VERSION,order_Id,scan_Id
+    </sql>
+
+    <select id="batchInsert" parameterType="java.util.List">
+        insert all
+        <foreach collection='list' item='item' separator=''>
+
+            into std_database_question_record (ID,TABLE_NAME,COLUMN_NAME,TYPE,DATABASE_ID,CREATE_TIME,
+            IS_EMPTY,IS_PK,LENGTH,DEFAULT_VALUE,COLUMN_TYPE,TABLE_ID,CHINESE_NAME,REMARK,STATUS,scan_Id
+            ) values
+            (#{item.id},#{item.tableName},#{item.columnName},#{item.type},#{item.databaseId},#{item.createTime}
+            ,#{item.isEmpty},#{item.isPk},#{item.length},#{item.defaultValue},#{item.columnType}
+            ,#{item.tableId},#{item.defaultValue},#{item.keyword},#{item.status},#{item.scanId}
+            )
+
+        </foreach>
+        select * from dual
+    </select>
+
+    <update id="update" parameterType="com.ctjsoft.orderserver.analyze.domain.JxStdDatabaseDataDicionary">
+        update std_database_question_record
+        <set>
+
+            <if test="orderId != null">
+                ORDER_ID = #{orderId,jdbcType=VARCHAR},
+            </if>
+
+        </set>
+        where ID = #{id,jdbcType=VARCHAR}
+    </update>
+
+    <select id="insert" parameterType="com.ctjsoft.orderserver.analyze.domain.JxStdDatabaseQuestionRecord">
+        insert into std_database_question_record(id, table_name ,column_name ,type,database_id,create_time) values(#{id}, #{tableName},#{columnName},#{type},#{databaseId},#{createTime})
+    </select>
+
+    <select id="list" resultMap="BaseResultMap">
+        select * from std_database_question_record where status = '0'
+    </select>
+
+    <select id="loadByDatabaseId" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select * from std_database_question_record where DATABASE_ID = #{databaseId} and status = '0'
+    </select>
+
+    <update id="solveById" parameterType="java.lang.String">
+        update std_database_question_record set status = '1' where id = #{id}
+    </update>
+
+    <select id="listByGroupCount" resultType="java.util.HashMap">
+        select DATABASE_ID as key,count(1) as value from std_database_question_record where status = '0' GROUP BY DATABASE_ID
+    </select>
+
+
+    <select id="loadByDbIdAndKeyword" parameterType="com.ctjsoft.orderserver.analyze.domain.JxStdDatabaseQuestionRecord"
+            resultMap="BaseResultMap">
+        select a.*,b.entity_name from std_database_question_record a, STD_DATABASE_DATA_DICIONARY b
+        where a.DATABASE_ID = #{databaseId} and a.status = '0'
+        and a.DATABASE_ID = b.DATABASE_ID and a.TABLE_NAME = b.TABLE_NAME
+        <if test="keyword != null and keyword != ''">
+            and ( a.column_name like '%' || #{keyword}||'%'
+            or a.table_name like '%' || #{keyword}||'%'
+            )
+        </if>
+        <if test="tableName != null and tableName != '' ">
+            and ( a.table_name = #{tableName} )
+        </if>
+        <if test="columnName != null  and columnName != '' ">
+            and ( a.column_name = #{columnName} )
+        </if>
+    </select>
+
+
+
+<!--
+    <update id="updateOrderID"   parameterType="" >
+		UPDATE std_database_question_record
+		SET ORDER_ID = #{orderId}
+		WHERE id = #{id}
+	</update>
+-->
+
+
+
+    <select id="loadByDbIdAndKeywordCount"
+            parameterType="com.ctjsoft.orderserver.analyze.domain.JxStdDatabaseQuestionRecord"
+            resultType="java.lang.String">
+        select count(1) as count from std_database_question_record a, STD_DATABASE_DATA_DICIONARY b
+        where a.DATABASE_ID = #{databaseId} and a.status = '0'
+        and a.DATABASE_ID = b.DATABASE_ID and a.TABLE_NAME = b.TABLE_NAME
+        <if test="keyword != null and keyword != ''">
+            and ( a.column_name like '%' || #{keyword}||'%'
+            or a.table_name like '%' || #{keyword}||'%'
+            )
+        </if>
+        <if test="tableName != null and tableName != '' ">
+            and ( a.table_name = #{tableName} )
+        </if>
+        <if test="columnName != null  and columnName != '' ">
+            and ( a.column_name = #{columnName} )
+        </if>
+    </select>
+
+
+    <select id="listDistinctTableNameByDbId" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select distinct table_name   from std_database_question_record
+        where DATABASE_ID = #{databaseId} and status = '0' and column_name like '%${keyword}%'
+        order by  table_name
+    </select>
+
+    <select id="listDistinctColumnNameByDbIdAndTbaleName" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select distinct COLUMN_NAME from std_database_question_record
+        where DATABASE_ID = #{databaseId} and status = '0'
+        and COLUMN_NAME is not null
+        <if test="tableName != null and tableName != '' ">
+            and ( table_name like '%' || #{tableName}||'%' )
+        </if>
+        order by COLUMN_NAME
+    </select>
+
+
+    <select id="loadJxCompareVo" parameterType="com.ctjsoft.orderserver.analyze.domain.JxCompareVo"
+            resultType="com.ctjsoft.orderserver.analyze.domain.JxCompareVo">
+        select  d.type as  column_type , d.is_pk as is_primary,d.table_id , d.table_name ,'' as chinese_name ,
+        d.create_time,case when (select max( distinct tt.create_time ) from
+        std_database_question_record tt where tt.database_id = d.database_id ) = d.create_time
+        then 1 else 0 end as is_newest ,
+        d.COLUMN_NAME  ,d.COLUMN_TYPE as type,d.LENGTH as length,
+        d.DEFAULT_VALUE as DEFAULT_VALUE , d.REMARK as remak,d.is_empty,d.order_Id
+        from
+        std_database_question_record d
+        left join DATAGEAR_SCHEMA e on d.database_id = e.SCHEMA_ID
+        where d.database_id = #{databaseId}
+        <if test="remak != null and remak != ''">
+            and ( d.column_name like '%' || #{remak}||'%'
+            or d.table_name like '%' || #{remak}||'%'
+            )
+        </if>
+        <if test="tableName != null and tableName != '' ">
+            and ( d.table_name = #{tableName} )
+        </if>
+        <if test="name != null  and name != '' ">
+            and ( d.column_name = #{name} )
+        </if>
+        order by  d.create_time desc
+    </select>
+
+
+    <select id="loadJxCompareVoPlus" parameterType="String"
+              resultMap="BaseResultMap" >
+
+
+        SELECT * FROM(
+        SELECT ROWNUM WN,RN.* FROM (
+
+        select d.type as  column_type, d.is_pk as is_primary,nvl(d.table_id,'null')   , d.table_name ,'' as chinese_name ,
+        d.create_time,case when (select max( distinct tt.create_time ) from
+        std_database_question_record tt where tt.database_id = d.database_id ) = d.create_time
+        then 1 else 0 end as is_newest ,
+        d.COLUMN_NAME  ,d.COLUMN_TYPE as type,d.LENGTH as length,d.IS_PK as isPrimary,
+        d.DEFAULT_VALUE as DEFAULT_VALUE , d.REMARK as remak,d.is_empty,d.order_Id
+
+        from
+        std_database_question_record d
+        left join DATAGEAR_SCHEMA e on d.database_id = e.SCHEMA_ID
+        where d.database_id = #{databaseId,jdbcType=VARCHAR}
+        <if test="remak != null and remak != ''">
+            and ( d.column_name like '%' || #{remak,jdbcType=VARCHAR}||'%'
+            or d.table_name like '%' || #{remak,jdbcType=VARCHAR}||'%'
+            )
+        </if>
+        <if test="tableName != null and tableName != '' ">
+            and ( d.table_name = #{tableName,jdbcType=VARCHAR} )
+        </if>
+        <if test="name != null  and name != '' ">
+            and ( d.column_name = #{name,jdbcType=VARCHAR} )
+        </if>
+
+        <if test="status != null  and status != '' ">
+            and ( d.status = #{status,jdbcType=VARCHAR} )
+        </if>
+        order by  d.create_time desc
+        )RN
+        )WN where WN &lt;= #{page} * #{limit} AND WN > #{limit} * (#{page} -1)
+    </select>
+    <select id="getCount" parameterType="com.ctjsoft.orderserver.analyze.domain.JxCompareVo"
+            resultType="java.lang.String">
+        select count(1) as count
+        from
+        std_database_question_record a
+        left join DATAGEAR_SCHEMA e on a.database_id = e.SCHEMA_ID
+        where a.database_id = #{databaseId}
+        <if test="remak != null and remak != ''">
+            and ( a.column_name like '%' || #{remak}||'%'
+            or a.table_name like '%' || #{remak}||'%'
+            )
+        </if>
+        <if test="tableName != null and tableName != '' ">
+            and ( a.table_name = #{tableName} )
+        </if>
+        <if test="name != null  and name != '' ">
+            and ( a.column_name = #{name} )
+        </if>
+        <if test="status != null  and status != '' ">
+            and ( a.status = #{status} )
+        </if>
+
+
+    </select>
+
+
+</mapper>

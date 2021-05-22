@@ -1,0 +1,376 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ctjsoft.orderserver.order.mapper.OrdersMapper">
+
+    <resultMap type="com.ctjsoft.orderserver.order.domain.OrdersJobVo" id="OrdersResult">
+        <result property="id"    column="id"    />
+        <result property="name"    column="name"    />
+        <result property="sqls"    column="sqls"    />
+        <result property="reason"    column="reason"    />
+        <result property="rowCount"    column="row_count"    />
+        <result property="dbId"    column="db_id"    />
+        <result property="isSchedule"    column="is_schedule"    />
+        <result property="cron"    column="cron"    />
+        <result property="reviewStatus"    column="review_status"    />
+        <result property="executeStatus"    column="execute_status"    />
+        <result property="checkStatus"    column="check_status"    />
+        <result property="flowId"    column="flow_id"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="pushTime"    column="push_time"    />
+        <result property="executeTime"    column="execute_time"    />
+        <result property="executorId"    column="executor_id"    />
+        <result property="reviewTime"    column="review_time"    />
+        <result property="createorId"    column="createor_id"    />
+        <result property="pusherId"    column="pusher_id"    />
+        <result property="reviewerId"    column="reviewer_id"    />
+        <result property="dbName"    column="db_name"    />
+        <result property="flowName"    column="flow_name"    />
+        <result property="creatorName"    column="creator_name"    />
+        <result property="pusherName"    column="pusher_name"    />
+        <result property="reviewerName"    column="reviewer_name"    />
+        <result property="sqlType"    column="sql_type"    />
+        <result property="fileId"    column="file_id"    />
+        <result property="forbidWords"    column="forbid_Words"    />
+
+        <result property="cronName"    column="cron_Name"    />
+        <result property="cronText"    column="cron_Text"    />
+        <result property="jobStatus"    column="job_Status"    />
+        <result property="executeTime"    column="execute_time"    />
+
+
+
+    </resultMap>
+
+
+
+
+
+    <sql id="selectOrdersVo">
+        select id, name, sqls, reason, ROW_COUNT, db_id, is_schedule, cron, review_status, check_status,execute_status, flow_id,
+               create_time,update_time, push_time, review_time, createor_id, pusher_id, reviewer_id, sql_type , file_id ,executor_id,EXECUTE_TIME from jx_orders
+    </sql>
+
+
+
+    <select id="linkSelectCronJobLogList"  parameterType="com.ctjsoft.orderserver.order.domain.OrdersJobVo" resultMap="OrdersResult"  >
+        select c.*,a.status as job_Status,b.name as cron_Name,b.cron as cron_Text from JX_CRON_JOB a left join JX_CRON
+            b on a.CRON_ID = b.id left join JX_ORDERS c on a.order_id = c.id
+        <where>
+            <if test="name != null  and name != ''"> and a.name like '%' ||#{name} || '%'</if>
+            <if test="sqls != null  and sqls != ''"> and a.sqls  like '%' ||#{sqls} || '%'  </if>
+            <if test="reason != null  and reason != ''"> and a.reason = #{reason}</if>
+            <if test="rowCount != null  and rowCount != ''"> and a.ROW_COUNT = #{rowCount}</if>
+            <if test="dbId != null  and dbId != ''"> and a.db_id = #{dbId}</if>
+            <if test="isSchedule != null  and isSchedule != ''"> and a.is_schedule = #{isSchedule}</if>
+            <if test="cron != null  and cron != ''"> and a.cron = #{cron}</if>
+            <if test="reviewStatus != null  and reviewStatus != ''"> and a.review_status = #{reviewStatus}</if>
+            <if test="executeStatus != null  and executeStatus != ''"> and a.execute_status = #{executeStatus}</if>
+            <if test="checkStatus != null  and checkStatus != ''"> and a.check_status = #{checkStatus}</if>
+            <if test="flowId != null  and flowId != ''"> and a.flow_id = #{flowId}</if>
+            <if test="pushTime != null "> and push_time = #{pushTime}</if>
+            <if test="reviewTime != null "> and review_time = #{reviewTime}</if>
+            <if test="createorId != null  and createorId != ''"> and a.createor_id = #{createorId}</if>
+            <if test="pusherId != null  and pusherId != ''"> and a.pusher_id = #{pusherId}</if>
+            <if test="reviewerId != null  and reviewerId != ''"> and a.reviewer_id = #{reviewerId}</if>
+            <if test="sqlType != null  and sqlType != ''"> and a.sql_type = #{sqlType}</if>
+            <if test="fileId != null  and fileId != ''"> and a.file_id = #{fileId}</if>
+
+
+            <if test="jobId != null  and jobId != ''"> and a.id = #{jobId}</if>
+            <if test="jobStatus != null  and jobStatus != ''"> and a.status = #{jobStatus}</if>
+            <if test="cronName != null  and cronName != ''"> and b.name = #{cronName}</if>
+            <if test="cronText != null  and cronText != ''"> and b.cron = #{cronText}</if>
+
+
+        </where>
+        order by update_time desc
+    </select>
+
+
+    <select id="selectOrdersList" parameterType="com.ctjsoft.orderserver.order.domain.Orders" resultMap="OrdersResult">
+        <include refid="selectOrdersVo"/>
+        <where>
+            <if test="name != null  and name != ''"> and name like '%' ||#{name} || '%'</if>
+            <if test="sqls != null  and sqls != ''"> and sqls  like '%' ||#{sqls} || '%' </if>
+            <if test="reason != null  and reason != ''"> and reason = #{reason}</if>
+            <if test="rowCount != null  and rowCount != ''"> and ROW_COUNT = #{rowCount}</if>
+            <if test="dbId != null  and dbId != ''"> and db_id = #{dbId}</if>
+            <if test="isSchedule != null  and isSchedule != ''"> and is_schedule = #{isSchedule}</if>
+            <if test="cron != null  and cron != ''"> and cron = #{cron}</if>
+            <if test="reviewStatus != null  and reviewStatus != ''"> and review_status = #{reviewStatus}</if>
+            <if test="executeStatus != null  and executeStatus != ''"> and execute_status = #{executeStatus}</if>
+            <if test="checkStatus != null  and checkStatus != ''"> and check_status = #{checkStatus}</if>
+            <if test="flowId != null  and flowId != ''"> and flow_id = #{flowId}</if>
+            <if test="pushTime != null "> and push_time = #{pushTime}</if>
+            <if test="reviewTime != null "> and review_time = #{reviewTime}</if>
+            <if test="createorId != null  and createorId != ''"> and createor_id = #{createorId}</if>
+            <if test="pusherId != null  and pusherId != ''"> and pusher_id = #{pusherId}</if>
+            <if test="reviewerId != null  and reviewerId != ''"> and reviewer_id = #{reviewerId}</if>
+            <if test="sqlType != null  and sqlType != ''"> and sql_type = #{sqlType}</if>
+            <if test="fileId != null  and fileId != ''"> and file_id = #{fileId}</if>
+            <if test="executorId != null  and executorId != ''"> and executor_id = #{executorId}</if>
+            <if test="executeTime != null  and executeTime != ''"> and EXECUTE_TIME = #{executeTime}</if>
+
+
+
+        </where>
+        order by update_time  desc
+    </select>
+
+
+    <select id="selectOrdersLinkList" parameterType="com.ctjsoft.orderserver.order.domain.OrdersVo" resultMap="OrdersResult">
+
+        select a.executor_id,a.EXECUTE_TIME,b.forbid_Words,a.sql_type,a.file_id,a.id, a.name, a.sqls, a.reason, a.ROW_COUNT, a.db_id, a.is_schedule, a.cron, a.review_status,a.check_status,
+        a.execute_status, a.flow_id,a.create_time, a.push_time, a.review_time, a.createor_id, a.pusher_id, a.reviewer_id
+        ,b.name as flow_name,c.user_real_name as creator_name,d.user_real_name as pusher_name,e.user_real_name as reviewer_name,f.schema_title as db_name
+        ,g.name as cron_Name,g.cron as cron_Text
+        from jx_orders  a
+        left join JX_FLOW b on a.FLOW_ID = b.id
+        left join DATAGEAR_USER c on a.createor_id = c.user_id
+        left join DATAGEAR_USER d on a.pusher_id = d.user_id
+        left join DATAGEAR_USER e on a.reviewer_id = e.user_id
+        left join DATAGEAR_SCHEMA f on a.db_id = f.schema_id
+        left join jx_cron g on a.cron = g.id
+
+        <where>
+              1=1
+            <if test="sqlType != null  and sqlType != ''"> and  a.sql_type like  '%' ||#{sqlType} || '%'</if>
+            <if test="fileId != null  and fileId != ''"> and  a.file_id like  '%' ||#{fileId} || '%'</if>
+            <if test="id != null  and id != ''"> and  a.id like  '%' ||#{id} || '%'</if>
+            <if test="name != null  and name != ''"> and  a.name like  '%' ||#{name} || '%'</if>
+            <if test="sqls != null  and sqls != ''"> and  a.sqls   like '%' ||#{sqls} || '%' </if>
+            <if test="reason != null  and reason != ''"> and  a.reason = #{reason}</if>
+            <if test="rowCount != null  and rowCount != ''"> and  a.ROW_COUNT = #{rowCount}</if>
+            <if test="dbId != null  and dbId != ''"> and  a.db_id = #{dbId}</if>
+            <if test="isSchedule != null  and isSchedule != ''"> and  a.is_schedule = #{isSchedule}</if>
+            <if test="cron != null  and cron != ''"> and  a.cron = #{cron}</if>
+
+            <if test="reviewStatus != null  and reviewStatus != ''"> and  a.review_status = #{reviewStatus}</if>
+
+
+            <if test="reviewStatusS != null ">
+                and  a.review_status in
+                <foreach item="status" collection="reviewStatusS" open="(" separator="," close=")">
+                    #{status}
+                </foreach>
+            </if>
+
+
+            <if test="isSelfOrder != null ">
+                and (
+                        (
+                            a.review_status in ('0')   or   a.review_status in ('1')
+                        )
+                     or (
+                            a.review_status in ('2') and a.createor_id = #{createorId}
+                        )
+                )
+            </if>
+
+
+
+          <!--  <if test="flowRightType != null   and flowRightType != ''    ">
+
+                and    EXISTS ( select * from JX_ORDER_REVIEW_LOG h  where  h.CREATOR_ID =#{currentUserId} and h.order_id = #{orderId}   )
+            </if>-->
+
+
+
+
+            <if test="executeStatus != null  and executeStatus != ''"> and  a.execute_status = #{executeStatus}</if>
+            <if test="checkStatus != null  and checkStatus != ''"> and  a.check_status = #{checkStatus}</if>
+            <if test="flowId != null  and flowId != ''"> and  a.flow_id = #{flowId}</if>
+            <if test="pushTime != null "> and  a.push_time = #{pushTime}</if>
+            <if test="updateTime != null "> and  a.update_time = #{updateTime}</if>
+            <if test="reviewTime != null "> and  a.review_time = #{reviewTime}</if>
+
+            <!--  <if test="createorId != null  and createorId != ''"> and  a.createor_id = #{createorId}</if>
+              <if test="pusherId != null  and pusherId != ''"> and  a.pusher_id = #{pusherId}</if>
+              <if test="reviewerId != null  and reviewerId != ''"> and  a.reviewer_id = #{reviewerId}</if>-->
+
+            <if test="createorId != null  and createorId != ''
+                    and pusherId != null  and pusherId != ''
+                    and reviewerId != null  and reviewerId != ''
+            ">
+                and (a.createor_id= #{createorId}  or a.pusher_id = #{pusherId} or a.reviewer_id = #{reviewerId}  )
+            </if>
+
+
+            <if test="flowName != null  and flowName != ''"> and  b.name like  '%' ||#{flowName} || '%'</if>
+            <if test="creatorName != null  and creatorName != ''"> and  c.user_name like  '%' ||#{creatorName} || '%'</if>
+            <if test="pusherName != null  and pusherName != ''"> and  d.user_name like  '%' ||#{pusherName} || '%'</if>
+            <if test="reviewerName != null  and reviewerName != ''"> and  e.user_name like  '%' ||#{reviewerName} || '%'</if>
+            <if test="dbName != null  and dbName != ''"> and  f.schema_title like  '%' ||#{dbName}) , '%' )</if>
+        </where>
+        order by update_time  desc
+    </select>
+
+
+    <select id="selectOneOrdersLinkDetail" parameterType="com.ctjsoft.orderserver.order.domain.OrdersVo" resultMap="OrdersResult">
+        select t.* from (
+        select b.forbid_Words,a.sql_type,a.file_id,a.id, a.name, a.sqls, a.reason, a.ROW_COUNT, a.db_id, a.is_schedule, a.cron, a.review_status,a.check_status,
+        a.executor_id,
+        a.execute_status, a.flow_id,a.create_time, a.push_time, a.review_time, a.createor_id, a.pusher_id, a.reviewer_id
+        ,b.name as flow_name,c.user_real_name as creator_name,d.user_real_name as pusher_name,e.user_real_name as reviewer_name,f.schema_title as db_name
+        ,g.name as cron_Name,g.cron as cron_Text,h.create_time as execute_time
+        from jx_orders  a
+        left join JX_FLOW b on a.FLOW_ID = b.id
+        left join DATAGEAR_USER c on a.createor_id = c.user_id
+        left join DATAGEAR_USER d on a.pusher_id = d.user_id
+        left join DATAGEAR_USER e on a.reviewer_id = e.user_id
+        left join DATAGEAR_SCHEMA f on a.db_id = f.schema_id
+        left join jx_cron g on a.cron = g.id
+        left join JX_ORDER_SQL_LOG h on h.order_id = a.id
+
+        <where>
+            <if test="sqlType != null  and sqlType != ''"> and  a.sql_type like  '%' ||#{sqlType} || '%'</if>
+            <if test="fileId != null  and fileId != ''"> and  a.file_id like  '%' ||#{fileId} || '%'</if>
+            <if test="id != null  and id != ''"> and  a.id like  '%' ||#{id} || '%'</if>
+            <if test="name != null  and name != ''"> and  a.name like  '%' ||#{name} || '%'</if>
+            <if test="sqls != null  and sqls != ''"> and  a.sqls   like '%' ||#{sqls} || '%' </if>
+            <if test="reason != null  and reason != ''"> and  a.reason = #{reason}</if>
+            <if test="rowCount != null  and rowCount != ''"> and  a.ROW_COUNT = #{rowCount}</if>
+            <if test="dbId != null  and dbId != ''"> and  a.db_id = #{dbId}</if>
+            <if test="isSchedule != null  and isSchedule != ''"> and  a.is_schedule = #{isSchedule}</if>
+            <if test="cron != null  and cron != ''"> and  a.cron = #{cron}</if>
+
+            <if test="reviewStatus != null  and reviewStatus != ''"> and  a.review_status = #{reviewStatus}</if>
+
+            <if test="executeStatus != null  and executeStatus != ''"> and  a.execute_status = #{executeStatus}</if>
+            <if test="checkStatus != null  and checkStatus != ''"> and  a.check_status = #{checkStatus}</if>
+            <if test="flowId != null  and flowId != ''"> and  a.flow_id = #{flowId}</if>
+            <if test="pushTime != null "> and  a.push_time = #{pushTime}</if>
+            <if test="updateTime != null "> and  a.update_time = #{updateTime}</if>
+            <if test="reviewTime != null "> and  a.review_time = #{reviewTime}</if>
+
+            <!--  <if test="createorId != null  and createorId != ''"> and  a.createor_id = #{createorId}</if>
+              <if test="pusherId != null  and pusherId != ''"> and  a.pusher_id = #{pusherId}</if>
+              <if test="reviewerId != null  and reviewerId != ''"> and  a.reviewer_id = #{reviewerId}</if>-->
+
+            <if test="createorId != null  and createorId != ''
+                    and pusherId != null  and pusherId != ''
+                    and reviewerId != null  and reviewerId != ''
+            ">
+                and (a.createor_id= #{createorId}  or a.pusher_id = #{pusherId} or a.reviewer_id = #{reviewerId}  )
+            </if>
+
+
+            <if test="flowName != null  and flowName != ''"> and  b.name like  '%' ||#{flowName} || '%'</if>
+            <if test="creatorName != null  and creatorName != ''"> and  c.user_name like  '%' ||#{creatorName} || '%'</if>
+            <if test="pusherName != null  and pusherName != ''"> and  d.user_name like  '%' ||#{pusherName} || '%'</if>
+            <if test="reviewerName != null  and reviewerName != ''"> and  e.user_name like  '%' ||#{reviewerName} || '%'</if>
+            <if test="dbName != null  and dbName != ''"> and  f.schema_title like  '%' ||#{dbName}) , '%' )</if>
+        </where>
+        order by update_time  desc
+        ) t  where  rownum = 1
+    </select>
+
+
+    <select id="selectOrdersById" parameterType="String" resultMap="OrdersResult">
+        <include refid="selectOrdersVo"/>
+        where id = #{id}
+        order by update_time desc
+    </select>
+
+    <insert id="insertOrders" parameterType="com.ctjsoft.orderserver.order.domain.Orders">
+        insert into jx_orders
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="name != null">name,</if>
+            <if test="sqls != null">sqls,</if>
+            <if test="reason != null">reason,</if>
+            <if test="rowCount != null">ROW_COUNT,</if>
+            <if test="dbId != null">db_id,</if>
+            <if test="isSchedule != null">is_schedule,</if>
+            <if test="cron != null">cron,</if>
+            <if test="reviewStatus != null">review_status,</if>
+            <if test="executeStatus != null">execute_status,</if>
+            <if test="checkStatus != null">check_status,</if>
+            <if test="flowId != null">flow_id,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="pushTime != null">push_time,</if>
+            <if test="reviewTime != null">review_time,</if>
+            <if test="createorId != null">createor_id,</if>
+            <if test="pusherId != null">pusher_id,</if>
+            <if test="reviewerId != null">reviewer_id,</if>
+            <if test="sqlType != null">sql_type,</if>
+            <if test="fileId != null">file_id,</if>
+            <if test="executeTime != null">execute_time,</if>
+            <if test="executorId != null">executor_id,</if>
+
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="name != null">#{name},</if>
+            <if test="sqls != null">#{sqls},</if>
+            <if test="reason != null">#{reason},</if>
+            <if test="rowCount != null">#{rowCount},</if>
+            <if test="dbId != null">#{dbId},</if>
+            <if test="isSchedule != null">#{isSchedule},</if>
+            <if test="cron != null">#{cron},</if>
+            <if test="reviewStatus != null">#{reviewStatus},</if>
+            <if test="executeStatus != null">#{executeStatus},</if>
+            <if test="checkStatus != null">#{checkStatus},</if>
+            <if test="flowId != null">#{flowId},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="pushTime != null">#{pushTime},</if>
+            <if test="reviewTime != null">#{reviewTime},</if>
+            <if test="createorId != null">#{createorId},</if>
+            <if test="pusherId != null">#{pusherId},</if>
+            <if test="reviewerId != null">#{reviewerId},</if>
+            <if test="sqlType != null">#{sqlType},</if>
+            <if test="fileId != null">#{fileId},</if>
+
+            <if test="executeTime != null">#{executeTime},</if>
+            <if test="executorId != null">#{executorId},</if>
+
+
+        </trim>
+    </insert>
+
+    <update id="updateOrders" parameterType="com.ctjsoft.orderserver.order.domain.Orders">
+        update jx_orders
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="name != null">name = #{name},</if>
+            <if test="sqls != null">sqls = #{sqls},</if>
+            <if test="reason != null">reason = #{reason},</if>
+            <if test="rowCount != null">ROW_COUNT = #{rowCount},</if>
+            <if test="dbId != null">db_id = #{dbId},</if>
+            <if test="isSchedule != null">is_schedule = #{isSchedule},</if>
+            <if test="cron != null">cron = #{cron},</if>
+            <if test="reviewStatus != null">review_status = #{reviewStatus},</if>
+            <if test="executeStatus != null">execute_status = #{executeStatus},</if>
+            <if test="checkStatus != null">check_status = #{checkStatus},</if>
+            <if test="flowId != null">flow_id = #{flowId},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="pushTime != null">push_time = #{pushTime},</if>
+            <if test="reviewTime != null">review_time = #{reviewTime},</if>
+            <if test="createorId != null">createor_id = #{createorId},</if>
+            <if test="pusherId != null">pusher_id = #{pusherId},</if>
+            <if test="reviewerId != null">reviewer_id = #{reviewerId},</if>
+            <if test="sqlType != null">sql_type = #{sqlType},</if>
+            <if test="fileId != null">file_id = #{fileId},</if>
+            <if test="executeTime != null">execute_time = #{executeTime},</if>
+            <if test="executorId != null">executor_id = #{executorId},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteOrdersById" parameterType="String">
+        delete from jx_orders where id = #{id}
+    </delete>
+
+    <delete id="deleteOrdersByIds" parameterType="String">
+        delete from jx_orders where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

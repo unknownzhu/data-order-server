@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>新增数据源</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+   <!-- <script src="../../lib/layui/layui.js" charset="utf-8"></script>-->
+    <style type="text/css">
+        .redstar {
+            color: red;
+            margin-right: 5px;
+        }
+
+        .layui-form {
+            margin-left: 20px;
+        }
+
+        .layui-form-item {
+            width: 600px;
+            /*height: 35px;*/
+        }
+
+        .layui-field-title {
+            color: #ffffff;
+        }
+
+        .database {
+            width: 170px !important;
+            float: right !important;
+            margin-right: 0 !important;
+        }
+
+        .layui-input-block button {
+            float: right;
+            margin-left: 15px;
+            height: 35px;
+            width: 70px;
+            /*background:#2667DF;*/
+            padding: 0;
+        }
+
+        .yes {
+            background: #2667DF;
+        }
+
+        .cancel:hover {
+            border: 1px solid #2667DF;
+            color: #2667DF;
+        }
+
+
+        .modal-content {
+            height: 100%;
+            margin: 0px;
+            background-color: #a09898;
+        }
+
+        /*.selectDemo {
+            height: 30px;
+            border: 1px solid #e6e6e6;
+            border-radius: 4px;
+        }*/
+
+    </style>
+</head>
+<body>
+
+
+<script type="text/html" id="barDemo">
+
+    <a href="#" class="layui-table-link" lay-event="look">查看</a>
+    <a href="#" class="layui-table-link" lay-event="history">历史</a>
+</script>
+
+
+<div class="layuimini-container">
+
+    <div class="layuimini-main">
+
+        <button-icon style="background: none;margin-top: 3px;" type="button"
+                     class="layui-btn layui-btn-sm layui-btn-primary"
+                     lay-submit="" id="refresh"> 刷新
+        </button-icon>
+        <button-icon style="background: none;margin-top: 3px;" type="button"
+                     class="layui-btn layui-btn-sm layui-btn-primary"
+                     lay-submit="" id="send"> 推送
+        </button-icon>
+
+        <table  style="display: none" class="layui-hide" id="compare" lay-filter="compare"></table>
+
+    </div>
+</div>
+
+
+
+<div id="timeDiv" style="display: none"></div>
+
+
+
+<!--
+<script src="../../lib/layui/layui.js" charset="utf-8"></script>
+-->
+
+
+<script src="../../../component/layui/layui.js"></script>
+<link rel="stylesheet" href="../../../component/layui/css/layui.css" media="all">
+<script src="../../../component/js/coustomizeEvent.js"></script>
+<script src="../../../component/js/jquery-1.9.0.js"></script>
+<script type="text/javascript" src="../../../component/js/common/jquery.cookie.js"></script>
+<script type="text/javascript" src="../../../component/js/common.js"></script>
+<!--		<script type="text/javascript" src="../../../js/common/request.js"></script>-->
+<!--		<script type="text/javascript" src="../../../js/common/common.js"></script>-->
+<script src="../timLine.js" charset="utf-8"></script>
+<script src="../difference.js" charset="utf-8"></script>
+
+
+<!--
+<script src="../../../lib/dist/xm-select.js" charset="utf-8"></script>
+-->
+
+</body>
+</html>

@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ctjsoft.orderserver.order.mapper.OrderReviewLogMapper">
+    
+    <resultMap type="com.ctjsoft.orderserver.order.domain.OrderReviewLog" id="OrderReviewLogResult">
+        <result property="id"    column="ID"    />
+        <result property="type"    column="TYPE"    />
+        <result property="orderId"    column="ORDER_ID"    />
+        <result property="creatorId"    column="CREATOR_ID"    />
+        <result property="createTime"    column="CREATE_TIME"    />
+        <result property="info"    column="INFO"    />
+        <result property="creatorName"    column="CREATOR_NAME"    />
+        <result property="orderName"    column="ORDER_NAME"    />
+
+
+
+    </resultMap>
+
+    <sql id="selectOrderReviewLogVo">
+        select ID, TYPE, ORDER_ID, CREATOR_ID, CREATE_TIME, INFO,CREATOR_NAME,ORDER_NAME from jx_order_review_log
+    </sql>
+
+    <select id="selectOrderReviewLogList" parameterType="com.ctjsoft.orderserver.order.domain.OrderReviewLog" resultMap="OrderReviewLogResult">
+        <include refid="selectOrderReviewLogVo"/>
+        <where>  
+            <if test="type != null  and type != ''"> and TYPE = #{type}</if>
+            <if test="orderId != null  and orderId != ''"> and ORDER_ID = #{orderId}</if>
+            <if test="creatorId != null  and creatorId != ''"> and CREATOR_ID = #{creatorId}</if>
+            <if test="createTime != null "> and CREATE_TIME = #{createTime}</if>
+            <if test="info != null  and info != ''"> and INFO = #{info}</if>
+            <if test="orderName != null  and orderName != ''"> and ORDER_NAME = #{orderName}</if>
+            <if test="creatorName != null  and creatorName != ''"> and CREATOR_NAME = #{creatorName}</if>
+        </where>
+        order by CREATE_TIME desc
+    </select>
+    
+    <select id="selectOrderReviewLogById" parameterType="String" resultMap="OrderReviewLogResult">
+        <include refid="selectOrderReviewLogVo"/>
+        where ID = #{id}
+         order by CREATE_TIME desc
+    </select>
+        
+    <insert id="insertOrderReviewLog" parameterType="com.ctjsoft.orderserver.order.domain.OrderReviewLog">
+        insert into jx_order_review_log
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">ID,</if>
+            <if test="type != null">TYPE,</if>
+            <if test="orderId != null">ORDER_ID,</if>
+            <if test="creatorId != null">CREATOR_ID,</if>
+            <if test="createTime != null">CREATE_TIME,</if>
+            <if test="info != null">INFO,</if>
+            <if test="orderName != null">ORDER_NAME,</if>
+            <if test="creatorName != null">CREATOR_NAME,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="type != null">#{type},</if>
+            <if test="orderId != null">#{orderId},</if>
+            <if test="creatorId != null">#{creatorId},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="info != null">#{info},</if>
+            <if test="orderName != null">#{orderName},</if>
+            <if test="creatorName != null">#{creatorName},</if>
+         </trim>
+    </insert>
+
+    <update id="updateOrderReviewLog" parameterType="com.ctjsoft.orderserver.order.domain.OrderReviewLog">
+        update jx_order_review_log
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="type != null">TYPE = #{type},</if>
+            <if test="orderId != null">ORDER_ID = #{orderId},</if>
+            <if test="creatorId != null">CREATOR_ID = #{creatorId},</if>
+            <if test="createTime != null">CREATE_TIME = #{createTime},</if>
+            <if test="info != null">INFO = #{info},</if>
+            <if test="creatorName  != info">CREATOR_NAME = #{creatorName},</if>
+            <if test="orderName != null">ORDER_NAME = #{orderName},</if>
+        </trim>
+        where ID = #{id}
+    </update>
+
+    <delete id="deleteOrderReviewLogById" parameterType="String">
+        delete from jx_order_review_log where ID = #{id}
+    </delete>
+
+    <delete id="deleteOrderReviewLogByIds" parameterType="String">
+        delete from jx_order_review_log where ID in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

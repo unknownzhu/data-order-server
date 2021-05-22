@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>跳转中</title>
+</head>
+<body>
+<script src="common.js"></script>
+<script src="../component/layui/layui.js"></script>
+<script src="../component/js/jquery-3.4.1.min.js"></script>
+<div style="font-size: 20px">
+
+</div>
+<script>
+
+    var url = GetQueryString('url');
+    var username = GetQueryString('username');
+    var password = GetQueryString('password');
+
+
+
+    var SERVER_NAME = '';
+    var userData  ;
+    if (location.host.substr(0, 6) == '10.108') {
+         SERVER_NAME = SERVER_NAME + "/data-order-server";
+
+        $.ajax({
+            type: 'GET',
+            url: "/user",
+            async: false,
+            success: function (redata) {
+                userData = redata;
+            },
+            error: function () {
+                //layer.msg('跳转失败！', {icon: 2, time: 2000});
+            }
+        });
+
+    }
+    var loginUrl = SERVER_NAME + '/login/doLogin?name=' + userData.userCode; //+ '&password=' + password;
+
+
+   // if (username != '' && password != '' && username != undefined && password != undefined) {
+        $.ajax({
+            type: 'POST',
+            url: loginUrl,
+            async: false,
+            success: function (redata) {
+
+
+                window.location.href = url; //location.href.split('?')[0];
+            },
+            error: function () {
+                //layer.msg('跳转失败！', {icon: 2, time: 2000});
+            }
+        });
+
+  //  }
+
+
+</script>
+
+</body>
+</html>

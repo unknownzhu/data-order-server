@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>修改工单管理</title>
+    <link rel="stylesheet" href="../../admin/css/load.css"/>
+    <link rel="stylesheet" href="../../admin/css/admin.css"/>
+    <link rel="stylesheet" href="../../component/pear/css/pear.css">
+    <link rel="stylesheet" href="../../component/zTree_v3/css/zTreeStyle/zTreeStyle.css">
+    <script src="../../component/layui/layui.js"></script>
+    <script src="../../component/pear/pear.js"></script>
+    <script src="../../component/jquery.min.js"></script>
+    <script src="../../component/zTree_v3/js/jquery.ztree.core.js"></script>
+    <script src="../common.js"></script>
+    <script src="../request.js"></script>
+</head>
+<body>
+<input style="display: none" id="dbIdInput" name="dbIdInput">
+
+<input name="forbidWords" id="forbidWords" type="hidden">
+<form class="layui-form">
+    <div class="mainBox">
+        <div class="main-container">
+            <input name="id" id="id" type="hidden">
+            <div class="layui-form-item">
+                <label class="layui-form-label">工单名：</label>
+                <div class="layui-input-block">
+                    <input type="text" name="name" id="name" placeholder="请输入工单名" class="layui-input"/>
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">申请类型：</label>
+                <div class="layui-input-block">
+                    <!-- <input type="text" name="dbId" placeholder="请输入数据库id" class="layui-input"/>-->
+                    <select id="flowId" name="flowId" lay-filter="flowId"></select>
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">数据库名称：</label>
+                <div class="layui-input-block">
+                    <!-- <input type="text" name="dbId" placeholder="请输入数据库id" class="layui-input"/>-->
+                    <select id="dbId" name="dbId" lay-filter="dbId"></select>
+                </div>
+            </div>
+
+            <div class="layui-form-item layui-form-text">
+                <label class="layui-form-label">申请原因：</label>
+                <div class="layui-input-block">
+                    <textarea name="reason" id="reason" placeholder="请输入申请原因" style="height: 100px;"
+                              class="layui-textarea"></textarea>
+                </div>
+            </div>
+            <!--<div style="float:left;">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">sql：</label>
+                    <div class="layui-input-block">
+                        <input type="radio" value="0" name='sqlType' id="sqlType" lay-filter="sqlType" checked
+                               title="语句"/>
+                        <input type="radio" value="1" name='sqlType' id="sqlType" lay-filter="sqlType"
+                               title="sql文件"/>
+                        &lt;!&ndash; <input  type="radio" value="2" name='sqlType' id="sqlType" lay-filter="sqlType"
+                                title="dmp"/>&ndash;&gt;
+                    </div>
+                </div>
+            </div>-->
+
+            <div id="sqlDiv" class="layui-form-item layui-form-text">
+                <label class="layui-form-label">sql：</label>
+                <div class="layui-input-block">
+                   <textarea name="sqls" id="sqls" placeholder="请输入sql语句" style="height: 200px;"
+                             class="layui-textarea"></textarea>
+                    <input type="button" class="layui-btn layui-btn-normal layui-btn-sm"
+                           lay-submit="" onclick="checkSql()"
+                           lay-filter="checkSql" value="检验语句"/>
+
+                    &nbsp; &nbsp;结果：<input type="text" style="width: 200px;height: 36px;border:none;margin-top: 5px"
+                                           name="checkStatusTitle"
+                                           id="checkStatusTitle" value="检查状态"/>
+                    <input id="checkStatus" name="checkStatus" style="display: none">
+                </div>
+            </div>
+
+
+            <div id="uploadDiv" style="display: none">
+                <div class="layui-form-item layui-form-text">
+                    <label class="layui-form-label">文件名：</label>
+                    <div class="layui-input-block">
+                        <input type="button" style="margin-top:10px;width: 128px; border:none" name="fileName"
+                               id="fileName"
+                               placeholder="文件名" value="未上传" class="layui-input"/>
+
+                    </div>
+                </div>
+                <div class="layui-form-item layui-form-text">
+                    <label class="layui-form-label"></label>
+                    <div class="layui-input-block">
+
+                        <button type="button" class="layui-btn" id="uploadButton">
+                            <i class="layui-icon">&#xe67c;</i>上传并检查
+                        </button>
+                        &nbsp; &nbsp;
+                        结果：<input type="text" style="width: 200px;height: 36px;border:none;margin-top: 5px"
+                                  name="checkStatusTitle1"
+                                  id="checkStatusTitle1" value="未检测"/>
+
+                        <input type="button" style="display:none;margin-top:10px" name="fileId" id="fileId"
+                               placeholder="文件id" class="layui-input"/>
+
+
+                        <!--<a href="www.baidu.com">
+                         <input type="button" style="margin-top:10px" name="fileName" id="fileName" placeholder="文件名" class="layui-input"/>
+                        </a>-->
+
+                    </div>
+                </div>
+            </div>
+
+
+            <div id="errorInfoDiv" style="display: none" class="layui-form-item layui-form-text">
+                <label class="layui-form-label">错误原因：</label>
+                <div class="layui-input-block">
+                    <textarea name="errorInfo" id="errorInfo" style="height: 100px;"
+                              class="layui-textarea"></textarea>
+                </div>
+            </div>
+
+
+            <div style="float:left;">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">定时任务：</label>
+                    <div class="layui-input-block">
+                        <input type="radio" value="0" name='isSchedule' id="isSchedule" lay-filter="isSchedule" checked
+                               title="否"/>
+                        <input type="radio" value="1" name='isSchedule' id="isSchedule" lay-filter="isSchedule"
+                               title="是"/>
+                    </div>
+                </div>
+            </div>
+
+            <div style="float:left;" id="cronDiv">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">表达式：</label>
+                    <div class="layui-input-block">
+                        <select id="cron" name="cron" lay-filter="cron"></select>
+                       <!-- <input type="text" name="cron" id="cron"
+                               placeholder="请输入cron表达式"
+                               autocomplete="off" class="layui-input">-->
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <div class="bottom">
+        <div class="button-container">
+            <button type="submit" class="layui-btn layui-btn-normal layui-btn-sm" lay-submit=""
+                    lay-filter="orders-update">
+                <i class="layui-icon layui-icon-ok"></i>
+                提交
+            </button>
+            <button type="reset" class="layui-btn layui-btn-primary layui-btn-sm">
+                <i class="layui-icon layui-icon-refresh"></i>
+                重置
+            </button>
+        </div>
+    </div>
+</form>
+</body>
+<th:block th:include="include :: footer"/>
+
+
+<script th:inline="javascript">
+
+    var dataId = GetQueryString('id');
+    $("#sqls").change(function (data) {
+        var str = '3';
+        if ($("#sqls").val() == editSqls) {
+            str = 1;
+        }
+        formatCheckStatusTitle(str, 1);
+    });
+
+    //sqlType 1 sql语句 2 sql文件
+    function formatCheckStatusTitle(checkStatus, sqlType) {
+        var str = '';
+        var empty = '未检查';
+        if (checkStatus == '0') {
+            str = '未检查';
+        } else if (checkStatus == '1') {
+            str = '通过';
+        } else if (checkStatus == '2') {
+            str = '未通过'
+        } else if (checkStatus == '3') {
+            str = '变动后未检查';
+        }
+        if (sqlType == '1') {
+            $("#checkStatusTitle").val(str);
+            $("#checkStatusTitle1").val(empty);
+        } else if (sqlType == '2') {
+            $("#checkStatusTitle1").val(str);
+            $("#checkStatusTitle").val(empty);
+        }
+
+    }
+
+    var editSqls = '';
+
+    layui.use(['form', 'jquery', 'laydate', 'upload'], function () {
+        let form = layui.form;
+        let $ = layui.jquery;
+        let laydate = layui.laydate;
+        var upload = layui.upload;
+
+        let prefix = "/data-order-server/system/orders/";
+        laydate.render({
+            elem: '#pushTime'
+        });
+        laydate.render({
+            elem: '#reviewTime'
+        });
+        var editData =  request.get(prefix + "edit?id=" + dataId, null).data;
+        var isSchedule = '';
+        var sqlType = '';
+
+        var uploadInst = upload.render({
+            elem: '#uploadButton' //绑定元素
+            //   , url: '/data-order-server/system/orders/analyzeSqlFile?dbId=ewqw' //上传接口
+            , url: '/data-order-server/system/orders/analyzeSqlFile'
+            , done: function (resultData) {
+                layer.msg(resultData.data.msg, {icon: resultData.data.status, time: 2000});
+                $("#fileName").val(resultData.data.fileName);
+                $("#fileId").val(resultData.data.fileId);
+
+                if (resultData.data.status != '1') {
+                    document.getElementById("errorInfoDiv").style.display = "block";
+                    $("#errorInfo").val(resultData.data.errofInfo);
+                } else if (resultData.data.status == '1') {
+                    document.getElementById("errorInfoDiv").style.display = "none";
+                    $("#errorInfo").val('');
+                }
+
+                formatCheckStatusTitle(resultData.data.status, 2);
+
+                //上传完毕回调
+            }, data: {
+                dbId: function () {
+                    return $("#dbIdInput").val();
+                }
+            }
+            , accept: 'file'
+            , error: function () {
+                //请求异常回调
+            }
+        });
+
+        form.on('select(dbId)', function (data) {
+            $("#dbIdInput").val(data.value);
+        });
+
+        form.on('select(flowId)', function (data) {
+            checkForbidWords = selectData[data.value];
+        });
+
+        var selectData = [];
+        var checkForbidWords = '';
+
+        function formFlowSelect() {
+            var data = JSON.stringify({});
+            var resultData = request.get("/data-order-server/system/flow/list", null).data
+
+            var opt = '<option value="" selected=""></option>';
+            //循环遍历
+            for (var i in resultData) {
+                var selected = '';
+                if (resultData[i].id == editData.flowId) {
+                    selected = 'selected="selected"';
+                }
+                opt += '<option ' + selected + '   value = "' + resultData[i].id + '"' +
+                    '>' + resultData[i].name + '</option>'
+                var idd = resultData[i].id;
+                selectData[idd] = resultData[i].forbidWords;
+            }
+            $("#flowId").html(opt);
+            form.render('select');
+            formatData();
+
+        }
+    //    formatData();
+        function formatData() {
+
+
+
+            $("#id").val(editData.id);
+            $("#name").val(editData.name);
+            $("#dbId").val(editData.dbId);
+            $("#dbIdInput").val(editData.dbId);
+            $("#reason").val(editData.reason);
+            $("#sqls").val(editData.sqls);
+            $("#rowCount").val(editData.rowCount);
+         //   $("#cron").val(editData.cron);
+
+            checkForbidWords = selectData[editData.flowId];
+            editSqls = editData.sqls;
+            var checkStatus = editData.checkStatus;
+            if (editData.checkStatus == null || editData.checkStatus == '') {
+                checkStatus = "0";
+            }
+            ;
+            formatCheckStatusTitle(checkStatus, editData.sqlType);
+            $("#checkStatus").val(checkStatus);
+            document.querySelector("input[name='isSchedule'][value='" + editData.isSchedule + "']").checked = true;
+            if (editData.isSchedule == '0') {
+                document.getElementById("cronDiv").style.display = "none";
+            }
+            form.render();
+        }
+
+
+        window.checkSql = function () {
+
+            var sqls = $("#sqls").val();
+            var dbId = $("#dbId").val();
+
+            if (sqls == null || sqls == '' || dbId == null || dbId == '') {
+                layer.msg('请检查源数据库及语句', {icon: 2, time: 2000});
+            }
+
+            var data = {};
+            data.sqls = sqls;
+            data.dbId = dbId;
+
+
+            data.forbidWords = checkForbidWords;
+
+            var resultData = request.post("/data-order-server/system/orders/checkSql", JSON.stringify(data));
+            layer.msg(resultData.data.msg, {icon: resultData.data.status, time: 2000});
+            if (resultData.data.status != '1') {
+                document.getElementById("errorInfoDiv").style.display = "block";
+                $("#errorInfo").val(resultData.data.errofInfo);
+            } else if (resultData.data.status == '1') {
+                document.getElementById("errorInfoDiv").style.display = "none";
+                $("#errorInfo").val('');
+            }
+            $("#checkStatus").val(resultData.data.status);
+            formatCheckStatusTitle(resultData.data.status, 1);
+            form.render();
+            return checkStatus;
+        }
+
+
+        formDbSelect();
+
+        function formDbSelect() {
+            var data = JSON.stringify({});
+            var resultData = request.post("/data-order-server/schema/list", data);
+            formFlowSelect();
+            var opt = '<option value="" selected=""></option>';
+            //循环遍历
+            for (var i in resultData) {
+                var selected = '';
+                if (resultData[i].id == editData.dbId) {
+                    selected = 'selected="selected"';
+                }
+                opt += '<option ' + selected + '   value = "' + resultData[i].id + '">' + resultData[i].title + '</option>'
+            }
+            $("#dbId").html(opt);
+            form.render('select');
+        }
+
+        formCronSelect();
+
+        function formCronSelect() {
+            var resultData = request.get("/data-order-server/system/cron/list").data;
+            var opt = '<option value="" selected=""></option>';
+            //循环遍历
+            for (var i in resultData) {
+                var selected = '';
+                if (resultData[i].id == editData.cron) {
+                    selected = 'selected="selected"';
+                }
+                opt += '<option ' + selected + '   value = "' + resultData[i].id + '">' + resultData[i].name+' —— '+ resultData[i].cron + '</option>'
+            }
+            $("#cron").html(opt);
+            form.render('select');
+        }
+
+        form.on('radio(isSchedule)', function (data) {
+            isSchedule = data.value;
+            if (isSchedule == '0') {
+                $("#cron").val('');
+                document.getElementById("cronDiv").style.display = "none";
+            } else if (isSchedule == '1') {
+                document.getElementById("cronDiv").style.display = "inline";
+            }
+        });
+
+        form.on('radio(sqlType)', function (data) {
+            sqlType = data.value;
+            if (sqlType == '0') {
+                document.getElementById("sqlDiv").style.display = "block";
+                document.getElementById("uploadDiv").style.display = "none";
+            } else {
+                document.getElementById("sqlDiv").style.display = "none";
+                document.getElementById("uploadDiv").style.display = "block";
+            }
+        });
+
+        function checkNull(data) {
+            var dataaa = data.field;
+            var flag = false;
+
+            if (dataaa.name == '' || dataaa.flowId == '' || dataaa.dbId == '' || dataaa.reason == '' || dataaa.sqls == '') {
+                flag = true;
+            }
+            return flag;
+        }
+
+
+        form.on('submit(orders-update)', function (data) {
+
+            if (checkNull(data)) {
+                layer.msg('请填写空表单', {icon: 2, time: 1000});
+                return false;
+            }
+
+            if ($("#checkStatus").val() == '1') {
+                update(data);
+            } else {   // 不重复校验
+                if (checkSql() == '1') {
+                    update(data);
+                }
+                ;
+            }
+
+            return false;
+        });
+
+        function update(data) {
+            for (var key in data.field) {
+                var type = $(data.form).find("input[name='" + key + "']").attr("type");
+                if (type == "checkbox") {
+                    var value = "";
+                    $(data.form).find("input[name='" + key + "']:checked").each(function () {
+                        value += $(this).val() + ",";
+                    })
+                    if (value != "") {
+                        value = value.substr(0, value.length - 1);
+                        data.field[key] = value;
+                    }
+                }
+            }
+            if (isSchedule == '') {
+                isSchedule = editData.isSchedule;
+            }
+            data.field.isSchedule = isSchedule;
+            $.ajax({
+                url: prefix + 'update',
+                data: JSON.stringify(data.field),
+                dataType: 'json',
+                contentType: 'application/json',
+                type: 'put',
+                success: function (result) {
+                    if (result.success) {
+                        layer.msg(result.msg, {icon: 1, time: 1000}, function () {
+                            parent.layer.close(parent.layer.getFrameIndex(window.name));
+                            parent.layui.table.reload("orders-table");
+                        });
+                    } else {
+                        layer.msg(result.msg, {icon: 2, time: 1000});
+                    }
+                }, error: function (result) {
+                    layer.msg(result.msg, {icon: 2, time: 1000});
+                }
+            })
+        }
+    });
+</script>
+</html>

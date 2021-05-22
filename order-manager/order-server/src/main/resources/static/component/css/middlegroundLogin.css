@@ -1,0 +1,154 @@
+@import url("../lib/layui/css/layui.css");
+@import url("common.css");
+
+.layui-body {
+	background: #407EE5 url(../img/loginBg33.png) no-repeat;
+	background-size: 100% 100%;
+	left: 0px;
+	overflow: hidden;
+}
+
+/* 登录框 */
+.loginWarp {
+	background: url(../img/loginBall.png) no-repeat;
+	background-size: 100% 100%;
+	width: 570px;
+	height: 550px;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	margin-top: -300px;
+	margin-left: 150px;
+}
+
+.loginBor {
+	border: 1px solid #FFFFFF;
+	border-radius: 10px;
+	box-shadow: 0px 0px 10px 5px rgba(0, 0, 0, 0.2);
+	background: rgba(255, 255, 255, 0.1);
+	width: 360px;
+	/* height: 400px; */
+	height: 300px;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	margin-top: -180px;
+	margin-left: -200px;
+	padding: 25px 20px 25px 20px;
+}
+
+/* .loginText {
+	font-size: 33px;
+	letter-spacing: 5px;
+	font-weight: bold;
+	background-image:-webkit-linear-gradient(0deg,#e6e6e6,#ffffff); 
+	text-shadow: 3px 4px 2px #1138b7;
+	-webkit-background-clip: text;
+	color: #FFFFFF;
+	text-align: center;
+} */
+.loginForm{
+	width: 100%;
+	height: 350px;
+	overflow: hidden;
+}
+.loginTop{
+	text-align: center;
+	font-size: 16px;
+	color: #FFFFFF;
+	cursor: pointer;
+	/* margin-top: 25px; */
+}
+.loginTop div{
+	padding: 10px 0px 10px 0px;
+	border-bottom: 1px solid #B0D2F8;
+}
+.loginTopNav{
+	font-weight: bold;
+	border-bottom: 1px solid #FFFFFF !important;
+	cursor: auto;
+}
+.loginCenter{
+	/* height: 310px; */
+}
+.loginCenter input{
+	border: 1px solid #FFFFFF;
+	height: 45px;
+	line-height: 45px;
+	background: rgba(255, 255, 255, 0.3);
+	margin-top: 35px;
+	color: #FFFFFF;
+	border-radius: 2px;
+	font-size: 16px;
+	padding-left: 50px;
+}
+.bg{
+	background-size: 100% 100%;
+	width: 32px;
+	height: 32px;
+	position: absolute;
+	top: 5px;
+	left: 10px;
+}
+.userBg{
+	background: url(../img/user.png) no-repeat;
+}
+.passwordBg{
+	background: url(../img/password.png) no-repeat;
+}
+
+input::-webkit-input-placeholder { /* WebKit browsers 适配谷歌 */
+    color: #FFFFFF;
+}
+input:-moz-placeholder { /* Mozilla Firefox 4 to 18 适配火狐 */
+    color: #FFFFFF;
+}
+input::-moz-placeholder { /* Mozilla Firefox 19+ 适配火狐 */
+    color: #FFFFFF;
+}
+input:-ms-input-placeholder { /* Internet Explorer 10+  适配ie*/
+    color: #FFFFFF;
+}
+.loginBtn{
+	width: 100%;
+	height: 45px;
+	line-height: 45px;
+	color: #FFFFFF;
+	border-radius: 2px;
+	font-size: 20px;
+	letter-spacing: 5px;
+	font-weight: bold;
+	margin-top: 40px;
+	color: #2667DF;
+	border: 0px;
+	cursor: pointer;
+	background-image: linear-gradient(to top, #d3e5fc , #ffffff);
+	position: relative;
+	padding-left: 35px;
+}
+.loginBtn:hover{
+	background-image: linear-gradient(to top, #b0c7f0 , #ffffff);
+}
+.btnBg{
+	width: 22px;
+	height: 22px;
+	background: url(../img/loginBtn.png) no-repeat;
+	position: absolute;
+	top: 11.5px;
+	left: 140px;
+}
+.loginCenter p:first-child{
+	margin-top: 35px;
+}
+.loginCenter p{
+	font-size: 16px;
+	color: #FFFFFF;
+	line-height: 25px;
+}
+.loginCenter p span{
+	color: #0d17df;
+	cursor: pointer;
+}
+.loginCenter p span:hover{
+	text-decoration: underline;
+}

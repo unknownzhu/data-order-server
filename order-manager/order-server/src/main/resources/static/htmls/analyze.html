@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <!-- <th:block th:include="include :: header('常用语句列表')"    /> -->
+    <link rel="stylesheet" href="../admin/css/load.css"/>
+    <link rel="stylesheet" href="../admin/css/admin.css"/>
+    <link rel="stylesheet" href="../component/pear/css/pear.css">
+    <link rel="stylesheet" href="../component/zTree_v3/css/zTreeStyle/zTreeStyle.css">
+    <script src="../component/layui/layui.js"></script>
+    <script src="../component/pear/pear.js"></script>
+    <script src="../component/jquery.min.js"></script>
+    <script src="../component/zTree_v3/js/jquery.ztree.core.js"></script>
+    <script src="common.js"></script>
+    <script src="request.js"></script>
+    <style>
+
+
+        *.layui-progress-big{
+            margin-top: 8px;
+        }
+
+        $('.spes_desc').hover(function() {
+        tip_index = layui.layer.tips(this.value, this, {tips: [1, '#ff6700'], time: 30000});
+        }, function() {
+            layui.layer.close(tip_index);
+        });
+
+    </style>
+</head>
+<body class="pear-container">
+<div class="layui-card">
+    <div class="layui-card-body">
+        <div class="col-sm-12 search-collapse">
+            <form id="formId" class="layui-form">
+
+                <div class="layui-form-item">
+
+                    <label class="layui-form-label">名称：</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="name" placeholder="请输入名称" class="layui-input"/>
+                    </div>
+                    <!--   <label class="layui-form-label">类别id：</label>
+                       <div class="layui-input-inline">
+                           <input type="text" name="typeId" placeholder="请输入类别id" class="layui-input" />
+                       </div>
+                       <label class="layui-form-label">创建人：</label>
+                       <div class="layui-input-inline">
+                           <input type="text" name="creatorId" placeholder="请输入创建人" class="layui-input" />
+                       </div>
+
+                     <label class="layui-form-label">数据库类型：</label>
+                       <div class="layui-input-inline">
+                           <select name="dbType"   dict-code="input" >
+                               <option value="">所有</option>
+                           </select>
+                       </div>-->
+
+                    <!--  <label class="layui-form-label">显示范围：0 所有人 1仅管理员 2 创建人：</label>
+                      <div class="layui-input-inline">
+                          <select name="showType"   dict-code="input" >
+                              <option value="">所有</option>
+                          </select>
+                      </div>-->
+                    <button class="pear-btn pear-btn-md pear-btn-primary" lay-submit lay-filter="historySql-query">
+                        <i class="layui-icon layui-icon-search"></i>
+                        查询
+                    </button>
+                    <button type="reset" class="pear-btn pear-btn-md">
+                        <i class="layui-icon layui-icon-refresh"></i>
+                        重置
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="layui-card">
+    <div class="layui-card-body">
+        <table id="historySql-table" lay-filter="historySql-table"></table>
+
+        <script type="text/html" id="historySql-toolbar">
+            <!--<button  sec:authorize="hasPermission('/data-order-server/system/historySql/add','system:historySql:add')"  class="pear-btn pear-btn-primary pear-btn-md" lay-event="add">
+                <i class="layui-icon layui-icon-add-1"></i>
+                新增
+            </button>-->
+            <!--  <button sec:authorize="hasPermission('/data-order-server/system/historySql/remove','system:historySql:remove')"
+                      class="pear-btn pear-btn-primary pear-btn-md" lay-event="batchRemove">
+                  <i class="layui-icon layui-icon-delete"></i>
+                  删除
+              </button>-->
+        </script>
+
+        <script type="text/html" id="historySql-bar">
+
+
+
+            <button sec:authorize="hasPermission('/data-order-server/system/historySql/edit','system:historySql:edit')"
+                    class="pear-btn pear-btn-primary pear-btn-sm" lay-event="detail"> 详情
+            </button>
+            <button sec:authorize="hasPermission('/data-order-server/system/historySql/rescan','system:historySql:rescan')"
+                    class="pear-btn pear-btn-primary pear-btn-sm" lay-event="export"> 导出
+            </button>
+            <button sec:authorize="hasPermission('/data-order-server/system/historySql/rescan','system:historySql:rescan')"
+                    class="pear-btn pear-btn-primary pear-btn-sm" lay-event="rescan"> 重新扫描
+            </button>
+
+
+        </script>
+    </div>
+</div>
+<th:block th:include="include :: footer"/>
+<script>
+    var schemaSpace = {};
+    layui.use(['table', 'form', 'element', 'jquery'], function () {
+        let table = layui.table;
+        let form = layui.form;
+        let $ = layui.jquery;
+        var element = layui.element;
+
+
+        let prefix = "/data-order-server/system/schema/";
+
+        let cols = [
+            [
+                {type: 'checkbox'},
+
+                {
+                    field: 'title',
+                    title: '名称' //,width: 300
+                },
+                {
+                    field: 'tablespaceName',
+                    title: '表空间名称' //,width: 300
+                }, {
+                field: 'title',
+                title: '表空间使用率', templet: function (d) {
+
+                    var str = ''
+                    if (d.total  == null || d.total == undefined) {
+                        str = '未扫描';
+                    }else{
+
+                        var rate = (d.used / d.total * 100).toFixed(2)  +'%';
+                        str = '                 <div  class="layui-progress layui-progress-big"  lay-showPercent="true">\n' +
+                            '                        <div class="layui-progress-bar layui-bg-blue" lay-percent="' + rate + '"></div>\n' +
+                            '                    </div>';
+
+                    }
+                    return str;
+                }
+
+            },
+                {
+                    field: 'total',
+                    title: '总大小' , templet: function (d) {
+                        if (d.total == null || d.total == undefined) {
+                            return '未扫描';
+                        }
+                        return (d.total/1024/1024/1024).toFixed(2) +"GB";
+                    } //,width: 300
+                },
+                {
+                    field: 'url',
+                    title: '连接地址'
+                },
+                {
+                    field: '',
+                    title: '创建人', templet: function (d) {
+                        return d.createUser.realName;
+                    } //,width: 180
+                },
+                {
+                    field: 'createTime',
+                    title: '创建时间' //,width: 180
+                }/*,
+                {title: '操作', toolbar: '#historySql-bar', align: 'center', width: 230}*/
+                ,
+                {
+                    title: '操作',width: 220, templet: function (d) {
+                        var str = ' <button sec:authorize="hasPermission(\'/data-order-server/system/historySql/edit\',\'system:historySql:edit\')"\n' +
+                            '                  class="pear-btn pear-btn-primary pear-btn-sm" lay-event="detail"> 详情\n' +
+                            '          </button>\n' +
+                            '          <button sec:authorize="hasPermission(\'/data-order-server/system/historySql/rescan\',\'system:historySql:rescan\')"\n' +
+                            '                  class="pear-btn pear-btn-primary pear-btn-sm" lay-event="export"> 导出\n' +
+                            '          </button>\n' ;
+
+
+                        if (d.status != null && d.status != '' && d.status != undefined && d.status == '1') {
+
+                            str +=
+                                '          <button sec:authorize="hasPermission(\'/data-order-server/system/historySql/rescan\',\'system:historySql:rescan\')"\n' +
+                                '                  class="pear-btn pear-btn-primary pear-btn-sm" lay-event="rescan"> 重新扫描\n' +
+                                '          </button>';
+
+                        } else     {
+
+                            str +=
+                                '          <button sec:authorize="hasPermission(\'/data-order-server/system/historySql/rescan\',\'system:historySql:rescan\')"\n' +
+                                '                  class="pear-btn   pear-btn-sm"  style="background-color: gray;color: white" > 扫描中\n' +
+                                '          </button>';
+                        }
+
+                        return str;
+                    }
+                }
+            ]
+        ]
+
+
+        function like(historySqlId, showType) {
+            var returnData = request.post("/data-order-server/system/commonSql/insertFromHistorySql?historySqlId=" + historySqlId + "&showType=" + showType, null);
+
+            if (returnData.success) {
+                layer.msg('操作成功', {icon: 1, time: 1000}, function () {
+                    parent.layer.close(parent.layer.getFrameIndex(window.name));
+                });
+            } else {
+                layer.msg(returnData.msg, {icon: 2, time: 1000}, function () {
+                });
+            }
+        }
+
+
+        /*       $.ajax({
+                   url: prefix + 'listTableSpace',
+                   dataType: 'json',
+                   type: 'get',
+                   success: function (result) {
+                       schemaSpace = result;
+                   }
+               })
+       */
+
+
+        table.render({
+            elem: '#historySql-table',
+            url: prefix + 'list',
+            page: true,
+            cols: cols,
+            skin: 'line',
+            /*  toolbar: '#historySql-toolbar',*/
+            defaultToolbar: [{
+                layEvent: 'refresh',
+                icon: 'layui-icon-refresh',
+            }, 'filter', 'print', 'exports']
+            , done: function () {
+                element.render()
+            }
+
+        });
+
+        table.on('tool(historySql-table)', function (obj) {
+            if (obj.event === 'remove') {
+                window.remove(obj);
+            } else if (obj.event === 'edit') {
+                window.edit(obj);
+            } else if (obj.event === 'like') {
+                window.like(obj);
+            } else if (obj.event === 'detail') {
+                window.detail(obj);
+            }else if (obj.event === 'rescan') {
+                window.rescan(obj);
+            }else if (obj.event === 'export') {
+                window.export(obj);
+            }
+        });
+
+        table.on('toolbar(historySql-table)', function (obj) {
+            if (obj.event === 'add') {
+                window.add();
+            } else if (obj.event === 'refresh') {
+                window.refresh();
+            } else if (obj.event === 'batchRemove') {
+                window.batchRemove(obj);
+            }
+        });
+
+        form.on('submit(historySql-query)', function (data) {
+            table.reload('historySql-table', {where: data.field})
+            return false;
+        });
+
+        window.add = function () {
+            layer.open({
+                type: 2,
+                title: '新增常用语句',
+                shade: 0.1,
+                area: ['100%', '100%'],
+                content: 'add.html'
+            });
+        }
+
+        window.edit = function (obj) {
+            layer.open({
+                type: 2,
+                title: '修改常用语句',
+                shade: 0.1,
+                area: ['100%', '100%'],
+                content: 'edit.html?id=' + obj.data['id']
+
+            });
+        }
+
+        window.like = function (obj) {
+            /*   layer.open({
+                   type: 2,
+                   title: '收藏语句',
+                   shade: 0.1,
+                   area: ['100%', '100%'],
+                   content: '../commonSql/like.html?id=' + obj.data['id']
+
+               });*/
+
+            layer.confirm('请选择语句权限？', {
+                    btn: ['所有人', '仅自己', '取消'] //可以无限个按钮
+                    , btn3: function (index, layero) {
+                        //按钮【按钮三】的回调
+                    }
+                }, function (index, layero) {
+                    like(obj.data.id, 0)
+                }, function (index, layero) {
+                    like(obj.data.id, 2)
+                }
+            );
+        }
+
+        window.detail = function (obj) {
+            var detail_index = layer.open({
+                type: 2,
+                title: '详情',
+                shade: 0.1,
+                area: ['100%', '100%'],
+                //                        var tabUrl = '/data-order-server/htmls/analyze/html/basic.html?dbId=' + schema.id + '&url=' + schema.url;
+
+                content: '/data-order-server/htmls/analyze/html/basic.html?dbId=' + obj.data['id']
+            });
+        }
+
+        window.export = function (obj) {
+
+
+            var dbId = obj.data.id;
+            var url = obj.data.url;
+            layer.confirm('确定导出该库的数据字典？', {icon: 3, title: '提示'}, function (index) {
+                layer.close(index);
+
+                window.location.href = '/data-order-server/jxStdDatabaseDataDicionary/export/' + dbId;
+
+            });
+        }
+        window.rescan = function (obj) {
+
+
+            var dbId = obj.data.id;
+            var url = obj.data.url;
+
+            layer.confirm('确定重新扫描该数据库？', {icon: 3, title: '提示'}, function (index) {
+                layer.close(index);
+
+                $.ajax({
+                    url: '/data-order-server/jxStdDatabaseDataDicionary/reScan/' + dbId ,
+                    contentType: "application/json;charset=UTF-8",
+                     async: true,
+                    dataType: 'json',
+                    type: 'get',
+                    success: function (result) {
+                    }
+                })
+
+
+                layer.alert('启动扫描成功', {
+                    btn: ['确定']
+                }, function (index) {
+                    layer.close(index);
+                    location.reload();
+                });
+
+
+
+            });
+
+
+
+        }
+
+        window.remove = function (obj) {
+            layer.confirm('确定要删除该常用语句', {icon: 3, title: '提示'}, function (index) {
+                layer.close(index);
+                let loading = layer.load();
+                $.ajax({
+                    url: prefix + "remove/" + obj.data['id'],
+                    dataType: 'json',
+                    type: 'delete',
+                    success: function (result) {
+                        layer.close(loading);
+                        if (result.success) {
+                            layer.msg(result.msg, {icon: 1, time: 1000}, function () {
+                                table.reload('historySql-table');
+                            });
+                        } else {
+                            layer.msg(result.msg, {icon: 2, time: 1000});
+                        }
+                    }
+                })
+            });
+        }
+
+        window.batchRemove = function (obj) {
+            let data = table.checkStatus(obj.config.id).data;
+            if (data.length === 0) {
+                layer.msg("未选中数据", {icon: 3, time: 1000});
+                return false;
+            }
+            let ids = "";
+            for (let i = 0; i < data.length; i++) {
+                ids += data[i].id + ",";
+            }
+            ids = ids.substr(0, ids.length - 1);
+            layer.confirm('确定要删除这些常用语句', {icon: 3, title: '提示'}, function (index) {
+                layer.close(index);
+                let loading = layer.load();
+                $.ajax({
+                    url: prefix + "batchRemove",
+                    dataType: 'json',
+                    data: {"ids": ids},
+                    type: 'delete',
+                    success: function (result) {
+                        layer.close(loading);
+                        if (result.success) {
+                            layer.msg(result.msg, {icon: 1, time: 1000}, function () {
+                                table.reload('historySql-table');
+                            });
+                        } else {
+                            layer.msg(result.msg, {icon: 2, time: 1000});
+                        }
+                    }
+                })
+            });
+        }
+
+        window.refresh = function (param) {
+            table.reload('historySql-table', {where: param});
+        }
+    })
+</script>
+</body>
+</html>

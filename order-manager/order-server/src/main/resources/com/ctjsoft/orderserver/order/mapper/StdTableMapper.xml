@@ -1,0 +1,1509 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ctjsoft.orderserver.analyze.mapper.StdTableMapper">
+	<resultMap id="BaseResultMap" type="com.ctjsoft.orderserver.analyze.domain.StdTable">
+		<id column="ID" jdbcType="VARCHAR" property="id" />
+		<result column="COMPANY_CODE" jdbcType="VARCHAR"
+			property="companyCode" />
+		<result column="SYSTEM_CODE" jdbcType="VARCHAR"
+			property="systemCode" />
+		<result column="BUSINESS_CODE" jdbcType="VARCHAR"
+			property="businessCode" />
+		<result column="TABLE_CODE" jdbcType="VARCHAR"
+			property="tableCode" />
+		<result column="IN_TABLE_CODE" jdbcType="VARCHAR"
+			property="tableInCode" />
+		<result column="TABLE_NAME" jdbcType="VARCHAR"
+			property="tableName" />
+		<result column="TABLE_CN_NAME" jdbcType="VARCHAR"
+			property="tableCnName" />
+		<result column="TABLE_DES" jdbcType="VARCHAR"
+			property="tableDes" />
+		<result column="BUSINESS_KEY" jdbcType="VARCHAR"
+			property="businessKey" />
+		<result column="IS_STANDARD" jdbcType="NUMERIC"
+			property="isStandard" />
+		<result column="VERSION" jdbcType="NUMERIC" property="version" />
+		<result column="CHANGE_VERSION" jdbcType="NUMERIC"
+			property="changeVersion" />
+		<result column="UPDATE_TIME" jdbcType="TIMESTAMP"
+			property="updateTime" />
+		<result column="UPDATE_USER" jdbcType="VARCHAR"
+			property="updateUser" />
+		<result column="CREATE_TIME" jdbcType="TIMESTAMP"
+			property="createTime" />
+		<result column="CREATE_USER" jdbcType="VARCHAR"
+			property="createUser" />
+		<result column="CATALOG_ENUM_ID" jdbcType="NUMERIC"
+			property="catalogEnumId" />
+		<result column="TABLE_TYPE" jdbcType="NUMERIC"
+			property="tableType" />
+		<result column="CHECK_RESULT" jdbcType="NUMERIC"
+			property="checkResult" />
+		<result column="FAIL_REASON" jdbcType="VARCHAR"
+			property="failReason" />
+		<result column="STD_TYPE" jdbcType="NUMERIC" property="stdType" />
+		<result column="IS_DELETED" jdbcType="NUMERIC"
+			property="isDeleted" />
+		<result column="IS_WZZX" jdbcType="NUMERIC" property="isWzzx" />
+		<result column="IS_YYZW" jdbcType="NUMERIC" property="isYyzw" />
+		<result column="IS_JQRJ" jdbcType="NUMERIC" property="isJqrj" />
+		<result column="IS_JRRJ" jdbcType="NUMERIC" property="isJrrj" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		ID, COMPANY_CODE, SYSTEM_CODE, BUSINESS_CODE,
+		TABLE_CODE,IN_TABLE_CODE,
+		TABLE_NAME,
+		TABLE_CN_NAME,
+		TABLE_DES,
+		BUSINESS_KEY, IS_STANDARD,
+		VERSION, CHANGE_VERSION, UPDATE_TIME,
+		UPDATE_USER,
+		CREATE_TIME,
+		CREATE_USER, CATALOG_ENUM_ID, TABLE_TYPE,
+		STD_TYPE, IS_DELETED,
+		CHECK_RESULT,
+		FAIL_REASON,IS_WZZX,IS_YYZW,IS_JQRJ,IS_JRRJ
+	</sql>
+	<select id="selectByPrimaryKey" parameterType="java.lang.String"
+		resultMap="BaseResultMap">
+		select
+		*
+		from STD_TABLE
+		where ID = #{id,jdbcType=VARCHAR}
+	</select>
+	<select id="selectTableCode" parameterType="java.lang.String"
+		resultMap="BaseResultMap">
+		select
+		*
+		from STD_TABLE
+		where TABLE_CODE =
+		#{tableCode,jdbcType=VARCHAR}
+	</select>
+	<select id="selectTableByCodeAndVer"
+		parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		ST.*
+		from STD_TABLE ST
+		<where>
+			ST.IS_DELETED = #{isDeleted}
+			<if test="tableCode != null">
+				AND ST.TABLE_CODE = #{tableCode}
+			</if>
+			<if test="version != null">
+				AND ST.VERSION &lt;= #{version}
+				AND ST.CHANGE_VERSION &gt;
+				#{version}
+			</if>
+		</where>
+	</select>
+
+	<select id="getTable" resultMap="BaseResultMap">
+		SELECT
+		ST.*
+		FROM STD_TABLE ST
+		<where>
+			1 = 1
+			<if test="versionRange == 0 or versionRange == 1">
+				<if test="version != null">
+					AND ST.VERSION &lt;= #{version}
+					AND ST.CHANGE_VERSION
+					&gt; #{version}
+				</if>
+				AND ST.IS_DELETED = #{isDeleted}
+			</if>
+<!-- 			<if test="versionRange == 1"> -->
+<!-- 				<if test="version != null"> -->
+<!-- 					AND ST.VERSION &lt; #{version} -->
+<!-- 					AND ST.CHANGE_VERSION -->
+<!-- 					&gt;= #{version} -->
+<!-- 				</if> -->
+<!-- 			</if> -->
+			<if test="versionRange == 2">
+				<if test="version != null">
+					AND ST.VERSION &gt; #{version}
+					AND ST.CHANGE_VERSION
+					&gt;
+					#{version}
+				</if>
+			</if>
+
+			<if test="systemCode != null and systemCode != ''">
+				AND ST.SYSTEM_CODE = #{systemCode}
+			</if>
+			<if test="companyCode != null and companyCode != ''">
+				AND ST.COMPANY_CODE = #{companyCode}
+			</if>
+			<if test="stdType != null">
+				AND ST.STD_TYPE = #{stdType}
+			</if>
+			<if test="tableType != null and tableType != 3">
+				AND ST.TABLE_TYPE = #{tableType}
+			</if>
+			<if test="catalogEnumId != null">
+				AND ST.CATALOG_ENUM_ID = #{catalogEnumId}
+			</if>
+			<if test="checkResult != null and checkResult.size > 0">
+				AND ST.CHECK_RESULT IN
+				<foreach collection="checkResult" item="cr" separator="," open="(" close=")">
+					#{cr}
+				</foreach>
+			</if>
+			<if test="isWzzx != null">
+				AND ST.IS_WZZX=#{isWzzx}
+			</if>
+			<if test="isYyzw != null">
+				AND ST.IS_YYZW=#{isYyzw}
+			</if>
+			<if test="isJqrj != null">
+				AND ST.IS_JQRJ=#{isJqrj}
+			</if>
+			<if test="isJrrj != null">
+				AND ST.IS_JRRJ=#{isJrrj}
+			</if>
+		</where>
+	</select>
+	<select id="getCzbTable" resultMap="BaseResultMap">
+		SELECT
+		ST.*
+		FROM STD_TABLE_CZB ST
+		<where>
+			1 = 1
+			<if test="versionRange == 0 or versionRange == 1">
+				<if test="version != null">
+					AND ST.VERSION &lt;= #{version}
+					AND ST.CHANGE_VERSION
+					&gt; #{version}
+				</if>
+				AND ST.IS_DELETED =  #{isDeleted}
+			</if>
+			<if test="versionRange == 2">
+				<if test="version != null">
+					AND ST.VERSION &gt; #{version}
+					AND ST.CHANGE_VERSION
+					&gt;
+					#{version}
+				</if>
+			</if>
+
+			<if test="systemCode != null and systemCode != ''">
+				AND ST.SYSTEM_CODE = #{systemCode}
+			</if>
+			<if test="companyCode != null and companyCode != ''">
+				AND ST.COMPANY_CODE = #{companyCode}
+			</if>
+			<if test="stdType != null">
+				AND ST.STD_TYPE = #{stdType}
+			</if>
+			<if test="checkResult != null and checkResult.size > 0">
+				AND ST.CHECK_RESULT IN
+				<foreach collection="checkResult" item="cr" separator="," open="(" close=")">
+					#{cr}
+				</foreach>
+			</if>
+			<if test="catalogEnumId != null">
+				AND ST.CATALOG_ENUM_ID = #{catalogEnumId}
+			</if>
+		</where>
+	</select>
+	<select id="getCzbTableByCode" resultMap="BaseResultMap">
+		SELECT
+			*
+		FROM
+			STD_TABLE_CZB ST
+		<where>
+			ST.IS_DELETED = #{isDeleted}
+			<if test="tableCode != null">
+				AND ST.TABLE_CODE = #{tableCode}
+			</if>
+			<if test="version != null">
+				AND ST.VERSION &lt;= #{version}
+				AND ST.CHANGE_VERSION &gt;
+				#{version}
+			</if>
+		</where>
+	</select>
+
+	<select id="getTableForChange" resultMap="BaseResultMap">
+		SELECT
+		ST.*
+		FROM STD_TABLE ST
+		<where>
+			1 = 1
+			<if test="version != null">
+				AND ST.VERSION = #{version}
+			</if>
+			<if test="systemCode != null and systemCode != ''">
+				AND ST.SYSTEM_CODE = #{systemCode}
+			</if>
+			<if test="stdType != null">
+				AND ST.STD_TYPE = #{stdType}
+			</if>
+			<if test="tableType != null">
+				AND ST.TABLE_TYPE = #{tableType}
+			</if>
+			<if test="catalogEnumId != null">
+				AND ST.CATALOG_ENUM_ID = #{catalogEnumId}
+			</if>
+		</where>
+	</select>
+
+	<select id="getTableForSqlImp" resultMap="BaseResultMap">
+		SELECT
+		ST.*
+		FROM STD_TABLE ST
+		<where>
+			1=1
+			<if test="companyCode != null and companyCode != ''">
+				AND ST.COMPANY_CODE = #{companyCode}
+			</if>
+			<if test="systemCode != null and systemCode != ''">
+				AND ST.SYSTEM_CODE = #{systemCode}
+			</if>
+			<if test="businessCode != null">
+				AND ST.BUSINESS_CODE = #{businessCode}
+			</if>
+			<if test="tableName != null">
+				AND ST.TABLE_NAME = #{tableName}
+			</if>
+			<if test="isStandard != null">
+				AND ST.IS_STANDARD = #{isStandard}
+			</if>
+			ORDER BY ST.VERSION DESC
+		</where>
+	</select>
+
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+		delete from
+		STD_TABLE
+		where ID = #{id,jdbcType=VARCHAR}
+	</delete>
+	<delete id="batchDeleteByPrimaryKey"
+		parameterType="java.util.List">
+		delete from
+		STD_TABLE
+		where ID IN
+		<foreach collection="ids" item="id" separator="," open="("
+			close=")">
+			#{id}
+		</foreach>
+	</delete>
+	<insert id="insert" parameterType="com.ctjsoft.orderserver.analyze.domain.StdTable">
+		insert into STD_TABLE (ID,
+		COMPANY_CODE, SYSTEM_CODE,
+		BUSINESS_CODE, TABLE_CODE,IN_TABLE_CODE,
+		TABLE_NAME,
+		TABLE_CN_NAME, TABLE_DES, BUSINESS_KEY,
+		IS_STANDARD,
+		VERSION,
+		CHANGE_VERSION,
+		UPDATE_TIME, UPDATE_USER, CREATE_TIME,
+		CREATE_USER,
+		CATALOG_ENUM_ID, TABLE_TYPE,
+		STD_TYPE, IS_DELETED,
+		CHECK_RESULT,
+		FAIL_REASON,IS_WZZX,IS_YYZW,IS_JQRJ,IS_JRRJ)
+		values
+		(#{id,jdbcType=VARCHAR},
+		#{companyCode,jdbcType=VARCHAR},
+		#{systemCode,jdbcType=VARCHAR},
+		#{businessCode,jdbcType=VARCHAR},
+		#{tableCode,jdbcType=VARCHAR},
+		#{tableInCode,jdbcType=VARCHAR},
+		#{tableName,jdbcType=VARCHAR},
+		#{tableCnName,jdbcType=VARCHAR},
+		#{tableDes,jdbcType=VARCHAR},
+		#{businessKey,jdbcType=VARCHAR},
+		#{isStandard,jdbcType=NUMERIC},
+		#{version,jdbcType=NUMERIC},
+		#{changeVersion,jdbcType=NUMERIC},
+		#{updateTime,jdbcType=TIMESTAMP},
+		#{updateUser,jdbcType=VARCHAR},
+		#{createTime,jdbcType=TIMESTAMP},
+		#{createUser,jdbcType=VARCHAR},
+		#{catalogEnumId,jdbcType=NUMERIC},
+		#{tableType,jdbcType=NUMERIC},
+		#{stdType,jdbcType=NUMERIC},
+		#{isDeleted,jdbcType=NUMERIC},
+		#{checkResult,jdbcType=NUMERIC},
+		#{failReason,jdbcType=VARCHAR},
+		#{isWzzx,jdbcType=NUMERIC},
+		#{isYyzw,jdbcType=NUMERIC},
+		#{isJqrj,jdbcType=NUMERIC},
+		#{isJrrj,jdbcType=NUMERIC})
+	</insert>
+	<insert id="insertSelective"
+		parameterType="com.ctjsoft.orderserver.analyze.domain.StdTable">
+		insert into STD_TABLE
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				ID,
+			</if>
+			<if test="companyCode != null">
+				COMPANY_CODE,
+			</if>
+			<if test="systemCode != null">
+				SYSTEM_CODE,
+			</if>
+			<if test="businessCode != null">
+				BUSINESS_CODE,
+			</if>
+			<if test="tableCode != null">
+				TABLE_CODE,
+			</if>
+			<if test="tableInCode != null">
+				IN_TABLE_CODE,
+			</if>
+			<if test="tableName != null">
+				TABLE_NAME,
+			</if>
+			<if test="tableCnName != null">
+				TABLE_CN_NAME,
+			</if>
+			<if test="tableDes != null">
+				TABLE_DES,
+			</if>
+			<if test="businessKey != null">
+				BUSINESS_KEY,
+			</if>
+			<if test="isStandard != null">
+				IS_STANDARD,
+			</if>
+			<if test="version != null">
+				VERSION,
+			</if>
+			<if test="changeVersion != null">
+				CHANGE_VERSION,
+			</if>
+			<if test="updateTime != null">
+				UPDATE_TIME,
+			</if>
+			<if test="updateUser != null">
+				UPDATE_USER,
+			</if>
+			<if test="createTime != null">
+				CREATE_TIME,
+			</if>
+			<if test="createUser != null">
+				CREATE_USER,
+			</if>
+			<if test="catalogEnumId != null">
+				CATALOG_ENUM_ID,
+			</if>
+			<if test="tableType != null">
+				TABLE_TYPE,
+			</if>
+			<if test="stdType != null">
+				STD_TYPE,
+			</if>
+			<if test="isDeleted != null">
+				IS_DELETED,
+			</if>
+			<if test="checkResult != null">
+				CHECK_RESULT,
+			</if>
+			<if test="failReason != null">
+				FAIL_REASON,
+			</if>
+			<if test="isWzzx != null">
+				IS_WZZX,
+			</if>
+			<if test="isYyzw != null">
+				IS_YYZW,
+			</if>
+			<if test="isJqrj != null">
+				IS_JQRJ,
+			</if>
+			<if test="isJrrj != null">
+				IS_JRRJ,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=VARCHAR},
+			</if>
+			<if test="companyCode != null">
+				#{companyCode,jdbcType=VARCHAR},
+			</if>
+			<if test="systemCode != null">
+				#{systemCode,jdbcType=VARCHAR},
+			</if>
+			<if test="businessCode != null">
+				#{businessCode,jdbcType=VARCHAR},
+			</if>
+			<if test="tableCode != null">
+				#{tableCode,jdbcType=VARCHAR},
+			</if>
+			<if test="tableInCode != null">
+				#{tableInCode,jdbcType=VARCHAR},
+			</if>
+			<if test="tableName != null">
+				#{tableName,jdbcType=VARCHAR},
+			</if>
+			<if test="tableCnName != null">
+				#{tableCnName,jdbcType=VARCHAR},
+			</if>
+			<if test="tableDes != null">
+				#{tableDes,jdbcType=VARCHAR},
+			</if>
+			<if test="businessKey != null">
+				#{businessKey,jdbcType=VARCHAR},
+			</if>
+			<if test="isStandard != null">
+				#{isStandard,jdbcType=NUMERIC},
+			</if>
+			<if test="version != null">
+				#{version,jdbcType=NUMERIC},
+			</if>
+			<if test="changeVersion != null">
+				#{changeVersion,jdbcType=NUMERIC},
+			</if>
+			<if test="updateTime != null">
+				#{updateTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateUser != null">
+				#{updateUser,jdbcType=VARCHAR},
+			</if>
+			<if test="createTime != null">
+				#{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createUser != null">
+				#{createUser,jdbcType=VARCHAR},
+			</if>
+			<if test="catalogEnumId != null">
+				#{catalogEnumId,jdbcType=NUMERIC},
+			</if>
+			<if test="tableType != null">
+				#{tableType,jdbcType=NUMERIC},
+			</if>
+			<if test="stdType != null">
+				#{stdType,jdbcType=NUMERIC},
+			</if>
+			<if test="isDeleted != null">
+				#{isDeleted,jdbcType=NUMERIC},
+			</if>
+			<if test="checkResult != null">
+				#{checkResult,jdbcType=NUMERIC},
+			</if>
+			<if test="failReason != null">
+				#{failReason,jdbcType=VARCHAR},
+			</if>
+			<if test="isWzzx != null">
+				#{isWzzx,jdbcType=NUMERIC},
+			</if>
+			<if test="isYyzw != null">
+				#{isYyzw,jdbcType=NUMERIC},
+			</if>
+			<if test="isJqrj != null">
+				#{isJqrj,jdbcType=NUMERIC},
+			</if>
+			<if test="isJrrj != null">
+				#{isJrrj,jdbcType=NUMERIC},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective"
+		parameterType="com.ctjsoft.orderserver.analyze.domain.StdTable">
+		update STD_TABLE
+		<set>
+			<if test="companyCode != null">
+				COMPANY_CODE = #{companyCode,jdbcType=VARCHAR},
+			</if>
+			<if test="systemCode != null">
+				SYSTEM_CODE = #{systemCode,jdbcType=VARCHAR},
+			</if>
+			<if test="businessCode != null">
+				BUSINESS_CODE = #{businessCode,jdbcType=VARCHAR},
+			</if>
+			<if test="tableCode != null">
+				TABLE_CODE = #{tableCode,jdbcType=VARCHAR},
+			</if>
+			<if test="tableInCode != null">
+				IN_TABLE_CODE = #{tableInCode,jdbcType=VARCHAR},
+			</if>
+			<if test="tableName != null">
+				TABLE_NAME = #{tableName,jdbcType=VARCHAR},
+			</if>
+			<if test="tableCnName != null">
+				TABLE_CN_NAME = #{tableCnName,jdbcType=VARCHAR},
+			</if>
+			<if test="tableDes != null">
+				TABLE_DES = #{tableDes,jdbcType=VARCHAR},
+			</if>
+			<if test="businessKey != null">
+				BUSINESS_KEY = #{businessKey,jdbcType=VARCHAR},
+			</if>
+			<if test="isStandard != null">
+				IS_STANDARD = #{isStandard,jdbcType=NUMERIC},
+			</if>
+			<if test="version != null">
+				VERSION = #{version,jdbcType=NUMERIC},
+			</if>
+			<if test="changeVersion != null">
+				CHANGE_VERSION = #{changeVersion,jdbcType=NUMERIC},
+			</if>
+			<if test="updateTime != null">
+				UPDATE_TIME = #{updateTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateUser != null">
+				UPDATE_USER = #{updateUser,jdbcType=VARCHAR},
+			</if>
+			<if test="createTime != null">
+				CREATE_TIME = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createUser != null">
+				CREATE_USER = #{createUser,jdbcType=VARCHAR},
+			</if>
+			<if test="catalogEnumId != null">
+				CATALOG_ENUM_ID = #{catalogEnumId,jdbcType=NUMERIC},
+			</if>
+			<if test="tableType != null">
+				TABLE_TYPE = #{tableType,jdbcType=NUMERIC},
+			</if>
+			<if test="stdType != null">
+				STD_TYPE = #{stdType,jdbcType=NUMERIC},
+			</if>
+			<if test="isDeleted != null">
+				IS_DELETED = #{isDeleted,jdbcType=NUMERIC},
+			</if>
+			<if test="checkResult != null">
+				CHECK_RESULT = #{checkResult,jdbcType=DECIMAL},
+			</if>
+			<if test="failReason != null">
+				FAIL_REASON = #{failReason,jdbcType=VARCHAR},
+			</if>
+			<if test="isWzzx != null">
+				IS_WZZX = #{isWzzx,jdbcType=NUMERIC},
+			</if>
+			<if test="isYyzw != null">
+				IS_YYZW = #{isYyzw,jdbcType=NUMERIC},
+			</if>
+			<if test="isJqrj != null">
+				IS_JQRJ = #{isJqrj,jdbcType=NUMERIC},
+			</if>
+			<if test="isJrrj != null">
+				IS_JRRJ = #{isJrrj,jdbcType=NUMERIC},
+			</if>
+		</set>
+		where ID = #{id,jdbcType=VARCHAR}
+	</update>
+	<update id="updateByPTabCodeSelective"
+		parameterType="com.ctjsoft.orderserver.analyze.domain.StdTable">
+		update STD_TABLE
+		<set>
+			<if test="companyCode != null">
+				COMPANY_CODE = #{companyCode,jdbcType=VARCHAR},
+			</if>
+			<if test="systemCode != null">
+				SYSTEM_CODE = #{systemCode,jdbcType=VARCHAR},
+			</if>
+			<if test="businessCode != null">
+				BUSINESS_CODE = #{businessCode,jdbcType=VARCHAR},
+			</if>
+			<if test="tableInCode != null">
+				IN_TABLE_CODE = #{tableInCode,jdbcType=VARCHAR},
+			</if>
+			<if test="tableName != null">
+				TABLE_NAME = #{tableName,jdbcType=VARCHAR},
+			</if>
+			<if test="tableCnName != null">
+				TABLE_CN_NAME = #{tableCnName,jdbcType=VARCHAR},
+			</if>
+			<if test="tableDes != null">
+				TABLE_DES = #{tableDes,jdbcType=VARCHAR},
+			</if>
+			<if test="businessKey != null">
+				BUSINESS_KEY = #{businessKey,jdbcType=VARCHAR},
+			</if>
+			<if test="isStandard != null">
+				IS_STANDARD = #{isStandard,jdbcType=NUMERIC},
+			</if>
+			<if test="version != null">
+				VERSION = #{version,jdbcType=NUMERIC},
+			</if>
+			<if test="changeVersion != null">
+				CHANGE_VERSION = #{changeVersion,jdbcType=NUMERIC},
+			</if>
+			<if test="updateTime != null">
+				UPDATE_TIME = #{updateTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateUser != null">
+				UPDATE_USER = #{updateUser,jdbcType=VARCHAR},
+			</if>
+			<if test="createTime != null">
+				CREATE_TIME = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createUser != null">
+				CREATE_USER = #{createUser,jdbcType=VARCHAR},
+			</if>
+			<if test="catalogEnumId != null">
+				CATALOG_ENUM_ID = #{catalogEnumId,jdbcType=NUMERIC},
+			</if>
+			<if test="tableType != null">
+				TABLE_TYPE = #{tableType,jdbcType=NUMERIC},
+			</if>
+			<if test="stdType != null">
+				STD_TYPE = #{stdType,jdbcType=NUMERIC},
+			</if>
+			<if test="isDeleted != null">
+				IS_DELETED = #{isDeleted,jdbcType=NUMERIC},
+			</if>
+			<if test="checkResult != null">
+				CHECK_RESULT = #{checkResult,jdbcType=DECIMAL},
+			</if>
+			<if test="failReason != null">
+				FAIL_REASON = #{failReason,jdbcType=VARCHAR},
+			</if>
+			<if test="isWzzx != null">
+				IS_WZZX = #{isWzzx,jdbcType=NUMERIC},
+			</if>
+			<if test="isYyzw != null">
+				IS_YYZW = #{isYyzw,jdbcType=NUMERIC},
+			</if>
+			<if test="isJqrj != null">
+				IS_JQRJ = #{isJqrj,jdbcType=NUMERIC},
+			</if>
+			<if test="isJrrj != null">
+				IS_JRRJ = #{isJrrj,jdbcType=NUMERIC},
+			</if>
+		</set>
+		where TABLE_CODE = #{tableCode,jdbcType=VARCHAR}
+	</update>
+	<update id="updateStdByPrimaryKeySelective"
+		parameterType="com.ctjsoft.orderserver.analyze.domain.StdTable">
+		update STD_TABLE_CZB
+		<set>
+			<if test="companyCode != null">
+				COMPANY_CODE = #{companyCode,jdbcType=VARCHAR},
+			</if>
+			<if test="systemCode != null">
+				SYSTEM_CODE = #{systemCode,jdbcType=VARCHAR},
+			</if>
+			<if test="businessCode != null">
+				BUSINESS_CODE = #{businessCode,jdbcType=VARCHAR},
+			</if>
+			<if test="tableCode != null">
+				TABLE_CODE = #{tableCode,jdbcType=VARCHAR},
+			</if>
+			<if test="tableInCode != null">
+				IN_TABLE_CODE = #{tableInCode,jdbcType=VARCHAR},
+			</if>
+			<if test="tableName != null">
+				TABLE_NAME = #{tableName,jdbcType=VARCHAR},
+			</if>
+			<if test="tableCnName != null">
+				TABLE_CN_NAME = #{tableCnName,jdbcType=VARCHAR},
+			</if>
+			<if test="tableDes != null">
+				TABLE_DES = #{tableDes,jdbcType=VARCHAR},
+			</if>
+			<if test="businessKey != null">
+				BUSINESS_KEY = #{businessKey,jdbcType=VARCHAR},
+			</if>
+			<if test="isStandard != null">
+				IS_STANDARD = #{isStandard,jdbcType=NUMERIC},
+			</if>
+			<if test="version != null">
+				VERSION = #{version,jdbcType=NUMERIC},
+			</if>
+			<if test="changeVersion != null">
+				CHANGE_VERSION = #{changeVersion,jdbcType=NUMERIC},
+			</if>
+			<if test="updateTime != null">
+				UPDATE_TIME = #{updateTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateUser != null">
+				UPDATE_USER = #{updateUser,jdbcType=VARCHAR},
+			</if>
+			<if test="createTime != null">
+				CREATE_TIME = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createUser != null">
+				CREATE_USER = #{createUser,jdbcType=VARCHAR},
+			</if>
+			<if test="catalogEnumId != null">
+				CATALOG_ENUM_ID = #{catalogEnumId,jdbcType=NUMERIC},
+			</if>
+			<if test="tableType != null">
+				TABLE_TYPE = #{tableType,jdbcType=NUMERIC},
+			</if>
+			<if test="stdType != null">
+				STD_TYPE = #{stdType,jdbcType=NUMERIC},
+			</if>
+			<if test="isDeleted != null">
+				IS_DELETED = #{isDeleted,jdbcType=NUMERIC},
+			</if>
+			<!-- <if test="dataModelCode != null">
+				DATA_MODEL_CODE = #{dataModelCode,jdbcType=VARCHAR},
+			</if> -->
+			<if test="checkResult != null">
+				CHECK_RESULT = #{checkResult,jdbcType=DECIMAL},
+			</if>
+			<if test="failReason != null">
+				FAIL_REASON = #{failReason,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where ID = #{id,jdbcType=VARCHAR}
+	</update>
+	<update id="updateByPrimaryKey"
+		parameterType="com.ctjsoft.orderserver.analyze.domain.StdTable">
+		update STD_TABLE
+		set COMPANY_CODE =
+		#{companyCode,jdbcType=VARCHAR},
+		SYSTEM_CODE =
+		#{systemCode,jdbcType=VARCHAR},
+		BUSINESS_CODE =
+		#{businessCode,jdbcType=VARCHAR},
+		TABLE_CODE =
+		#{tableCode,jdbcType=VARCHAR},
+		IN_TABLE_CODE =
+		#{tableInCode,jdbcType=VARCHAR},
+		TABLE_NAME =
+		#{tableName,jdbcType=VARCHAR},
+		TABLE_CN_NAME =
+		#{tableCnName,jdbcType=VARCHAR},
+		TABLE_DES =
+		#{tableDes,jdbcType=VARCHAR},
+		BUSINESS_KEY =
+		#{businessKey,jdbcType=VARCHAR},
+		IS_STANDARD =
+		#{isStandard,jdbcType=NUMERIC},
+		VERSION = #{version,jdbcType=NUMERIC},
+		CHANGE_VERSION = #{changeVersion,jdbcType=NUMERIC},
+		UPDATE_TIME =
+		#{updateTime,jdbcType=TIMESTAMP},
+		UPDATE_USER =
+		#{updateUser,jdbcType=VARCHAR},
+		CREATE_TIME =
+		#{createTime,jdbcType=TIMESTAMP},
+		CREATE_USER =
+		#{createUser,jdbcType=VARCHAR},
+		CATALOG_ENUM_ID =
+		#{catalogEnumId,jdbcType=NUMERIC},
+		TABLE_TYPE =
+		#{tableType,jdbcType=NUMERIC},
+		STD_TYPE = #{stdType,jdbcType=NUMERIC},
+		IS_DELETED = #{isDeleted,jdbcType=NUMERIC},
+		CHECK_RESULT =
+		#{checkResult,jdbcType=DECIMAL},
+		FAIL_REASON =
+		#{failReason,jdbcType=VARCHAR},
+		IS_WZZX = #{isWzzx,jdbcType=NUMERIC},
+		IS_YYZW = #{isYyzw,jdbcType=NUMERIC},
+		IS_JQRJ =
+		#{isJqrj,jdbcType=NUMERIC},
+		IS_JRRJ = #{isJrrj,jdbcType=NUMERIC}
+		where
+		ID =
+		#{id,jdbcType=VARCHAR}
+	</update>
+	<select id="selectTablesBySystemVersion"
+		resultMap="BaseResultMap">
+		SELECT
+		*
+		FROM
+		STD_TABLE
+		WHERE
+		IS_DELETED= #{isDeleted}
+		AND VERSION &lt;=
+		#{version}
+		AND
+		CHANGE_VERSION &gt; #{version}
+		<if test="systemCode != null and systemCode != ''">
+			AND SYSTEM_CODE=#{systemCode}
+		</if>
+		<if test="companyCode != null and companyCode != ''">
+			AND COMPANY_CODE=#{companyCode}
+		</if>
+		<if test="iStandard != null">
+			AND IS_STANDARD=#{iStandard}
+		</if>
+		<if test="stdType != null">
+			AND STD_TYPE=#{stdType}
+		</if>		
+		<if test="isCompanyDto != null">
+			<if test="isCompanyDto.isWzzx != null">
+				AND IS_WZZX=#{isCompanyDto.isWzzx}
+			</if>
+			<if test="isCompanyDto.isYyzw != null">
+				AND IS_YYZW=#{isCompanyDto.isYyzw}
+			</if>
+			<if test="isCompanyDto.isJqrj != null">
+				AND IS_JQRJ=#{isCompanyDto.isJqrj}
+			</if>
+			<if test="isCompanyDto.isJrrj != null">
+				AND IS_JRRJ=#{isCompanyDto.isJrrj}
+			</if>
+		</if>
+	</select>
+	<select id="selectStdTablesByTableName"
+		resultMap="BaseResultMap">
+		SELECT
+		*
+		FROM
+		STD_TABLE_CZB
+		WHERE
+		IS_DELETED= #{isDeleted}
+		<if test="version != null">
+			AND VERSION &lt;=
+			#{version}
+			AND
+			CHANGE_VERSION &gt;
+			#{version}
+		</if>
+		<if test="tableName != null">
+			AND TABLE_NAME=#{tableName}
+		</if>
+		<if test="stdType != null">
+			AND STD_TYPE=#{stdType}
+		</if>
+	</select>
+	<select id="selectCZBTablesByTableNameList"
+		resultMap="BaseResultMap">
+		SELECT
+		*
+		FROM
+		STD_TABLE_CZB
+		WHERE
+		IS_DELETED= #{isDeleted}
+		<if test="version != null">
+			AND VERSION &lt;=
+			#{version}
+			AND
+			CHANGE_VERSION &gt;
+			#{version}
+		</if>
+		<if test="list != null ">
+			<choose>
+				<when test="list.size > 0">
+					AND TABLE_NAME IN
+					<foreach collection="list" item="tableName" index="index"
+						open="(" close=")" separator=",">
+						#{tableName}
+					</foreach>
+				</when>
+		        <otherwise>
+		         AND 1=2
+		      	</otherwise>
+	      	</choose>
+      	</if>
+		<if test="stdType != null">
+			AND STD_TYPE=#{stdType}
+		</if>
+	</select>
+	<select id="selectByTableName"
+		resultMap="BaseResultMap">
+		SELECT
+		*
+		FROM
+		STD_TABLE
+		WHERE
+		IS_DELETED=#{isDeleted}
+		<if test="version != null">
+			AND VERSION &lt;=
+			#{version}
+			AND
+			CHANGE_VERSION &gt;
+			#{version}
+		</if>
+		<if test="tableName != null">
+			AND TABLE_NAME=#{tableName}
+		</if>
+		<if test="stdType != null">
+			AND STD_TYPE=#{stdType}
+		</if>
+	</select>
+
+	<select id="getMaxTableCode" resultMap="BaseResultMap">
+		SELECT ST.TABLE_CODE FROM STD_TABLE ST  ORDER BY ST.TABLE_CODE DESC
+	</select>
+
+	<update id="changeCurrenTableCheckResultToNormal">
+		update STD_TABLE set FAIL_REASON=null,CHECK_RESULT=1
+		where
+		IS_DELETED= #{isDeleted}  AND NVL(CHECK_RESULT,-1) != 1
+		<if test="companyCode != null and companyCode != ''">
+			AND COMPANY_CODE=#{companyCode}
+		</if>
+		<if test="systemCode != null and systemCode != ''">
+			AND SYSTEM_CODE=#{systemCode}
+		</if>
+		<if test="version != null">
+			AND VERSION &lt;=
+			#{version}
+			AND
+			CHANGE_VERSION &gt;
+			#{version}
+		</if>
+		<if test="tableCode != null">
+			AND TABLE_CODE=#{tableCode}
+		</if>
+		<if test="stdType != null">
+			AND STD_TYPE=#{stdType}
+		</if>
+		<if test="isCompanyDto != null">
+			<if test="isCompanyDto.isWzzx != null">
+				AND IS_WZZX=#{isCompanyDto.isWzzx}
+			</if>
+			<if test="isCompanyDto.isYyzw != null">
+				AND IS_YYZW=#{isCompanyDto.isYyzw}
+			</if>
+			<if test="isCompanyDto.isJqrj != null">
+				AND IS_JQRJ=#{isCompanyDto.isJqrj}
+			</if>
+			<if test="isCompanyDto.isJrrj != null">
+				AND IS_JRRJ=#{isCompanyDto.isJrrj}
+			</if>
+		</if>
+	</update>
+	<update id="changeStdTableCheckResultToNormal">
+		update STD_TABLE_CZB set
+		FAIL_REASON=null,CHECK_RESULT=1
+		where
+		IS_DELETED= #{isDeleted} AND NVL(CHECK_RESULT,-1) != 1
+		<if test="version != null">
+			AND VERSION &lt;=
+			#{version}
+			AND
+			CHANGE_VERSION &gt;
+			#{version}
+		</if>
+		<if test="tableCode != null">
+			AND TABLE_CODE=#{tableCode}
+		</if>
+        <if test="stdType != null">
+            AND STD_TYPE=#{stdType}
+        </if>		
+	</update>
+
+	<select id="selectByTableCode" resultMap="BaseResultMap">
+		SELECT
+		ST.*
+		FROM
+		STD_TABLE ST
+		WHERE
+		1=1
+
+		<if test="versionRange == 0 or versionRange == 1">
+			<if test="version != null">
+				AND ST.VERSION &lt;= #{version}
+				AND ST.CHANGE_VERSION
+				&gt;
+				#{version}
+			</if>
+			AND ST.IS_DELETED= #{isDeleted}
+		</if>
+<!-- 		<if test="versionRange == 1"> -->
+<!-- 			<if test="version != null"> -->
+<!-- 				AND ST.VERSION &lt; #{version} -->
+<!-- 				AND ST.CHANGE_VERSION -->
+<!-- 				&gt;= -->
+<!-- 				#{version} -->
+<!-- 			</if> -->
+<!-- 		</if> -->
+		<if test="versionRange == 2">
+			<if test="version != null">
+				AND ST.VERSION &gt; #{version}
+				AND ST.CHANGE_VERSION
+				&gt;
+				#{version}
+			</if>
+		</if>
+
+		<if test="tableCode != null">
+			AND ST.TABLE_CODE=#{tableCode}
+		</if>
+		<if test="companyCode != null and companyCode != ''">
+			AND ST.COMPANY_CODE=#{companyCode}
+		</if>
+		<if test="systemCode != null and systemCode != ''">
+			AND ST.SYSTEM_CODE=#{systemCode}
+		</if>
+		<if test="businessCode != null">
+			AND ST.BUSINESS_CODE=#{businessCode}
+		</if>
+		<if test="isCompanyDto != null">
+			<if test="isCompanyDto.isWzzx != null">
+				AND IS_WZZX=#{isCompanyDto.isWzzx}
+			</if>
+			<if test="isCompanyDto.isYyzw != null">
+				AND IS_YYZW=#{isCompanyDto.isYyzw}
+			</if>
+			<if test="isCompanyDto.isJqrj != null">
+				AND IS_JQRJ=#{isCompanyDto.isJqrj}
+			</if>
+			<if test="isCompanyDto.isJrrj != null">
+				AND IS_JRRJ=#{isCompanyDto.isJrrj}
+			</if>
+		</if>
+	</select>
+	<!-- 根据code和version查 getTableByTableCode -->
+	<select id="getTableByTableCode" resultMap="BaseResultMap">
+		SELECT
+		*
+		FROM
+		STD_TABLE ST
+		WHERE
+		ST.IS_DELETED=#{isDeleted}
+		AND ST.TABLE_CODE = #{tableCode}
+		AND ST.VERSION &lt;= #{version}
+		AND ST.CHANGE_VERSION &gt; #{version}
+	</select>
+	<!-- 根据条件查询是是否已经存在 -->
+	<select id="getStdTableByParam"
+		parameterType="com.ctjsoft.orderserver.analyze.domain.StdTable" resultMap="BaseResultMap">
+		SELECT
+		*
+		FROM
+		STD_TABLE ST
+		WHERE
+		ST.IS_DELETED = #{isDeleted}
+		AND ST.TABLE_NAME = #{stdTable.tableName}
+		AND ST.COMPANY_CODE = #{stdTable.companyCode}
+		AND ST.TABLE_CN_NAME = #{stdTable.tableCnName}
+		AND ST.SYSTEM_CODE = #{stdTable.systemCode}
+		AND ST.BUSINESS_CODE = #{stdTable.businessCode}
+	</select>
+	<!-- 获取当前父节点下最大排序的子节点getMaxSortByParam -->
+	<select id="getMaxSortByParam"
+		parameterType="com.ctjsoft.orderserver.analyze.domain.StdTable" resultMap="BaseResultMap">
+		SELECT
+		*
+		FROM
+		STD_TABLE ST
+		WHERE
+		ST.IS_DELETED = #{isDeleted}
+		AND ST.COMPANY_CODE = #{stdTable.companyCode}
+		AND ST.SYSTEM_CODE = #{stdTable.systemCode}
+		AND ST.BUSINESS_CODE = #{stdTable.businessCode}
+
+		LIMIT 0,1
+	</select>
+	<select id="selectStdByTableCode" resultMap="BaseResultMap">
+		SELECT
+		*
+		FROM
+		STD_TABLE_CZB
+		WHERE
+		IS_DELETED= #{isDeleted}
+		<if test="version != null">
+		AND VERSION &lt;= #{version}
+		AND CHANGE_VERSION &gt; #{version}
+		</if>
+		<if test="tableCode != null">
+			AND TABLE_CODE=#{tableCode}
+		</if>
+	</select>
+    <select id="selectByVersion" resultMap="BaseResultMap">
+        SELECT
+        *
+        FROM
+        STD_TABLE
+        WHERE
+        IS_DELETED= #{isDeleted}
+        AND VERSION &lt;= #{version}
+        AND CHANGE_VERSION &gt; #{version}
+        <if test="businessId != null">
+            AND CATALOG_ENUM_ID=#{businessId}
+        </if>
+        <if test="stdType != null">
+            AND STD_TYPE=#{stdType}
+        </if>
+        ORDER BY CATALOG_ENUM_ID
+    </select>
+    <select id="selectCZBByVersion" resultMap="BaseResultMap">
+        SELECT
+        *
+        FROM
+        STD_TABLE_CZB
+        WHERE
+        IS_DELETED= #{isDeleted}
+        AND VERSION &lt;= #{version}
+        AND CHANGE_VERSION &gt; #{version}
+        <if test="businessId != null">
+            AND CATALOG_ENUM_ID=#{businessId}
+        </if>
+        <if test="stdType != null">
+            AND STD_TYPE=#{stdType}
+        </if>
+    </select>
+
+    <select id="getTableByTableCodes" resultMap="BaseResultMap">
+        SELECT
+        *
+        FROM
+        STD_TABLE
+        WHERE
+        IS_DELETED=#{isDeleted}
+        AND VERSION &lt;= #{version}
+        AND CHANGE_VERSION &gt; #{version}
+        AND TABLE_CODE = #{tableCode}
+    </select>
+
+    <select id="getCzbTableByVersionAndBusinessCode" resultMap="BaseResultMap">
+        SELECT
+            *
+        FROM
+            STD_TABLE_CZB
+        where version = #{version} and BUSINESS_CODE = #{businessCode} and IS_DELETED = #{isDeleted}
+	</select>
+
+    <select id="getCZBTableByTableCodes" resultMap="BaseResultMap">
+        SELECT
+        *
+        FROM
+        STD_TABLE_CZB
+        WHERE
+        IS_DELETED=#{isDeleted}
+		<if test="version != null">
+			AND VERSION &lt;= #{version}
+			AND CHANGE_VERSION &gt; #{version}
+		</if>
+		<if test="tableCode != null">
+	        AND TABLE_CODE = #{tableCode}
+		</if>
+    </select>
+    <select id="getCzbTableByCodes" resultMap="BaseResultMap">
+		select * from STD_TABLE_CZB
+		WHERE IS_DELETED = #{isDeleted}
+		<if test="version != null">
+			AND VERSION &lt;= #{version}
+			AND CHANGE_VERSION &gt; #{version}
+		</if>
+		<if test="tableCodes != null and tableCodes.size > 0">
+			AND TABLE_CODE IN
+			<foreach collection="tableCodes" separator="," open="(" close=")" item="tableCode">
+				#{tableCode}
+			</foreach>
+		</if>
+	</select>
+	<select id="getTableByCodes" resultMap="BaseResultMap">
+		select * from STD_TABLE_CZB
+		WHERE IS_DELETED = #{isDeleted}
+		<if test="version != null">
+			AND VERSION &lt;= #{version}
+			AND CHANGE_VERSION &gt; #{version}
+		</if>
+		<if test="tableCodes != null and tableCodes.size > 0">
+			AND TABLE_CODE IN
+			<foreach collection="tableCodes" separator="," open="(" close=")" item="tableCode">
+				#{tableCode}
+			</foreach>
+		</if>
+	</select>
+
+    <select id="getCzbTableByNames" resultMap="BaseResultMap">
+		select * from STD_TABLE_CZB
+		    <if test="tableNames != null and tableNames.size > 0">
+				<where>
+					IS_DELETED = #{isDeleted} and TABLE_NAME in
+					<foreach collection="tableNames" separator="," open="(" close=")" item="tableName">
+						#{tableName}
+					</foreach>
+				</where>
+			</if>
+	</select>
+    <select id="getCzbTableByPerfixNames" resultMap="BaseResultMap">
+		select * from STD_TABLE_CZB
+		<where>
+			IS_DELETED = #{isDeleted} AND STD_TYPE = #{stdType} AND TABLE_NAME LIKE #{businessName} ESCAPE '\'
+		</where>
+	</select>
+    <select id="getTableByNames" resultMap="BaseResultMap">
+		select * from STD_TABLE
+		WHERE IS_DELETED = #{isDeleted}
+		<if test="version != null">
+			AND VERSION &lt;= #{version}
+			AND CHANGE_VERSION &gt; #{version}
+		</if>
+		<if test="tableNames != null and tableNames.size > 0">
+			AND TABLE_NAME IN
+			<foreach collection="tableNames" separator="," open="(" close=")" item="tableName">
+				#{tableName}
+			</foreach>
+		</if>
+	</select>
+
+	<select id="getTableByPrefixNames" resultMap="BaseResultMap">
+		select * from STD_TABLE
+		WHERE IS_DELETED = #{isDeleted}
+		<if test="version != null">
+			AND VERSION &lt;= #{version}
+			AND CHANGE_VERSION &gt; #{version}
+		</if>
+		AND TABLE_NAME LIKE #{businessName}  ESCAPE '\'
+	</select>
+    <select id="selectCZBCount" resultType="java.lang.Integer">
+		select count(-1) from STD_TABLE_CZB where IS_DELETED = #{isDeleted} AND STD_TYPE = #{stdType}
+	</select>
+    <select id="selectCZBTable" resultMap="BaseResultMap">
+		select * from STD_TABLE_CZB
+		where IS_DELETED = #{isDeleted}
+		<if test="version != null">
+			AND VERSION &lt;= #{version}
+			AND CHANGE_VERSION &gt; #{version}
+		</if>
+		AND STD_TYPE = #{stdType}
+	</select>
+    <select id="countConflictandError" resultType="int">
+		select count(1) from STD_TABLE where 
+		IS_DELETED = #{isDeleted}
+		<if test="version != null">
+			AND VERSION &lt;= #{version}
+			AND CHANGE_VERSION &gt; #{version}
+		</if>
+		<if test="stdType != null">
+			AND STD_TYPE=#{stdType}
+		</if>
+		AND (CHECK_RESULT IS NULL OR CHECK_RESULT!=1)
+	</select>
+
+    <select id="selectByVersionAndStdType" resultMap="BaseResultMap">
+        SELECT
+        *
+        FROM
+        STD_TABLE
+        WHERE
+        IS_DELETED=#{isDeleted}
+        AND VERSION &lt;= #{version}
+        AND CHANGE_VERSION &gt; #{version}
+        AND STD_TYPE = #{stdType}
+        <if test="businessId != null">
+            AND CATALOG_ENUM_ID=#{businessId}
+        </if>
+        ORDER BY CATALOG_ENUM_ID
+    </select>
+
+	<select id="getCzbTableByNamesLike" resultMap="BaseResultMap">
+		select * from STD_TABLE_CZB
+		WHERE IS_DELETED = #{isDeleted}
+		<if test="version != null">
+			AND VERSION &lt;= #{version}
+			AND CHANGE_VERSION &gt; #{version}
+		</if>
+		<if test="tableName != null">
+			AND TABLE_NAME LIKE #{tableName}
+		</if>
+	</select>
+	<select id="getTableByNamesLike" resultMap="BaseResultMap">
+		select * from STD_TABLE
+		WHERE IS_DELETED = #{isDeleted}
+		<if test="version != null">
+			AND VERSION &lt;= #{version}
+			AND CHANGE_VERSION &gt; #{version}
+		</if>
+		<if test="tableName != null">
+			AND TABLE_NAME LIKE #{tableName}
+		</if>
+	</select>
+	<!-- 查询czb数据  getCzbTableByNameAndVersion -->
+	<select id="getCzbTableByNameAndVersion" resultMap="BaseResultMap">
+		SELECT * from STD_TABLE_CZB
+		WHERE IS_DELETED = 2
+		<if test="version != null">
+			AND VERSION &lt;= #{version}
+			AND CHANGE_VERSION &gt; #{version}
+		</if>
+		<if test="tableName != null">
+			AND TABLE_NAME = #{tableName}
+		</if>
+		<if test="stdType != null">
+			AND STD_TYPE = #{stdType}
+		</if>
+	</select>
+	<!-- 保存财政部汇总数据 -->
+	<insert id="insertCZBTables" parameterType="com.ctjsoft.orderserver.analyze.domain.StdTable">
+	
+		insert into STD_TABLE_CZB (
+			ID,COMPANY_CODE, SYSTEM_CODE,BUSINESS_CODE, TABLE_CODE,
+			TABLE_NAME,TABLE_CN_NAME, TABLE_DES, BUSINESS_KEY,IS_STANDARD,
+			VERSION,CHANGE_VERSION,UPDATE_TIME, UPDATE_USER, CREATE_TIME,
+			CREATE_USER,CATALOG_ENUM_ID, TABLE_TYPE,STD_TYPE, IS_DELETED,
+			CHECK_RESULT,FAIL_REASON
+		)
+		 <foreach collection="list" item="item"  separator="UNION ALL">
+		(   SELECT
+			#{item.id,jdbcType=VARCHAR},
+			#{item.companyCode,jdbcType=VARCHAR},
+			#{item.systemCode,jdbcType=VARCHAR},
+			#{item.businessCode,jdbcType=VARCHAR},
+			#{item.tableCode,jdbcType=VARCHAR},
+			#{item.tableName,jdbcType=VARCHAR},
+			#{item.tableCnName,jdbcType=VARCHAR},
+			#{item.tableDes,jdbcType=VARCHAR},
+			#{item.businessKey,jdbcType=VARCHAR},
+			#{item.isStandard,jdbcType=NUMERIC},
+			#{item.version,jdbcType=NUMERIC},
+			#{item.changeVersion,jdbcType=NUMERIC},
+			#{item.updateTime,jdbcType=TIMESTAMP},
+			#{item.updateUser,jdbcType=VARCHAR},
+			#{item.createTime,jdbcType=TIMESTAMP},
+			#{item.createUser,jdbcType=VARCHAR},
+			#{item.catalogEnumId,jdbcType=NUMERIC},
+			#{item.tableType,jdbcType=NUMERIC},
+			#{item.stdType,jdbcType=NUMERIC},
+			#{item.isDeleted,jdbcType=NUMERIC},
+			#{item.checkResult,jdbcType=NUMERIC},
+			#{item.failReason,jdbcType=VARCHAR} 
+			FROM dual
+		)
+		</foreach>
+	</insert>
+	<!-- 查询tableCode --> 
+	 <select id="getTableCodeByName" resultType="java.lang.String">
+		SELECT
+			distinct TABLE_CODE 
+	    FROM 
+	        STD_TABLE_CZB
+		WHERE 
+		    IS_DELETED = #{isDeleted}
+			AND VERSION &lt;= #{version}
+			AND CHANGE_VERSION &gt; #{version}
+			AND TABLE_NAME = #{tableName}
+	</select>
+	<!-- 查询财政部数据 tableCode -->
+	<select id="getMaxCZBTableCode" resultMap="BaseResultMap">
+		SELECT ST.TABLE_CODE FROM STD_TABLE_CZB ST  ORDER BY ST.TABLE_CODE DESC
+	</select>
+	<!-- 保存单个财政部汇总数据 -->
+	<insert id="insertCZBTableByOne" parameterType="com.ctjsoft.orderserver.analyze.domain.StdTable">
+	
+		insert into STD_TABLE_CZB (
+			ID,COMPANY_CODE, SYSTEM_CODE,BUSINESS_CODE, TABLE_CODE,
+			TABLE_NAME,TABLE_CN_NAME, TABLE_DES, BUSINESS_KEY,IS_STANDARD,
+			VERSION,CHANGE_VERSION,UPDATE_TIME, UPDATE_USER, CREATE_TIME,
+			CREATE_USER,CATALOG_ENUM_ID, TABLE_TYPE,STD_TYPE, IS_DELETED,
+			CHECK_RESULT,FAIL_REASON
+		)
+		(   SELECT
+			#{item.id,jdbcType=VARCHAR},
+			#{item.companyCode,jdbcType=VARCHAR},
+			#{item.systemCode,jdbcType=VARCHAR},
+			#{item.businessCode,jdbcType=VARCHAR},
+			#{item.tableCode,jdbcType=VARCHAR},
+			#{item.tableName,jdbcType=VARCHAR},
+			#{item.tableCnName,jdbcType=VARCHAR},
+			#{item.tableDes,jdbcType=VARCHAR},
+			#{item.businessKey,jdbcType=VARCHAR},
+			#{item.isStandard,jdbcType=NUMERIC},
+			#{item.version,jdbcType=NUMERIC},
+			#{item.changeVersion,jdbcType=NUMERIC},
+			#{item.updateTime,jdbcType=TIMESTAMP},
+			#{item.updateUser,jdbcType=VARCHAR},
+			#{item.createTime,jdbcType=TIMESTAMP},
+			#{item.createUser,jdbcType=VARCHAR},
+			#{item.catalogEnumId,jdbcType=NUMERIC},
+			#{item.tableType,jdbcType=NUMERIC},
+			#{item.stdType,jdbcType=NUMERIC},
+			#{item.isDeleted,jdbcType=NUMERIC},
+			#{item.checkResult,jdbcType=NUMERIC},
+			#{item.failReason,jdbcType=VARCHAR} 
+			FROM dual
+		)
+	
+	</insert>
+	<!-- 查询 非czb表数据 中有该表   -->
+	<select id="getTableByCzbTableName" resultMap="BaseResultMap">
+		SELECT * from STD_TABLE
+		WHERE IS_DELETED = 2
+		<if test="version != null">
+			AND VERSION &lt;= #{version}
+			AND CHANGE_VERSION &gt; #{version}
+		</if>
+		<if test="tableName != null">
+			AND TABLE_NAME = #{tableName}
+		</if>
+		<if test="stdType != null">
+			AND STD_TYPE = #{stdType}
+		</if>
+	</select>
+	<!-- 精确 查询 要保存的版本是否已经存在   -->
+	<select id="getCzbTableByWillAddVersion" resultMap="BaseResultMap">
+		SELECT * from STD_TABLE_CZB
+		WHERE IS_DELETED = 2
+		<if test="version != null">
+			AND VERSION = #{version}
+			AND CHANGE_VERSION &gt; #{version}
+		</if>
+		<if test="tableName != null">
+			AND TABLE_NAME = #{tableName}
+		</if>
+		<if test="stdType != null">
+			AND STD_TYPE = #{stdType}
+		</if>
+	</select>
+	<!-- 修改 版本   处理汇总版本下发时  扩展的 数据  开始  -->
+	<update id="updateVersionForIsStandredOne">
+		UPDATE STD_TABLE st
+		SET st.CHANGE_VERSION=#{changeVersion}
+		WHERE EXISTS(SELECT 1 FROM STD_TABLE_CZB stz WHERE st.TABLE_NAME = stz.TABLE_NAME AND stz.STD_TYPE = #{stdType})
+  		AND version != #{version}
+  		AND change_version = 10000
+	</update>
+	<!-- 修改 版本two -->
+	<update id="updateVersionIsStandredTwo">
+		UPDATE STD_TABLE st
+		SET st.CHANGE_VERSION=#{hzVersion}
+		WHERE EXISTS(SELECT 1 FROM STD_TABLE_CZB stz WHERE st.TABLE_NAME = stz.TABLE_NAME AND stz.STD_TYPE = #{stdType})
+		AND change_version = #{version}	
+	</update>
+	<!-- 修改 版本three -->
+	<update id="updateVersionForIsStandredThree">
+		UPDATE STD_TABLE st
+		SET st.VERSION=#{hzVersion}
+		WHERE EXISTS(SELECT 1 FROM STD_TABLE_CZB stz WHERE st.TABLE_NAME = stz.TABLE_NAME AND stz.STD_TYPE = #{stdType})
+		AND version = #{version}
+		AND change_version = 10000	
+	</update>
+	<!-- 修改 版本 four-->
+	<update id="updateVersionForNotStandredFour">
+		UPDATE STD_TABLE st
+		SET st.CHANGE_VERSION=#{hzVersion}
+		WHERE not EXISTS(SELECT 1 FROM STD_TABLE_CZB stz WHERE st.TABLE_NAME = stz.TABLE_NAME)
+		AND st.STD_TYPE = #{stdType}
+		AND change_version = #{version}	
+	</update>
+	<!-- 修改 版本 five-->
+	<update id="updateVersionForNotStandredFive">
+		UPDATE STD_TABLE st
+		SET st.VERSION=#{hzVersion}
+		WHERE not EXISTS(SELECT 1 FROM STD_TABLE_CZB stz WHERE st.TABLE_NAME = stz.TABLE_NAME)
+		AND st.STD_TYPE = #{stdType}
+		AND version = #{version}
+		AND change_version = 10000
+	</update>
+    <!-- 修改 版本   处理汇总版本下发时  扩展的 数据  结束 -->
+	<select id="selectByVerAndBusCode" resultMap="BaseResultMap">
+        SELECT
+        *
+        FROM
+        STD_TABLE
+        WHERE
+        IS_DELETED= #{isDeleted}
+        AND VERSION &lt;= #{version}
+        AND CHANGE_VERSION &gt; #{version}
+        <if test="businessCode != null">
+            AND BUSINESS_CODE=#{businessCode}
+        </if>
+        <if test="stdType != null">
+            AND STD_TYPE=#{stdType}
+        </if>
+    </select>
+    <select id="selectCZBByVerAndBusCode" resultMap="BaseResultMap">
+        SELECT
+        *
+        FROM
+        STD_TABLE_CZB
+        WHERE
+        IS_DELETED= #{isDeleted}
+        AND VERSION &lt;= #{version}
+        AND CHANGE_VERSION &gt; #{version}
+        <if test="businessCode != null">
+            AND BUSINESS_CODE=#{businessCode}
+        </if>
+        <if test="stdType != null">
+            AND STD_TYPE=#{stdType}
+        </if>
+    </select>
+
+</mapper>

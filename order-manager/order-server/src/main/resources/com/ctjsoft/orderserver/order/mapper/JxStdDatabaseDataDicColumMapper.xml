@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ctjsoft.orderserver.analyze.mapper.JxStdDatabaseDataDicColumMapper">
+    <resultMap id="BaseResultMap" type="com.ctjsoft.orderserver.analyze.domain.JxStdDatabaseDataDicionaryColumn">
+        <id column="ID" jdbcType="VARCHAR" property="id"/>
+        <result column="NAME" jdbcType="VARCHAR" property="name"/>
+        <result column="CHINESE_NAME" jdbcType="VARCHAR" property="chineseName"/>
+        <result column="TYPE" jdbcType="VARCHAR" property="type"/>
+        <result column="LENGTH" jdbcType="VARCHAR" property="length"/>
+        <result column="ACCURACY" jdbcType="VARCHAR" property="accuracy"/>
+        <result column="LOGICAL_TABLES" jdbcType="VARCHAR" property="logicalTables"/>
+        <result column="IS_PK" jdbcType="VARCHAR" property="isPk"/>
+        <result column="IS_EMPTY" jdbcType="VARCHAR" property="isEmpty"/>
+        <result column="DEFAULT_VALUE" jdbcType="VARCHAR" property="defaultValue"/>
+        <result column="CODE_SET" jdbcType="VARCHAR" property="codeSet"/>
+        <result column="LIBRARY_TABLE" jdbcType="VARCHAR" property="libraryTable"/>
+        <result column="TABLE_NAME" jdbcType="VARCHAR" property="tableName"/>
+        <result column="TABLE_ID" jdbcType="VARCHAR" property="tableId"/>
+        <result column="DATABASE_ID" jdbcType="VARCHAR" property="databaseId"/>
+        <result column="REMARK" jdbcType="VARCHAR" property="remark"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        ID, CODE, NAME, TYPE, DRIVER, URL, USERNAME, PWD, DES, MODEL_NAME, BUSINESS, VERSION
+    </sql>
+
+    <select id="batchInsert" parameterType="java.util.List">
+        insert all
+        <foreach collection='list' item='item' separator=''>
+            into STD_DATABASE_COLUMN
+            (ID,TABLE_ID,NAME,TYPE,LENGTH,ACCURACY,IS_PK,IS_EMPTY,DEFAULT_VALUE,CHINESE_NAME,TABLE_NAME,DATABASE_ID)
+            values (#{item.id},#{item.tableId},#{item.name},#{item.type},
+            #{item.length},#{item.accuracy},#{item.isPk},#{item.isEmpty},#{item.defaultValue},#{item.chineseName},#{item.tableName},#{item.databaseId})
+        </foreach>
+        select * from dual
+    </select>
+
+    <update id="update" parameterType="com.ctjsoft.orderserver.analyze.domain.JxStdDatabaseDataDicionaryColumn">
+        update STD_DATABASE_COLUMN
+        <set>
+            <if test="chineseName != null">
+                CHINESE_NAME = #{chineseName,jdbcType=VARCHAR},
+            </if>
+            <if test="accuracy != null">
+                ACCURACY = #{accuracy,jdbcType=VARCHAR},
+            </if>
+            <if test="logicalTables != null">
+                LOGICAL_TABLES = #{logicalTables,jdbcType=VARCHAR},
+            </if>
+            <if test="isPk != null">
+                IS_PK = #{isPk,jdbcType=VARCHAR},
+            </if>
+            <if test="defaultValue != null">
+                DEFAULT_VALUE = #{defaultValue,jdbcType=VARCHAR},
+            </if>
+            <if test="codeSet != null">
+                CODE_SET = #{codeSet,jdbcType=VARCHAR},
+            </if>
+            <if test="libraryTable != null">
+                LIBRARY_TABLE = #{libraryTable,jdbcType=VARCHAR},
+            </if>
+            <if test="tableName != null">
+                TABLE_NAME = #{tableName,jdbcType=VARCHAR},
+            </if>
+            <if test="tableId != null">
+                TABLE_ID = #{tableId,jdbcType=VARCHAR},
+            </if>
+            <if test="remark != null">
+                REMARK = #{remark,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where ID = #{id,jdbcType=VARCHAR}
+    </update>
+    <select id="list" resultMap="BaseResultMap">
+        select * from STD_DATABASE_COLUMN
+    </select>
+    <select id="selectByTableId" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select * from STD_DATABASE_COLUMN where TABLE_ID = #{tableId}
+    </select>
+
+
+    <select id="loadByDatabaseId" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select * from STD_DATABASE_COLUMN where DATABASE_ID = #{databaseId}
+    </select>
+    <!--批量删除-->
+    <delete id="batchDelete" parameterType="java.util.List">
+        delete from STD_DATABASE_COLUMN where id in
+        <foreach collection="list" item="item" index="index" separator="," open="(" close=")">
+            #{item.id}
+        </foreach>
+    </delete>
+    <!--批量修改-->
+    <update id="batchUpdate">
+        <foreach collection="list" index="index" item="item" open="begin" separator=";" close=";end;">
+            UPDATE STD_DATABASE_COLUMN
+            <set>
+                <if test="item.type != null">
+                    TYPE = #{item.type,jdbcType=VARCHAR},
+                </if>
+                <if test="item.length != null">
+                    LENGTH = #{item.length,jdbcType=VARCHAR},
+                </if>
+                <if test="item.accuracy != null">
+                    ACCURACY = #{item.accuracy,jdbcType=VARCHAR},
+                </if>
+                <if test="item.isPk != null">
+                    IS_PK = #{item.isPk,jdbcType=VARCHAR},
+                </if>
+                <if test="item.defaultValue != null">
+                    DEFAULT_VALUE = #{item.defaultValue,jdbcType=VARCHAR},
+                </if>
+                <if test="item.tableName != null">
+                    TABLE_NAME = #{item.tableName,jdbcType=VARCHAR},
+                </if>
+                <if test="item.tableId != null">
+                    TABLE_ID = #{item.tableId,jdbcType=VARCHAR},
+                </if>
+                <if test="item.chineseName != null">
+                    CHINESE_NAME = #{item.chineseName,jdbcType=VARCHAR}
+                </if>
+            </set>
+            WHERE ID=#{item.id,jdbcType=VARCHAR}
+        </foreach>
+    </update>
+</mapper>

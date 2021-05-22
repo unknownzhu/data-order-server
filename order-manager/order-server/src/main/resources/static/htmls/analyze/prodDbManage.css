@@ -1,0 +1,40 @@
+@import url("../../lib/layui/css/layui.css");
+@import url("../../css/common.css");
+.layui-btn-primary{
+    margin-left: 10px;
+}
+/* 左侧导航栏 */
+.layui-side{
+	border-right: 1px solid #f0f0f0;
+	background: #F5F6FA !important;
+}
+/* 主题区域 */
+.layuiBodyHeader{
+    width: 100%;
+    height: 35px;
+    line-height: 35px;
+}
+.layuiBodyHeader input{
+    width: 200px;
+    float: right;
+    height: 35px;
+    line-height: 35px;
+}
+.layuiBodyHeader button{
+    height: 35px;
+    line-height: 35px;
+    float: right;
+    margin-right: 10px;
+    background: #2667DF;
+}
+.layuiBodyHeader button-icon{
+    float: right;
+    height: 34px;
+    position: absolute;
+    right: 10px;
+    border: #ffffff;
+}
+.layuiBodyHeader icon:hover{
+    color: #2667DF;
+}
+

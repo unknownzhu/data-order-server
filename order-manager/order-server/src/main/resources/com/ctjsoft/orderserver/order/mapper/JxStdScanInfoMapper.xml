@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ctjsoft.orderserver.analyze.mapper.JxStdScanInfoMapper">
+    <resultMap id="BaseResultMap" type="com.ctjsoft.orderserver.analyze.domain.JxStdScanInfo">
+        <id column="ID" jdbcType="VARCHAR" property="id"/>
+
+        <result column="createtime" jdbcType="TIMESTAMP" property="createtime"/>
+        <result column="creatorid" jdbcType="VARCHAR" property="creatorid"/>
+        <result column="creatorname" jdbcType="VARCHAR" property="creatorname"/>
+        <result column="totalnum" jdbcType="NUMERIC" property="totalnum"/>
+        <result column="ordernum" jdbcType="NUMERIC" property="ordernum"/>
+        <result column="updatedicrecords" jdbcType="NUMERIC" property="updatedicrecords"/>
+        <result column="insertdicrecords" jdbcType="NUMERIC" property="insertdicrecords"/>
+        <result column="deletedicrecords" jdbcType="NUMERIC" property="deletedicrecords"/>
+        <result column="updatecolumnsrecord" jdbcType="NUMERIC" property="updatecolumnsrecord"/>
+        <result column="insertcolumnsrecord" jdbcType="NUMERIC" property="insertcolumnsrecord"/>
+        <result column="deletecolumnsrecord" jdbcType="NUMERIC" property="deletecolumnsrecord"/>
+        <result column="dbid" jdbcType="NUMERIC" property="dbid"/>
+        <result column="info" jdbcType="VARCHAR" property="info"/>
+        <result column="status" jdbcType="VARCHAR" property="status"/>
+
+
+
+
+    </resultMap>
+
+    <sql id="Base_Column_List">
+
+        ID,CREATETIME, CREATORID, CREATORNAME, TOTALNUM, ORDERNUM, UPDATEDICRECORDS, INSERTDICRECORDS, DELETEDICRECORDS, UPDATECOLUMNSRECORD,
+        INSERTCOLUMNSRECORD, DELETECOLUMNSRECORD,dbid,info,status
+    </sql>
+
+
+    <insert id="insert" parameterType="com.ctjsoft.orderserver.analyze.domain.JxStdScanInfo">
+        insert into STD_SCAN_INFO (ID,CREATETIME, CREATORID, CREATORNAME, TOTALNUM, ORDERNUM, UPDATEDICRECORDS, INSERTDICRECORDS, DELETEDICRECORDS, UPDATECOLUMNSRECORD,
+                                  INSERTCOLUMNSRECORD, DELETECOLUMNSRECORD,dbid,status,info
+                                  )
+        values ( #{id,jdbcType=VARCHAR},#{createtime,jdbcType=TIMESTAMP},#{creatorid,jdbcType=VARCHAR},#{creatorname,jdbcType=VARCHAR},#{totalnum,jdbcType=NUMERIC},
+                 #{ordernum,jdbcType=NUMERIC},#{updatedicrecords,jdbcType=NUMERIC},#{insertdicrecords,jdbcType=NUMERIC},#{deletedicrecords,jdbcType=NUMERIC},
+                 #{updatecolumnsrecord,jdbcType=NUMERIC},#{insertcolumnsrecord,jdbcType=NUMERIC},#{deletecolumnsrecord,jdbcType=NUMERIC},#{dbid,jdbcType=VARCHAR} ,#{status,jdbcType=VARCHAR} ,#{info,jdbcType=VARCHAR}  )  </insert>
+
+    <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from STD_SCAN_INFO
+        where ID = #{id,jdbcType=VARCHAR}
+    </select>
+
+
+
+    <select id="selcountByDbId" parameterType="java.lang.String" resultType="Integer">
+        select  count(1)
+        from STD_SCAN_INFO
+        where DBID= #{dbid,jdbcType=VARCHAR}
+    </select>
+
+
+
+
+
+    <select id="list" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from STD_SCAN_INFO
+
+        <where>
+            <if test="createtime != null  and createtime != ''"> and createtime = #{createtime}</if>
+            <if test="creatorid != null  and creatorid != ''"> and creatorid = #{creatorid}</if>
+            <if test="ordernum != null  and ordernum != ''"> and ordernum = #{ordernum}</if>
+            <if test="dbid != null  and dbid != ''"> and dbid = #{dbid}</if>
+        </where>
+        order by CREATETIME desc
+
+    </select>
+
+
+
+
+</mapper>

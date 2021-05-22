@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ctjsoft.orderserver.analyze.mapper.JxStdDatabaseDicionaryLogMapper">
+    <resultMap id="BaseResultMap" type="com.ctjsoft.orderserver.analyze.domain.JxStdDatabaseDicionaryLog">
+        <id column="ID" jdbcType="VARCHAR" property="id"/>
+        <result column="CREATE_TIME" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="TYPE" jdbcType="INTEGER" property="type"/>
+        <result column="REMARK" jdbcType="VARCHAR" property="remark"/>
+        <result column="TABLE_ID" jdbcType="VARCHAR" property="tableId"/>
+        <result column="column_Name" jdbcType="VARCHAR" property="columnName"/>
+        <result column="old_column_name" jdbcType="VARCHAR" property="oldColumnName"/>
+        <result column="order_id" jdbcType="VARCHAR" property="orderId"/>
+        <result column="record_Id" jdbcType="VARCHAR" property="recordId"/>
+
+
+
+    </resultMap>
+    <sql id="Base_Column_List">
+        ID, TABLE_ID, TABLE_NAME, TYPE, REMARK, DATABASE_ID,column_Name,old_column_name,order_Id
+    </sql>
+    <select id="batchInsert" parameterType="java.util.List">
+        insert all
+        <foreach collection='list' item='item' separator=''>
+            into std_database_dicionary_log (ID,CREATE_TIME,TYPE,REMARK,TABLE_ID,column_Name,old_column_name,record_Id
+            ,TABLE_NAME,DB_ID)
+            values (#{item.id},#{item.createTime},#{item.type},#{item.remark},#{item.tableId},#{item.columnName} ,#{item.oldColumnName},#{item.recordId}
+            ,#{item.tableName}   ,#{item.dbId}   )
+        </foreach>
+        select * from dual
+    </select>
+    <select id="detail" parameterType="java.lang.String" resultMap="BaseResultMap">
+      select * from std_database_dicionary_log where TABLE_ID = #{tableId} order by CREATE_TIME desc
+    </select>
+
+
+    <select id="detailByTableIdAndDateAndColumnName" parameterType="java.lang.String" resultMap="BaseResultMap">
+      select * from std_database_dicionary_log where TABLE_ID = #{tableId}  and   to_char(create_time,'yyyymmdd' )   = #{today} and type = ${type}
+      and ( column_name = #{columnName} or  old_column_name = #{columnName}  )
+       order by CREATE_TIME desc
+    </select>
+
+    <select id="detailBySqls" parameterType="java.lang.String" resultMap="BaseResultMap">
+      select * from std_database_dicionary_log a
+      where  ( #{sqls}   like '%'||a.column_name ||'%'  or   #{sqls}   like '%'||a.old_column_name ||'%'   ) and    #{sqls}   like '%'||a.table_name ||'%'
+      and a.DB_ID = #{dbId} and    to_char(create_time,'yyyymmdd' )   = #{today}
+    </select>
+
+
+    <update id="update">
+		UPDATE std_database_dicionary_log
+		SET ORDER_ID = #{orderId}
+		WHERE id = #{id}
+	</update>
+
+
+</mapper>

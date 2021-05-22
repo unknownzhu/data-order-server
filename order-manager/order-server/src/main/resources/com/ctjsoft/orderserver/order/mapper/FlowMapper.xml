@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ctjsoft.orderserver.order.mapper.FlowMapper">
+    
+    <resultMap type="com.ctjsoft.orderserver.order.domain.Flow" id="FlowResult">
+        <result property="id"    column="id"    />
+        <result property="name"    column="name"    />
+        <result property="forbidWords"    column="forbid_Words"    />
+    </resultMap>
+
+    <sql id="selectFlowVo">
+        select id, name,forbid_Words  from jx_flow
+    </sql>
+
+    <select id="selectFlowList" parameterType="com.ctjsoft.orderserver.order.domain.Flow" resultMap="FlowResult">
+        <include refid="selectFlowVo"/>
+        <where>  
+            <if test="name != null  and name != ''"> and name like '%' ||#{name} || '%'</if>
+            <if test="forbidWords != null  and forbidWords != ''"> and  forbid_Words = #{forbidWords}</if>
+        </where>
+    </select>
+    
+    <select id="selectFlowById" parameterType="String" resultMap="FlowResult">
+        <include refid="selectFlowVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertFlow" parameterType="com.ctjsoft.orderserver.order.domain.Flow">
+        insert into jx_flow
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="name != null">name,</if>
+            <if test="forbidWords != null">forbid_Words,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="name != null">#{name},</if>
+            <if test="forbidWords != null">#{forbidWords},</if>
+         </trim>
+    </insert>
+
+    <update id="updateFlow" parameterType="com.ctjsoft.orderserver.order.domain.Flow">
+        update jx_flow
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="name != null">name = #{name},</if>
+            <if test="forbidWords != null">forbid_Words = #{forbidWords},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteFlowById" parameterType="String">
+        delete from jx_flow where id = #{id}
+    </delete>
+
+    <delete id="deleteFlowByIds" parameterType="String">
+        delete from jx_flow where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <!-- <th:block th:include="include :: header('常用语句列表')"    /> -->
+    <link rel="stylesheet" href="../../admin/css/load.css"/>
+    <link rel="stylesheet" href="../../admin/css/admin.css"/>
+    <link rel="stylesheet" href="../../component/pear/css/pear.css">
+    <link rel="stylesheet" href="../../component/zTree_v3/css/zTreeStyle/zTreeStyle.css">
+    <script src="../../component/layui/layui.js"></script>
+    <script src="../../component/pear/pear.js"></script>
+    <script src="../../component/jquery.min.js"></script>
+    <script src="../../component/zTree_v3/js/jquery.ztree.core.js"></script>
+    <script src="../common.js"></script>
+    <script src="../request.js"></script>
+</head>
+<body class="pear-container">
+<script type="text/html" id="commonSql-bar">
+    <button sec:authorize="hasPermission('/data-order-server/system/commonSql/copy','system:commonSql:copy')"
+            class="pear-btn pear-btn-primary pear-btn-sm" lay-event="copy">
+        复制语句
+    </button>
+</script>
+
+<script type="text/html" id="historySql-bar">
+<!--    <button sec:authorize="hasPermission('/data-order-server/system/commonSql/copy','system:commonSql:copy')"
+            class="pear-btn pear-btn-primary pear-btn-sm" lay-event="copy">
+        复制语句
+    </button>-->
+    <button sec:authorize="hasPermission('/data-order-server/system/commonSql/addCommon','system:commonSql:addCommon')"
+            class="pear-btn pear-btn-primary pear-btn-sm" lay-event="addCommon">
+        添加为常用
+    </button>
+</script>
+
+
+<div class="layui-card">
+    <div class="layui-tab layui-tab-brief">
+
+        <table id="historySql-table" lay-filter="historySql-table"></table>
+
+
+        <!-- <ul class="layui-tab-title">
+             <li class="layui-this">常用语句</li>
+             <li>历史语句</li>
+         </ul>
+         <div class="layui-tab-content">
+
+
+             <div class="layui-tab-item   layui-show" height="100%">
+                 <table id="commonSql-table" lay-filter="commonSql-table"></table>
+
+             </div>
+
+             <div class="layui-tab-item ">
+
+                 <table id="historySql-table" lay-filter="historySql-table"></table>
+
+             </div>
+         </div>-->
+    </div>
+</div>
+
+
+<th:block th:include="include :: footer"/>
+<script>
+    layui.use(['element', 'table', 'form', 'jquery'], function () {
+        let table = layui.table;
+        let form = layui.form;
+        let $ = layui.jquery;
+
+        //   let prefix = "/data-order-server/system/commonSql/";
+
+        let commonSqlCols = [
+            [
+                {
+                    field: 'sqls',
+                    title: '语句'
+                },
+                /*   {
+                       field: 'creatorName',
+                       title: '创建人'
+                   },*/
+                {
+                    field: 'dbTypeName',
+                    title: '数据库类型'
+                },
+                /* {
+                     field: 'showType',
+                     title: '显示范围', templet: function (d) {
+                         var str = '';
+                         if (d.showType == '0') {
+                             str = '所有人';
+                         } else if (d.showType == '1') {
+                             str = '仅管理员';
+                         } else if (d.showType == '2') {
+                             str = '创建人';
+                         }
+                         return str;
+
+                     }
+                 },*/
+                {
+                    field: 'createTime',
+                    title: '创建时间'
+                },
+                {title: '操作', toolbar: '#commonSql-bar', align: 'center', width: 230}
+            ]
+        ]
+
+
+        table.render({
+            elem: '#commonSql-table',
+            url: "/data-order-server/system/commonSql/" + 'linkData',
+            page: true,
+            cols: commonSqlCols,
+            skin: 'line',
+            // toolbar: '#commonSql-toolbar',
+            defaultToolbar: [{
+                layEvent: 'refresh',
+                icon: 'layui-icon-refresh',
+            }, 'filter', 'print', 'exports']
+        });
+
+
+        let historySqlCols = [
+            [
+                /* {type: 'checkbox'},
+                 /!*     {
+                          field: 'id',
+                          title: '主键'
+                      },*!/
+                 {
+                     field: 'name',
+                     title: '名称'
+                 },
+                 {
+                     field: 'typeName',
+                     title: '类别'
+                 },*/ {
+                field: 'sqls',
+                title: '语句'
+            },
+                {
+                    field: 'creatorName',
+                    title: '创建人'
+                },
+                {
+                    field: 'dbName',
+                    title: '数据库名称'
+                },
+
+                {
+                    field: 'dbTypeName',
+                    title: '数据库类型'
+                },
+                /*  {
+                      field: 'showType',
+                      title: '显示范围', templet: function (d) {
+                          var str = '';
+                          if (d.showType == '0') {
+                              str = '所有人';
+                          } else if (d.showType == '1') {
+                              str = '仅管理员';
+                          } else if (d.showType == '2') {
+                              str = '创建人';
+                          }
+                          return str;
+
+                      }
+                  },*/
+                {
+                    field: 'createTime',
+                    title: '记录时间'
+                },
+                {title: '操作', toolbar: '#historySql-bar', align: 'center', width: 230}
+            ]
+        ]
+
+
+        table.render({
+            elem: '#historySql-table',
+            url: "/data-order-server/system/historySql/" + 'linkData',
+            page: true,
+            cols: historySqlCols,
+            skin: 'line',
+            //  toolbar: '#historySql-toolbar',
+            defaultToolbar: [{
+                layEvent: 'refresh',
+                icon: 'layui-icon-refresh',
+            }, 'filter', 'print', 'exports']
+        });
+
+        table.on('tool(commonSql-table)', function (obj) {
+            if (obj.event === 'copy') {
+                window.copy(obj);
+            }
+        });
+        table.on('tool(historySql-table)', function (obj) {
+            if (obj.event === 'copy') {
+                window.copy(obj);
+            }
+            if (obj.event === 'addCommon') {
+                window.addCommon(obj);
+            }
+        });
+
+
+        window.add = function () {
+            layer.open({
+                type: 2,
+                title: '新增常用语句',
+                shade: 0.1,
+                area: ['100%', '100%'],
+                content: 'add.html'
+            });
+        }
+
+        window.edit = function (obj) {
+            layer.open({
+                type: 2,
+                title: '修改常用语句',
+                shade: 0.1,
+                area: ['100%', '100%'],
+                content: 'edit.html?id=' + obj.data['id']
+            });
+        }
+
+        window.addCommon = function (obj) {
+            layer.confirm('确定添加"' + obj.data.sqls + '"为常用语句？', {icon: 3, title: '提示'}, function (index) {
+
+                var data = {};
+                data.name = obj.data.name;
+                data.sqls = obj.data.sqls;
+                data.source = obj.data.id;
+                data.typeId = obj.data.typeId;
+                data.dbType = obj.data.dbType;
+                data.showType = obj.data.showType;
+
+                $.ajax({
+                    url: "/data-order-server/system/commonSql/" + 'save',
+                    data: JSON.stringify(data),
+                    dataType: 'json',
+                    contentType: 'application/json',
+                    type: 'post',
+                    success: function (result) {
+                        if (result.success) {
+                            layer.msg(result.msg, {icon: 1, time: 1000}, function () {
+                                layui.table.reload("commonSql-table");
+                                layer.close(index);
+                            });
+                        } else {
+                            layer.msg(result.msg, {icon: 2, time: 1000});
+                        }
+                    }
+                })
+            });
+        }
+
+        window.copy = function (obj) {
+
+            var text = obj.data.sqls;
+            var flag = copyText(text);
+            if (flag) {
+
+                layer.msg("复制成功", {icon: 1, time: 1000}, function () {
+
+                    window.parent.$("input[id='sqlWordCombainInput").val(text);
+
+
+                    // layer.close(index);
+                    parent.layer.close(parent.layer.getFrameIndex(window.name));
+                });
+
+            } else {
+                layer.msg("复制失败", {icon: 1, time: 1000});
+            }
+
+        }
+
+        function copyText(text) {
+            var textarea = document.createElement("textarea");
+            var currentFocus = document.activeElement;
+            document.body.appendChild(textarea);
+            textarea.value = text;
+            textarea.focus();
+            if (textarea.setSelectionRange)
+                textarea.setSelectionRange(0, textarea.value.length);
+            else
+                textarea.select();
+            try {
+                var flag = document.execCommand("copy");
+            } catch (eo) {
+                var flag = false;
+            }
+            document.body.removeChild(textarea);
+            currentFocus.focus();
+            return flag;
+        }
+
+
+        window.batchRemove = function (obj) {
+            let data = table.checkStatus(obj.config.id).data;
+            if (data.length === 0) {
+                layer.msg("未选中数据", {icon: 3, time: 1000});
+                return false;
+            }
+            let ids = "";
+            for (let i = 0; i < data.length; i++) {
+                ids += data[i].id + ",";
+            }
+            ids = ids.substr(0, ids.length - 1);
+            layer.confirm('确定要删除这些常用语句', {icon: 3, title: '提示'}, function (index) {
+                layer.close(index);
+                let loading = layer.load();
+                $.ajax({
+                    url: prefix + "batchRemove",
+                    dataType: 'json',
+                    data: {"ids": ids},
+                    type: 'delete',
+                    success: function (result) {
+                        layer.close(loading);
+                        if (result.success) {
+                            layer.msg(result.msg, {icon: 1, time: 1000}, function () {
+                                table.reload('commonSql-table');
+                            });
+                        } else {
+                            layer.msg(result.msg, {icon: 2, time: 1000});
+                        }
+                    }
+                })
+            });
+        }
+
+        window.refresh = function (param) {
+            table.reload('commonSql-table', {where: param});
+        }
+    })
+</script>
+</body>
+</html>
