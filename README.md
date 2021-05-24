@@ -21,7 +21,7 @@ Then it's about our own function describtion:
 
 2.Database structs analyze: Scan the database and persistent database infomation like tableSpace,table structs like table rows count,column info like length,is empty.And after scaning twice or more,system will compare them and show changes.
 
-3.Other functions may has been add suddenly case by our leader and some has been reduced to adapt to customer's use case.They may have not been write in this file and please try to expoler by your self!
+3.Other functions may has been add suddenly case by our leader and some has been reduced to adapt to customer's use case.They may have not been write in this file and please try to expoler by yourSelf!
 
 Again: 
 
