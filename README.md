@@ -11,7 +11,7 @@ This branch contains about 80 percents function of datagear and most important d
 
 Now the new struct allows you to use springcloud tools like gateway and oauth2.
 
-And incoluding to adapet to our portal website,I tried to use pearadmin program whitch has a fantistic function about creating front and backgroud code with layerui and springcloud.
+And incording  to adapet to our portal website,I tried to use pearadmin program whitch has a fantistic function about creating front and backgroud code with layerui and springcloud.
 
 
 
